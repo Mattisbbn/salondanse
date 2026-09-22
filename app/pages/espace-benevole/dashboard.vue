@@ -1,0 +1,505 @@
+<script setup lang="ts">
+useHead({
+  title: 'Mon Profil & Planning · Espace Bénévole'
+})
+
+interface VolunteerSummarySlot {
+  registrationId: string
+  missionId: string
+  missionName: string
+  isSensitive: boolean
+  date: string
+  dayLabel: string
+  shortDayLabel: string
+  startTime: string
+  endTime: string
+  orderIndex: number
+  location: string
+  instructions: string
+}
+
+interface VolunteerSummaryResponse {
+  volunteer: {
+    id: string
+    firstName: string
+    lastName: string
+    fullName: string
+    email: string
+    phone: string
+    photoUrl: string | null
+    isMinor: boolean
+    planningStatus: 'DRAFT' | 'CONFIRMED'
+    planningLockedAt: string | null
+    isLocked: boolean
+    editionName: string
+    editionYear: number
+  }
+  emergencyContact: {
+    organization: string
+    coordinator: string
+    email: string
+    phone: string
+    qgLocation: string
+  }
+  slots: VolunteerSummarySlot[]
+  totalSlots: number
+  totalHours: number
+}
+
+const { data } = await useFetch<VolunteerSummaryResponse>('/api/volunteer/me/summary', {
+  lazy: false
+})
+
+const summary = computed(() => data.value)
+const isConfirmed = computed(() => summary.value?.volunteer.planningStatus === 'CONFIRMED')
+
+function handlePrint() {
+  if (typeof window !== 'undefined') {
+    window.print()
+  }
+}
+</script>
+
+<template>
+  <div class="max-w-4xl mx-auto space-y-6">
+    <!-- EN-TÊTE ÉCRAN (Masqué à l'impression) -->
+    <div class="print:hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          Espace Bénévole • Mon Profil
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          {{ summary?.volunteer.fullName }} • Salon de la Danse 2027 (Angers)
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <UButton
+          color="neutral"
+          variant="outline"
+          size="sm"
+          icon="i-lucide-printer"
+          label="Imprimer / Télécharger (PDF)"
+          class="font-medium cursor-pointer shadow-xs"
+          @click="handlePrint"
+        />
+        <UButton
+          to="/espace-benevole/planning"
+          color="primary"
+          variant="solid"
+          size="sm"
+          icon="i-lucide-calendar"
+          label="Modifier mes créneaux"
+          class="font-semibold shadow-xs"
+        />
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION ONBOARDING & STATUT DU PLANNING                   -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      class="print:hidden bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
+    >
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
+            SD
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-violet-600 uppercase tracking-wider block">Événement officiel</span>
+            <h2 class="text-base font-bold text-slate-900">
+              Salon de la Danse d'Angers • 14, 15 & 16 Mai 2027
+            </h2>
+          </div>
+        </div>
+
+        <!-- Statut du planning -->
+        <div>
+          <UBadge
+            v-if="isConfirmed"
+            color="success"
+            variant="subtle"
+            size="md"
+            class="font-semibold inline-flex items-center gap-1.5"
+          >
+            <UIcon
+              name="i-lucide-check-circle-2"
+              class="w-4 h-4"
+            />
+            <span>Planning validé & verrouillé</span>
+          </UBadge>
+          <NuxtLink
+            v-else
+            to="/espace-benevole/planning"
+            class="inline-block"
+          >
+            <UBadge
+              color="warning"
+              variant="subtle"
+              size="md"
+              class="font-semibold inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <UIcon
+                name="i-lucide-clock"
+                class="w-4 h-4"
+              />
+              <span>En attente de validation (Brouillon)</span>
+            </UBadge>
+          </NuxtLink>
+        </div>
+      </div>
+
+      <!-- Règles clés d'engagement bénévole -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold text-slate-900">
+            <UIcon
+              name="i-lucide-clock-3"
+              class="w-4 h-4 text-violet-600"
+            />
+            <span>1. Ponctualité</span>
+          </div>
+          <p class="text-slate-500 text-[11px] leading-relaxed">
+            Se présenter 15 minutes avant le début de chaque tranche horaire au point d'accueil.
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold text-slate-900">
+            <UIcon
+              name="i-lucide-shirt"
+              class="w-4 h-4 text-violet-600"
+            />
+            <span>2. Tenue & Badge</span>
+          </div>
+          <p class="text-slate-500 text-[11px] leading-relaxed">
+            T-shirt officiel remis à votre arrivée. Le port du badge est obligatoire sur tout le site.
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold text-slate-900">
+            <UIcon
+              name="i-lucide-utensils"
+              class="w-4 h-4 text-violet-600"
+            />
+            <span>3. Repas & Pause</span>
+          </div>
+          <p class="text-slate-500 text-[11px] leading-relaxed">
+            Panier repas et rafraîchissements fournis dès 2 créneaux d'engagement dans la même journée.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION DONNÉES PERSONNELLES (LECTURE SEULE STRICTE)     -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      class="print:hidden bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
+    >
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <UIcon
+            name="i-lucide-user-check"
+            class="w-5 h-5 text-violet-600"
+          />
+          <h2 class="text-base font-bold text-slate-900">
+            Mes informations personnelles
+          </h2>
+        </div>
+        <UBadge
+          color="neutral"
+          variant="subtle"
+          size="xs"
+          class="font-medium"
+        >
+          Données vérifiées
+        </UBadge>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <!-- Photo d'identité ou Avatar avec initiales -->
+        <div class="shrink-0">
+          <img
+            v-if="summary.volunteer.photoUrl"
+            :src="summary.volunteer.photoUrl"
+            alt="Photo d'identité bénévole"
+            class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
+          >
+          <div
+            v-else
+            class="w-20 h-20 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border border-violet-200/60"
+          >
+            {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
+          </div>
+        </div>
+
+        <!-- Données en lecture seule -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Identité</span>
+            <p class="font-bold text-slate-900 text-sm">
+              {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Adresse e-mail</span>
+            <p class="font-medium text-slate-900 truncate">
+              {{ summary.volunteer.email }}
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
+            <p class="font-medium text-slate-900">
+              {{ summary.volunteer.phone || 'Non renseigné' }}
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Statut légal</span>
+            <p class="font-medium text-slate-900">
+              {{ summary.volunteer.isMinor ? 'Mineur (accord parental requis)' : 'Majeur' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mention explicite obligatoire de verrouillage -->
+      <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+        <UIcon
+          name="i-lucide-shield-alert"
+          class="w-4 h-4 text-violet-600 shrink-0"
+        />
+        <span>Pour modifier vos informations personnelles, veuillez contacter l'administration du Salon.</span>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- RÉCAPITULATIF CHRONOLOGIQUE DES CRÉNEAUX RÉSERVÉS        -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
+    >
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">
+            Mes créneaux de mission ({{ summary.totalSlots }})
+          </h3>
+          <p class="text-xs text-slate-500">
+            Total : {{ summary.totalHours }} heures de bénévolat
+          </p>
+        </div>
+
+        <UBadge
+          v-if="summary.totalSlots > 0"
+          color="primary"
+          variant="subtle"
+          size="xs"
+        >
+          {{ summary.totalSlots }} créneau(x)
+        </UBadge>
+      </div>
+
+      <!-- Liste des créneaux -->
+      <div
+        v-if="summary.slots.length > 0"
+        class="space-y-3"
+      >
+        <div
+          v-for="slot in summary.slots"
+          :key="slot.registrationId"
+          class="p-4 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:border-violet-300 transition-all"
+        >
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold text-sm text-slate-900">{{ slot.missionName }}</span>
+              <UBadge
+                v-if="slot.isSensitive"
+                color="primary"
+                variant="subtle"
+                size="xs"
+                class="text-[10px]"
+              >
+                Poste sensible
+              </UBadge>
+              <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded border border-violet-200/60 font-mono">
+                {{ slot.startTime }} - {{ slot.endTime }}
+              </span>
+            </div>
+
+            <p class="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-3.5 h-3.5 text-slate-400"
+              />
+              <span>{{ slot.dayLabel }}</span>
+            </p>
+
+            <!-- Lieu / Rendez-vous -->
+            <div class="pt-1 text-xs text-slate-500 space-y-0.5">
+              <p class="flex items-center gap-1.5">
+                <UIcon
+                  name="i-lucide-map-pin"
+                  class="w-3.5 h-3.5 text-violet-600 shrink-0"
+                />
+                <span class="font-medium text-slate-700">{{ slot.location }}</span>
+              </p>
+              <p class="text-[11px] text-slate-500 italic pl-5">
+                Consignes : {{ slot.instructions }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aucun créneau réservé -->
+      <div
+        v-else
+        class="py-8 text-center text-slate-400 space-y-2"
+      >
+        <UIcon
+          name="i-lucide-calendar-x"
+          class="w-8 h-8 mx-auto text-slate-300"
+        />
+        <p class="text-xs font-medium">
+          Vous n'avez pas encore choisi de créneau de bénévolat.
+        </p>
+        <div class="print:hidden pt-1">
+          <UButton
+            to="/espace-benevole/planning"
+            color="primary"
+            variant="subtle"
+            size="sm"
+            label="Accéder au planning"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- CONTACTS D'URGENCE & ASSISTANCE                           -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-3"
+    >
+      <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+        <UIcon
+          name="i-lucide-phone-call"
+          class="w-4 h-4 text-violet-600"
+        />
+        <h3>Contacts d'urgence & Assistance Bénévoles</h3>
+      </div>
+      <p class="text-xs text-slate-500">
+        En cas de retard, d'empêchement ou pour toute question sur place, contactez immédiatement la régie :
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
+          <span class="text-slate-400 font-semibold uppercase text-[10px]">Permanence téléphonique</span>
+          <p class="font-bold text-slate-900 text-sm">
+            <a
+              :href="'tel:' + summary.emergencyContact.phone.replace(/\s/g, '')"
+              class="text-violet-700 hover:underline"
+            >
+              {{ summary.emergencyContact.phone }}
+            </a>
+          </p>
+          <p class="text-slate-500 text-[11px]">
+            {{ summary.emergencyContact.coordinator }}
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
+          <span class="text-slate-400 font-semibold uppercase text-[10px]">Point de ralliement / QG</span>
+          <p class="font-bold text-slate-900 text-xs">
+            {{ summary.emergencyContact.qgLocation }}
+          </p>
+          <p class="text-slate-500 text-[11px]">
+            E-mail : {{ summary.emergencyContact.email }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION D'IMPRESSION PRINT A4 DÉDIÉE (Visible via @media print) -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      id="printable-schedule"
+      class="hidden print:block"
+    >
+      <div style="border-bottom: 2px solid #7C3AED; padding-bottom: 12px; margin-bottom: 16px;">
+        <h1 style="font-size: 20px; font-weight: bold; margin: 0; color: #0F172A;">
+          SALON DE LA DANSE D'ANGERS 2027
+        </h1>
+        <p style="font-size: 12px; color: #64748B; margin: 4px 0 0 0;">
+          Fiche individuelle de mission bénévole • Parc des Expositions d'Angers (14-16 Mai 2027)
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 12px;">
+        <div>
+          <strong>Bénévole :</strong> {{ summary.volunteer.fullName }}<br>
+          <strong>Email :</strong> {{ summary.volunteer.email }} • <strong>Téléphone :</strong> {{ summary.volunteer.phone || 'Non renseigné' }}
+        </div>
+        <div style="text-align: right;">
+          <strong>Statut :</strong> {{ isConfirmed ? 'Validé & Verrouillé' : 'Brouillon' }}<br>
+          <strong>Total :</strong> {{ summary.totalSlots }} créneau(x) ({{ summary.totalHours }}h)
+        </div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
+        <thead>
+          <tr style="background-color: #F1F5F9; border-bottom: 1px solid #CBD5E1;">
+            <th style="padding: 8px; text-align: left;">
+              Date & Tranche horaire
+            </th>
+            <th style="padding: 8px; text-align: left;">
+              Mission
+            </th>
+            <th style="padding: 8px; text-align: left;">
+              Point de rendez-vous
+            </th>
+            <th style="padding: 8px; text-align: left;">
+              Consignes
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="s in summary.slots"
+            :key="s.registrationId"
+            style="border-bottom: 1px solid #E2E8F0;"
+          >
+            <td style="padding: 8px; font-weight: bold;">
+              {{ s.shortDayLabel }}<br>{{ s.startTime }} - {{ s.endTime }}
+            </td>
+            <td style="padding: 8px; font-weight: bold; color: #7C3AED;">
+              {{ s.missionName }} {{ s.isSensitive ? '(Poste sensible)' : '' }}
+            </td>
+            <td style="padding: 8px;">
+              {{ s.location }}
+            </td>
+            <td style="padding: 8px; color: #475569;">
+              {{ s.instructions }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="border-top: 1px solid #E2E8F0; padding-top: 10px; font-size: 10px; color: #64748B;">
+        <strong>Numéro d'urgence régie bénévoles :</strong> {{ summary.emergencyContact.phone }} ({{ summary.emergencyContact.coordinator }})<br>
+        Présentation obligatoire 15 minutes avant l'heure de début au QG Bénévoles.
+      </div>
+    </div>
+  </div>
+</template>

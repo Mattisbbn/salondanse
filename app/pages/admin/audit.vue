@@ -1,0 +1,275 @@
+<script setup lang="ts">
+const { isAdmin } = useAuth()
+
+if (!isAdmin.value) {
+  await navigateTo('/espace-benevole/login')
+}
+
+interface AuditLogItem {
+  id: string
+  action: string
+  details: string | null
+  targetId: string | null
+  createdAt: string
+  adminName: string
+  adminEmail: string
+  editionName: string
+}
+
+interface AuditResponse {
+  total: number
+  logs: AuditLogItem[]
+}
+
+const { data, status, refresh } = await useFetch<AuditResponse>('/api/admin/audit-logs')
+
+const searchQuery = ref('')
+const selectedAction = ref('ALL')
+
+// Options de filtre
+const actionOptions = [
+  { label: 'Toutes les actions', value: 'ALL' },
+  { label: 'Attributions de mission', value: 'ASSIGN_MISSION' },
+  { label: 'Retraits de mission', value: 'UNASSIGN_MISSION' },
+  { label: 'Autorisations mineur', value: 'APPROVE_MINOR' },
+  { label: 'Invitations envoyées', value: 'SEND_INVITATION' },
+  { label: 'Verrouillages statut', value: 'LOCK_STATUS' },
+  { label: 'Créations d\'édition', value: 'CREATE_EDITION' }
+]
+
+const filteredLogs = computed(() => {
+  if (!data.value?.logs) return []
+  let list = data.value.logs
+
+  if (selectedAction.value !== 'ALL') {
+    list = list.filter(l => l.action.includes(selectedAction.value))
+  }
+
+  const q = searchQuery.value.trim().toLowerCase()
+  if (q) {
+    list = list.filter((l) => {
+      return (
+        l.action.toLowerCase().includes(q)
+        || l.adminName.toLowerCase().includes(q)
+        || l.adminEmail.toLowerCase().includes(q)
+        || (l.details && l.details.toLowerCase().includes(q))
+        || (l.targetId && l.targetId.toLowerCase().includes(q))
+      )
+    })
+  }
+
+  return list
+})
+
+// Formatage de date
+function formatDate(iso: string) {
+  const d = new Date(iso)
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+}
+
+// Badge couleur par action
+function getActionBadgeColor(action: string): 'primary' | 'success' | 'warning' | 'error' | 'neutral' {
+  if (action.includes('ASSIGN_MISSION')) return 'primary'
+  if (action.includes('APPROVE_MINOR') || action.includes('SUCCESS')) return 'success'
+  if (action.includes('UNASSIGN') || action.includes('DELETE') || action.includes('RESET')) return 'error'
+  if (action.includes('LOCK') || action.includes('WARN')) return 'warning'
+  return 'neutral'
+}
+
+function getActionLabel(action: string): string {
+  switch (action) {
+    case 'ASSIGN_MISSION':
+      return 'Attribution mission'
+    case 'UNASSIGN_MISSION':
+      return 'Retrait mission'
+    case 'APPROVE_MINOR':
+      return 'Autorisation mineur'
+    case 'SEND_INVITATION':
+      return 'Envoi invitation'
+    case 'LOCK_STATUS':
+      return 'Verrouillage planning'
+    case 'CREATE_EDITION':
+      return 'Création édition'
+    default:
+      return action
+  }
+}
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          Journal des Actions & Audit
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+          Historique et traçabilité des 100 dernières opérations administratives
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <UButton
+          color="neutral"
+          variant="subtle"
+          size="sm"
+          icon="i-lucide-refresh-cw"
+          :loading="status === 'pending'"
+          @click="() => refresh()"
+        />
+      </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        <div class="w-full sm:w-72">
+          <UInput
+            v-model="searchQuery"
+            placeholder="Rechercher par admin, action, détail..."
+            icon="i-lucide-search"
+            size="sm"
+            class="w-full"
+          />
+        </div>
+
+        <div class="w-full sm:w-56">
+          <select
+            v-model="selectedAction"
+            class="w-full text-xs font-semibold bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
+          >
+            <option
+              v-for="opt in actionOptions"
+              :key="opt.value"
+              :value="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="text-xs text-slate-500 self-end sm:self-auto">
+        <span class="font-semibold text-slate-800">{{ filteredLogs.length }}</span>
+        <span>événement(s) tracé(s)</span>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div
+      v-if="status === 'pending'"
+      class="py-16 text-center text-slate-400"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-6 h-6 animate-spin mx-auto text-violet-600 mb-2"
+      />
+      <p class="text-xs">
+        Chargement des logs d'audit...
+      </p>
+    </div>
+
+    <!-- Aucun log -->
+    <div
+      v-else-if="filteredLogs.length === 0"
+      class="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-2"
+    >
+      <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
+        <UIcon
+          name="i-lucide-clipboard-list"
+          class="w-6 h-6"
+        />
+      </div>
+      <h3 class="text-base font-bold text-slate-900">
+        Aucune action enregistrée
+      </h3>
+      <p class="text-xs text-slate-500">
+        Les opérations administratives (affectation, annulation, approbation mineur) apparaîtront ici.
+      </p>
+    </div>
+
+    <!-- Tableau des logs -->
+    <div
+      v-else
+      class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+            <tr>
+              <th class="py-3 px-4">
+                Date & Heure
+              </th>
+              <th class="py-3 px-4">
+                Administrateur
+              </th>
+              <th class="py-3 px-4">
+                Action
+              </th>
+              <th class="py-3 px-4">
+                Détails de l'opération
+              </th>
+              <th class="py-3 px-4 text-right">
+                ID Cible
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr
+              v-for="log in filteredLogs"
+              :key="log.id"
+              class="hover:bg-slate-50/70 transition-colors"
+            >
+              <!-- Date -->
+              <td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600">
+                {{ formatDate(log.createdAt) }}
+              </td>
+
+              <!-- Admin -->
+              <td class="py-3 px-4 whitespace-nowrap">
+                <div class="font-bold text-slate-900">
+                  {{ log.adminName }}
+                </div>
+                <div class="text-[11px] text-slate-400">
+                  {{ log.adminEmail }}
+                </div>
+              </td>
+
+              <!-- Action -->
+              <td class="py-3 px-4 whitespace-nowrap">
+                <UBadge
+                  :color="getActionBadgeColor(log.action)"
+                  variant="subtle"
+                  size="sm"
+                  class="font-semibold"
+                >
+                  {{ getActionLabel(log.action) }}
+                </UBadge>
+              </td>
+
+              <!-- Détails -->
+              <td class="py-3 px-4 max-w-xs sm:max-w-md">
+                <p class="text-slate-800 line-clamp-2">
+                  {{ log.details || '-' }}
+                </p>
+              </td>
+
+              <!-- Cible -->
+              <td class="py-3 px-4 text-right whitespace-nowrap font-mono text-[11px] text-slate-400">
+                {{ log.targetId ? log.targetId.slice(0, 8).toUpperCase() : '-' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</template>
