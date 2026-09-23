@@ -17,21 +17,26 @@ jobs:
                   username: ${{ secrets.VPS_USER }}
                   key: ${{ secrets.VPS_SSH_KEY }}
                   port: ${{ secrets.VPS_PORT }}
+                  timeout: 60s
+                  command_timeout: 15m
                   script: |
                       set -e
+                      # Charger l'environnement de root (indispensable pour pnpm et pm2)
+                      export PATH=$PATH:/root/.local/share/pnpm:/usr/local/bin:/usr/bin:~/.nvm/versions/node/$(ls ~/.nvm/versions/node 2>/dev/null | tail -n 1)/bin
+
                       cd /var/www/salondanse
 
-                      # Récupérer le dernier code
+                      # Récupérer le dernier code sur main
                       git reset --hard
-                      git pull origin master
+                      git pull origin main
 
-                      # Mettre à jour les dépendances et la BDD
+                      # Dépendances & migration BDD
                       pnpm install --frozen-lockfile
                       pnpm exec prisma db push
 
-                      # Compiler le projet Nuxt
+                      # Build Nuxt
                       pnpm build
 
-                      # Redémarrer l'application avec PM2
+                      # Redémarrage PM2
                       pm2 restart ecosystem.config.cjs --update-env
                       pm2 save
