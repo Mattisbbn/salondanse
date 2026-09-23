@@ -107,110 +107,12 @@ function handlePrint() {
     <!-- ======================================================== -->
     <div
       v-if="summary"
-      class="print:hidden bg-gradient-to-br from-violet-900 via-indigo-950 to-slate-950 text-white rounded-3xl p-6 sm:p-7 shadow-lg relative overflow-hidden border border-violet-800/40 cursor-pointer group transition-all hover:shadow-violet-900/20 hover:shadow-xl"
-      title="Cliquer pour afficher le QR Code en plein écran"
-      @click="isQrModalOpen = true"
+      class="print:hidden w-full flex justify-center"
     >
-      <!-- Effets de fond esthétiques -->
-      <div class="absolute -right-12 -top-12 w-48 h-48 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
-
-      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <!-- Informations Profil du Badge -->
-        <div class="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
-          <!-- Photo d'identité -->
-          <div class="relative shrink-0">
-            <img
-              v-if="summary.volunteer.photoUrl"
-              :src="summary.volunteer.photoUrl"
-              alt="Photo bénévole"
-              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-violet-400/60 shadow-md ring-4 ring-white/10"
-            >
-            <div
-              v-else
-              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-violet-600 text-white flex items-center justify-center font-bold text-2xl border-2 border-violet-400/60 shadow-md ring-4 ring-white/10"
-            >
-              {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
-            </div>
-            <!-- Pastille de statut -->
-            <span
-              class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-950 flex items-center justify-center"
-              title="Bénévole vérifié"
-            >
-              <span class="w-2 h-2 rounded-full bg-white animate-pulse" />
-            </span>
-          </div>
-
-          <!-- Nom, Rôle et Édition -->
-          <div class="space-y-1.5 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <UBadge
-                color="primary"
-                variant="solid"
-                size="sm"
-                class="font-extrabold uppercase tracking-wider text-xs px-2.5 py-1 shadow-2xs"
-              >
-                BÉNÉVOLE OFFICIEL
-              </UBadge>
-              <UBadge
-                v-if="summary.volunteer.isMinor"
-                color="warning"
-                variant="solid"
-                size="sm"
-                class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
-              >
-                Mineur ({{ summary.volunteer.minorValidationStatus === 'VALIDATED' ? 'Autorisation validée' : 'En attente' }})
-              </UBadge>
-            </div>
-
-            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight truncate">
-              {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
-            </h2>
-
-            <p class="text-xs sm:text-sm text-violet-200/90 font-medium">
-              {{ summary.volunteer.editionName || 'Salon de la Danse 2027' }} • Angers
-            </p>
-
-            <div class="flex items-center gap-2 pt-1 text-xs text-slate-300">
-              <span class="inline-flex items-center gap-1">
-                <UIcon
-                  name="i-lucide-calendar-check"
-                  class="w-3.5 h-3.5 text-violet-400"
-                />
-                {{ summary.totalSlots }} créneau(x) confirmé(s)
-              </span>
-              <span class="text-slate-600">•</span>
-              <span class="text-violet-300 font-semibold group-hover:underline inline-flex items-center gap-1">
-                <UIcon
-                  name="i-lucide-maximize-2"
-                  class="w-3 h-3"
-                />
-                Agrandir le QR Code
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Miniature du QR Code -->
-        <div class="flex items-center md:flex-col justify-between md:justify-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-white/10 md:pl-6">
-          <div class="p-2 bg-white rounded-2xl shadow-md border border-white/30 group-hover:scale-105 transition-transform">
-            <img
-              v-if="summary.volunteer.qrCodeUrl"
-              :src="summary.volunteer.qrCodeUrl"
-              alt="QR Code"
-              class="w-20 h-20 sm:w-24 sm:h-24"
-            >
-          </div>
-          <div class="text-right md:text-center">
-            <span class="text-[11px] font-bold text-violet-200 block uppercase tracking-wider">
-              Accréditation
-            </span>
-            <span class="text-[10px] text-slate-400 block">
-              Scan à l'accueil
-            </span>
-          </div>
-        </div>
-      </div>
+      <VolunteerBadge
+        :volunteer="summary.volunteer"
+        @open-qr="isQrModalOpen = true"
+      />
     </div>
 
     <!-- ======================================================== -->
