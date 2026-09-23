@@ -81,7 +81,12 @@ export default defineEventHandler(async (event) => {
 
     // S'ils n'existent pas, les générer avec toutes les missions actives
     if (existingSlots.length === 0) {
-      const missions = await prisma.mission.findMany()
+      const missions = await prisma.mission.findMany({
+        where: {
+          editionId,
+          isActive: true
+        }
+      })
 
       await prisma.$transaction(async (tx) => {
         for (const slotDef of STANDARD_SLOTS) {
@@ -100,7 +105,7 @@ export default defineEventHandler(async (event) => {
               data: {
                 missionId: m.id,
                 timeSlotId: createdSlot.id,
-                capacityMax: m.isSensitive ? 2 : 4
+                capacityMax: m.defaultCapacity || (m.isSensitive ? 2 : 3)
               }
             })
           }

@@ -136,7 +136,14 @@ async function main() {
   ]
 
   const createdMissions = await Promise.all(
-    missionsData.map(m => prisma.mission.create({ data: m }))
+    missionsData.map(m => prisma.mission.create({
+      data: {
+        ...m,
+        editionId: edition.id,
+        defaultCapacity: m.isSensitive ? 2 : 3,
+        isActive: true
+      }
+    }))
   )
 
   // 7. Tranches horaires (14, 15 et 16 mai 2027 - 5 créneaux de 2h)

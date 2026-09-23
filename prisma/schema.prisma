@@ -32,6 +32,7 @@ model Edition {
   users              User[]
   invitationCodes    InvitationCode[]
   auditLogs          AuditLog[]
+  missions           Mission[]
   createdAt          DateTime         @default(now())
 }
 
@@ -79,11 +80,18 @@ model User {
 }
 
 model Mission {
-  id           String        @id @default(uuid())
-  name         String        @unique
-  description  String?
-  isSensitive  Boolean       @default(false)
-  slotMissions SlotMission[]
+  id              String        @id @default(uuid())
+  name            String
+  description     String?
+  color           String?
+  isSensitive     Boolean       @default(false)
+  isActive        Boolean       @default(true)
+  defaultCapacity Int           @default(2)
+  editionId       String
+  edition         Edition       @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  slotMissions    SlotMission[]
+
+  @@unique([name, editionId])
 }
 
 model TimeSlot {

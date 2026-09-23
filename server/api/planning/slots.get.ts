@@ -26,7 +26,9 @@ export default defineEventHandler(async (event) => {
               id: true,
               name: true,
               description: true,
-              isSensitive: true
+              color: true,
+              isSensitive: true,
+              isActive: true
             }
           },
           _count: {
@@ -56,10 +58,13 @@ export default defineEventHandler(async (event) => {
         missionId: string
         name: string
         description: string | null
+        color: string | null
         capacityMax: number
         registeredCount: number
         availablePlaces: number
         isSelectedByMe: boolean
+        isSensitive: boolean
+        isAssignedByAdmin: boolean
       }>
     }>
   }>()
@@ -89,6 +94,14 @@ export default defineEventHandler(async (event) => {
     const currentDay = daysMap.get(dayKey)!
 
     const missions = ts.slotMissions
+      .filter((sm) => {
+        const isSelectedByMe = mySelectedSlotMissionIds.has(sm.id)
+        // Seules les missions actives sont présentées (sauf si déjà sélectionnée/affectée)
+        if (!sm.mission.isActive && !isSelectedByMe) return false
+        // Les missions sensibles ne sont visibles que si expressément assignées par l'admin
+        if (sm.mission.isSensitive && !isSelectedByMe) return false
+        return true
+      })
       .map((sm) => {
         const registeredCount = sm._count.registrations
         const availablePlaces = Math.max(0, sm.capacityMax - registeredCount)
@@ -100,6 +113,7 @@ export default defineEventHandler(async (event) => {
           missionId: sm.mission.id,
           name: sm.mission.name,
           description: sm.mission.description,
+          color: sm.mission.color,
           capacityMax: sm.capacityMax,
           registeredCount,
           availablePlaces,

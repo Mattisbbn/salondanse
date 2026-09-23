@@ -53,9 +53,9 @@ const adminNavItems: NavItem[] = [
     icon: 'i-lucide-calendar-cog'
   },
   {
-    label: 'Missions',
+    label: 'Gestion des Missions',
     to: '/admin/missions',
-    icon: 'i-lucide-clipboard-list'
+    icon: 'i-lucide-list-checks'
   },
   {
     label: 'Exports de données',
