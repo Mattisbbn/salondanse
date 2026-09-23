@@ -38,28 +38,48 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4">
-    <div class="w-full max-w-sm bg-white rounded-3xl border border-[#E2E8F0] shadow-lg p-6 text-center space-y-5">
-      <!-- Logo festival -->
-      <div class="space-y-1">
-        <span class="text-xs uppercase font-extrabold tracking-wider text-violet-600 block">
-          Contrôle d'accès officiel
-        </span>
-        <h1 class="text-xl font-extrabold text-[#0F172A]">
-          Salon de la Danse 2027
+  <div class="h-dvh min-h-dvh max-h-dvh w-full overflow-hidden flex flex-col justify-center items-center p-3 sm:p-4 bg-slate-950 relative selection:bg-violet-500 selection:text-white">
+    <!-- Fond d'ambiance sombre avec halo discret -->
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(99,102,241,0.18),transparent_65%)]" />
+
+    <!-- Carte physique de badge / effet carte bancaire -->
+    <div class="relative w-full max-w-sm rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_30px_rgba(99,102,241,0.15)] backdrop-blur-xl p-4 sm:p-5 text-center text-white flex flex-col justify-between">
+      <!-- Reflet lumineux animé (shimmer) -->
+      <div class="badge-shimmer pointer-events-none absolute inset-0" />
+
+      <!-- Halo holographique d'angle -->
+      <div class="pointer-events-none absolute -top-16 -right-16 w-36 h-36 bg-violet-500/20 rounded-full blur-2xl" />
+      <div class="pointer-events-none absolute -bottom-16 -left-16 w-36 h-36 bg-indigo-500/15 rounded-full blur-2xl" />
+
+      <!-- En-tête du badge -->
+      <div class="relative z-10 space-y-1">
+        <div class="flex items-center justify-between px-1 text-[10px] uppercase font-bold tracking-widest text-violet-400">
+          <span class="flex items-center gap-1.5">
+            <UIcon
+              name="i-lucide-wifi"
+              class="w-3.5 h-3.5 rotate-90 text-violet-400/80"
+            />
+            Contrôle d'accès
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-300 font-mono text-[9px] tracking-normal border border-white/10">
+            PASS 2027
+          </span>
+        </div>
+        <h1 class="text-lg sm:text-xl font-black text-white tracking-tight pt-0.5">
+          Salon de la Danse
         </h1>
       </div>
 
       <!-- Chargement -->
       <div
         v-if="status === 'pending'"
-        class="py-12 text-center text-slate-400"
+        class="relative z-10 py-12 text-center text-slate-400 space-y-2"
       >
         <UIcon
           name="i-lucide-loader-2"
-          class="w-8 h-8 animate-spin mx-auto text-violet-600 mb-2"
+          class="w-8 h-8 animate-spin mx-auto text-violet-400"
         />
-        <p class="text-xs">
+        <p class="text-xs text-slate-300">
           Vérification de l'accréditation en cours...
         </p>
       </div>
@@ -67,52 +87,56 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
       <!-- Badge valide -->
       <div
         v-else-if="data?.valid && data.volunteer"
-        class="space-y-4 transition-opacity duration-300"
+        class="relative z-10 space-y-3 sm:space-y-3.5 mt-3 transition-opacity duration-300"
       >
         <!-- Pastille de statut -->
-        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold shadow-xs">
-          <UIcon
-            name="i-lucide-shield-check"
-            class="w-4 h-4 text-emerald-600"
-          />
-          <span>Badge valide</span>
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="w-4 h-4 text-emerald-400"
+            />
+            <span>Badge valide</span>
+          </div>
         </div>
 
         <!-- Photo et nom -->
-        <div class="space-y-3">
-          <div class="relative w-28 h-28 mx-auto">
+        <div class="space-y-2">
+          <div class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto">
             <img
               v-if="data.volunteer.photoUrl"
               :src="data.volunteer.photoUrl"
               :alt="`${data.volunteer.firstName} ${data.volunteer.lastName}`"
-              class="w-full h-full rounded-2xl object-cover border-4 border-violet-500 shadow-md"
+              class="w-full h-full rounded-2xl object-cover ring-2 ring-violet-400/60 shadow-lg shadow-violet-950/60"
             >
             <div
               v-else
-              class="w-full h-full rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-black text-2xl border-4 border-violet-500 shadow-md"
+              class="w-full h-full rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-800 text-white flex items-center justify-center font-black text-xl sm:text-2xl ring-2 ring-violet-400/60 shadow-lg shadow-violet-950/60"
             >
               {{ data.volunteer.firstName.charAt(0) }}{{ data.volunteer.lastName.charAt(0) }}
             </div>
-            <div class="absolute -bottom-2 -right-2 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md ring-2 ring-slate-900">
               <UIcon
                 name="i-lucide-check"
-                class="w-4 h-4 font-bold"
+                class="w-3.5 h-3.5 font-bold"
               />
             </div>
           </div>
 
           <div>
-            <h2 class="text-xl font-bold text-[#0F172A]">
+            <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">
               {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
             </h2>
-            <div class="flex items-center justify-center gap-2 mt-1">
-            
+            <div
+              v-if="data.volunteer.isMinor"
+              class="flex items-center justify-center gap-2 mt-1"
+            >
               <UBadge
-                v-if="data.volunteer.isMinor"
                 :color="data.volunteer.isApprovedMinor ? 'success' : 'warning'"
                 variant="solid"
-                size="sm"
-                class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
+                size="xs"
+                class="font-semibold px-2 py-0.5 shadow-xs"
               >
                 {{ data.volunteer.isApprovedMinor ? 'Mineur (Autorisé)' : 'Mineur (En attente)' }}
               </UBadge>
@@ -121,57 +145,73 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
         </div>
 
         <!-- Récapitulatif missions -->
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-left space-y-2">
+        <div class="p-2.5 sm:p-3 bg-white/[0.04] border border-white/10 rounded-2xl text-left space-y-1.5 backdrop-blur-sm">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-            Missions  ({{ data.volunteer.missions.length }})
+            Missions ({{ data.volunteer.missions.length }})
           </span>
-          <div class="space-y-1.5">
+          <div class="space-y-1 max-h-24 sm:max-h-28 overflow-y-auto pr-1">
             <div
               v-for="m in data.volunteer.missions"
               :key="m.id"
-              class="text-xs flex items-center justify-between py-1 border-b border-slate-200/60 last:border-0"
+              class="text-xs flex items-center justify-between py-0.5 border-b border-white/[0.06] last:border-0"
             >
-              <span class="font-bold text-slate-800 truncate mr-2">{{ m.missionName }}</span>
-              <span class="text-violet-700 font-mono text-[11px] shrink-0">{{ m.timeSlot }}</span>
+              <span class="font-medium text-slate-200 truncate mr-2">{{ m.missionName }}</span>
+              <span class="text-violet-300 font-mono text-[11px] shrink-0">{{ m.timeSlot }}</span>
             </div>
           </div>
         </div>
 
-        <p class="text-[11px] text-slate-400">
-          ID Accréditation : {{ data.volunteer.id.slice(0, 8).toUpperCase() }} • Angers 2027
-        </p>
+        <!-- Footer accréditation physique -->
+        <div class="pt-1 flex items-center justify-center gap-2 text-[10px] font-mono text-slate-400">
+          <span>ID : {{ data.volunteer.id.slice(0, 8).toUpperCase() }}</span>
+          <span class="text-slate-600">•</span>
+          <span>ANGERS 2027</span>
+        </div>
       </div>
 
       <!-- Badge invalide -->
       <div
         v-else
-        class="space-y-4 py-4 transition-opacity duration-300"
+        class="relative z-10 space-y-3 py-6 transition-opacity duration-300"
       >
-        <div class="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+        <div class="w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(239,68,68,0.25)]">
           <UIcon
             name="i-lucide-shield-x"
-            class="w-8 h-8"
+            class="w-7 h-7"
           />
         </div>
         <div class="space-y-1">
-          <h2 class="text-lg font-bold text-red-600">
+          <h2 class="text-base sm:text-lg font-bold text-red-400">
             Accréditation Invalide
           </h2>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-slate-300 max-w-xs mx-auto">
             {{ data?.message || 'Ce badge n\'est pas actif ou le planning du bénévole n\'est pas encore validé.' }}
           </p>
         </div>
       </div>
-
-      <!-- Bouton retour -->
-      <div class="pt-2 border-t border-slate-100">
-        <NuxtLink
-          to="/"
-          class="text-xs text-slate-400 hover:text-slate-600 font-medium"
-        >
-          Retour à l'accueil
-        </NuxtLink>
-      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.badge-shimmer {
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.03) 38%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.03) 62%,
+    transparent 80%
+  );
+  animation: shimmer 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  35%, 100% {
+    transform: translateX(150%) skewX(-20deg);
+  }
+}
+</style>
