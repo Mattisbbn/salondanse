@@ -75,7 +75,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
             name="i-lucide-shield-check"
             class="w-4 h-4 text-emerald-600"
           />
-          <span>Accréditation Valide</span>
+          <span>Badge valide</span>
         </div>
 
         <!-- Photo et nom -->
@@ -106,14 +106,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
               {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
             </h2>
             <div class="flex items-center justify-center gap-2 mt-1">
-              <UBadge
-                color="primary"
-                variant="solid"
-                size="sm"
-                class="font-bold tracking-wider text-xs px-2.5 py-1 shadow-2xs"
-              >
-                BÉNÉVOLE
-              </UBadge>
+            
               <UBadge
                 v-if="data.volunteer.isMinor"
                 :color="data.volunteer.isApprovedMinor ? 'success' : 'warning'"
@@ -130,7 +123,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
         <!-- Récapitulatif missions -->
         <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-left space-y-2">
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-            Missions confirmées ({{ data.volunteer.missions.length }})
+            Missions  ({{ data.volunteer.missions.length }})
           </span>
           <div class="space-y-1.5">
             <div
