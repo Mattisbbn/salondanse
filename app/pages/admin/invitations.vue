@@ -114,7 +114,7 @@ async function sendInvitation(replaceExisting = false) {
         statusMessage?: string
         data?: {
           code?: string
-          existingInvitation?: { id: string; code: string; createdAt: string }
+          existingInvitation?: { id: string, code: string, createdAt: string }
         }
       }
       statusMessage?: string
@@ -307,7 +307,7 @@ const columns: TableColumn<InvitationItem>[] = [
       >
         <!-- Cellule E-mail Destinataire -->
         <template #email-cell="{ row }">
-          <div class="flex items-center gap-1.5 text-xs text-slate-850 font-medium">
+          <div class="flex items-center gap-1.5 text-xs text-slate-800 font-medium">
             <UIcon
               name="i-lucide-mail"
               class="w-3.5 h-3.5 text-slate-400 shrink-0"
