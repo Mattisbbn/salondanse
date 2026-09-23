@@ -110,14 +110,15 @@ function handlePrint() {
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION HAUTE : BADGE À GAUCHE & INFOS PERSO À DROITE    -->
+    <!-- ======================================================== -->
+    <!-- SECTION PRINCIPALE : BADGE À GAUCHE & INFOS + MISSIONS   -->
     <!-- ======================================================== -->
     <div
       v-if="summary || status === 'pending'"
-      class="print:hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+      class="print:hidden flex flex-col lg:flex-row gap-5 xl:gap-6 items-start"
     >
-      <!-- Badge bénévole rangé à gauche -->
-      <div class="lg:col-span-4 flex justify-center lg:justify-start">
+      <!-- Badge bénévole rangé à gauche (largeur ajustée, collé au contenu) -->
+      <div class="w-full lg:w-[320px] shrink-0 flex justify-center lg:justify-start lg:sticky lg:top-6">
         <!-- Badge officiel activé si planning validé -->
         <VolunteerBadge
           v-if="isConfirmed && summary"
@@ -211,267 +212,266 @@ function handlePrint() {
         </div>
       </div>
 
-      <!-- Informations personnelles à côté du badge -->
-      <div class="lg:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-          <div class="flex items-center gap-2.5">
-            <UIcon
-              name="i-lucide-user-check"
-              class="w-5 h-5 text-violet-600"
-            />
-            <h2 class="text-base font-bold text-slate-900">
-              Mes informations personnelles
-            </h2>
-          </div>
-          <div class="flex items-center gap-2">
-            <UBadge
-              v-if="isConfirmed"
-              color="success"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-2xs"
-            >
+      <!-- COLONNE DROITE : Informations personnelles, Missions et Urgences -->
+      <div class="flex-1 min-w-0 w-full space-y-5">
+        <!-- 1. Informations personnelles -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
               <UIcon
-                name="i-lucide-check-circle-2"
-                class="w-3.5 h-3.5"
+                name="i-lucide-user-check"
+                class="w-5 h-5 text-violet-600"
               />
-              <span>Planning validé</span>
-            </UBadge>
-            <NuxtLink
-              v-else
-              to="/espace-benevole/planning"
-              class="inline-block"
-            >
+              <h2 class="text-base font-bold text-slate-900">
+                Mes informations personnelles
+              </h2>
+            </div>
+            <div class="flex items-center gap-2">
               <UBadge
-                color="warning"
+                v-if="isConfirmed"
+                color="success"
                 variant="solid"
                 size="sm"
-                class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
+                class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-2xs"
               >
                 <UIcon
-                  name="i-lucide-clock"
+                  name="i-lucide-check-circle-2"
                   class="w-3.5 h-3.5"
                 />
-                <span>Planning en attente</span>
+                <span>Planning validé</span>
               </UBadge>
-            </NuxtLink>
+              <NuxtLink
+                v-else
+                to="/espace-benevole/planning"
+                class="inline-block"
+              >
+                <UBadge
+                  color="warning"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
+                >
+                  <UIcon
+                    name="i-lucide-clock"
+                    class="w-3.5 h-3.5"
+                  />
+                  <span>Planning en attente</span>
+                </UBadge>
+              </NuxtLink>
+              <UBadge
+                color="neutral"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
+              >
+                Données vérifiées
+              </UBadge>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <!-- Photo d'identité ou Avatar avec initiales -->
+            <div class="shrink-0">
+              <img
+                v-if="summary?.volunteer.photoUrl"
+                :src="summary.volunteer.photoUrl"
+                alt="Photo d'identité bénévole"
+                class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
+              >
+              <div
+                v-else
+                class="w-20 h-20 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border border-violet-200/60"
+              >
+                {{ (summary?.volunteer.firstName || authUser?.firstName || 'B').charAt(0) }}{{ (summary?.volunteer.lastName || authUser?.lastName || 'B').charAt(0) }}
+              </div>
+            </div>
+
+            <!-- Données en lecture seule -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Identité</span>
+                <p class="font-bold text-slate-900 text-sm">
+                  {{ summary?.volunteer.firstName || authUser?.firstName }} {{ summary?.volunteer.lastName || authUser?.lastName }}
+                </p>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Adresse e-mail</span>
+                <p class="font-medium text-slate-900 truncate">
+                  {{ summary?.volunteer.email || authUser?.email }}
+                </p>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
+                <p class="font-medium text-slate-900">
+                  {{ summary?.volunteer.phone || authUser?.phone || 'Non renseigné' }}
+                </p>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Statut légal</span>
+                <p class="font-medium text-slate-900">
+                  {{ summary?.volunteer.isMinor ? 'Mineur (accord parental requis)' : 'Majeur' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mention explicite obligatoire de verrouillage -->
+          <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+            <UIcon
+              name="i-lucide-shield-alert"
+              class="w-4 h-4 text-violet-600 shrink-0"
+            />
+            <span>Pour modifier vos informations personnelles, veuillez contacter l'administration du Salon.</span>
+          </div>
+        </div>
+
+        <!-- 2. Récapitulatif chronologique des créneaux réservés (Missions à droite) -->
+        <div
+          v-if="summary"
+          class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
+        >
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">
+                Mes créneaux de mission ({{ summary.totalSlots }})
+              </h3>
+              <p class="text-xs text-slate-500">
+                Total : {{ summary.totalHours }} heures de bénévolat
+              </p>
+            </div>
+
             <UBadge
-              color="neutral"
+              v-if="summary.totalSlots > 0"
+              color="primary"
               variant="solid"
               size="sm"
               class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
             >
-              Données vérifiées
+              {{ summary.totalSlots }} créneau(x)
             </UBadge>
           </div>
-        </div>
 
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <!-- Photo d'identité ou Avatar avec initiales -->
-          <div class="shrink-0">
-            <img
-              v-if="summary.volunteer.photoUrl"
-              :src="summary.volunteer.photoUrl"
-              alt="Photo d'identité bénévole"
-              class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
-            >
+          <!-- Liste des créneaux -->
+          <div
+            v-if="summary.slots.length > 0"
+            class="space-y-3"
+          >
             <div
-              v-else
-              class="w-20 h-20 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border border-violet-200/60"
+              v-for="slot in summary.slots"
+              :key="slot.registrationId"
+              class="p-4 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:border-violet-300 transition-all"
             >
-              {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-bold text-sm text-slate-900">{{ slot.missionName }}</span>
+                  <UBadge
+                    v-if="slot.isSensitive"
+                    color="warning"
+                    variant="solid"
+                    size="sm"
+                    class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs"
+                  >
+                    Poste sensible
+                  </UBadge>
+                  <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded border border-violet-200/60 font-mono">
+                    {{ slot.startTime }} - {{ slot.endTime }}
+                  </span>
+                </div>
+
+                <p class="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+                  <UIcon
+                    name="i-lucide-calendar"
+                    class="w-3.5 h-3.5 text-slate-400"
+                  />
+                  <span>{{ slot.dayLabel }}</span>
+                </p>
+
+                <!-- Lieu / Rendez-vous -->
+                <div class="pt-1 text-xs text-slate-500 space-y-0.5">
+                  <p class="flex items-center gap-1.5">
+                    <UIcon
+                      name="i-lucide-map-pin"
+                      class="w-3.5 h-3.5 text-violet-600 shrink-0"
+                    />
+                    <span class="font-medium text-slate-700">{{ slot.location }}</span>
+                  </p>
+                  <p class="text-[11px] text-slate-500 italic pl-5">
+                    Consignes : {{ slot.instructions }}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Données en lecture seule -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-xs">
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Identité</span>
-              <p class="font-bold text-slate-900 text-sm">
-                {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
-              </p>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Adresse e-mail</span>
-              <p class="font-medium text-slate-900 truncate">
-                {{ summary.volunteer.email }}
-              </p>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
-              <p class="font-medium text-slate-900">
-                {{ summary.volunteer.phone || 'Non renseigné' }}
-              </p>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Statut légal</span>
-              <p class="font-medium text-slate-900">
-                {{ summary.volunteer.isMinor ? 'Mineur (accord parental requis)' : 'Majeur' }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mention explicite obligatoire de verrouillage -->
-        <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
-          <UIcon
-            name="i-lucide-shield-alert"
-            class="w-4 h-4 text-violet-600 shrink-0"
-          />
-          <span>Pour modifier vos informations personnelles, veuillez contacter l'administration du Salon.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- RÉCAPITULATIF CHRONOLOGIQUE DES CRÉNEAUX RÉSERVÉS        -->
-    <!-- ======================================================== -->
-    <div
-      v-if="summary"
-      class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
-    >
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div>
-          <h3 class="text-base font-bold text-slate-900">
-            Mes créneaux de mission ({{ summary.totalSlots }})
-          </h3>
-          <p class="text-xs text-slate-500">
-            Total : {{ summary.totalHours }} heures de bénévolat
-          </p>
-        </div>
-
-        <UBadge
-          v-if="summary.totalSlots > 0"
-          color="primary"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
-        >
-          {{ summary.totalSlots }} créneau(x)
-        </UBadge>
-      </div>
-
-      <!-- Liste des créneaux -->
-      <div
-        v-if="summary.slots.length > 0"
-        class="space-y-3"
-      >
-        <div
-          v-for="slot in summary.slots"
-          :key="slot.registrationId"
-          class="p-4 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:border-violet-300 transition-all"
-        >
-          <div class="space-y-1.5">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-bold text-sm text-slate-900">{{ slot.missionName }}</span>
-              <UBadge
-                v-if="slot.isSensitive"
-                color="warning"
-                variant="solid"
-                size="sm"
-                class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs"
-              >
-                Poste sensible
-              </UBadge>
-              <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded border border-violet-200/60 font-mono">
-                {{ slot.startTime }} - {{ slot.endTime }}
-              </span>
-            </div>
-
-            <p class="text-xs text-slate-600 font-medium flex items-center gap-1.5">
-              <UIcon
-                name="i-lucide-calendar"
-                class="w-3.5 h-3.5 text-slate-400"
-              />
-              <span>{{ slot.dayLabel }}</span>
+          <!-- Aucun créneau réservé -->
+          <div
+            v-else
+            class="py-8 text-center text-slate-400 space-y-2"
+          >
+            <UIcon
+              name="i-lucide-calendar-x"
+              class="w-8 h-8 mx-auto text-slate-300"
+            />
+            <p class="text-xs font-medium">
+              Vous n'avez pas encore choisi de créneau de bénévolat.
             </p>
-
-            <!-- Lieu / Rendez-vous -->
-            <div class="pt-1 text-xs text-slate-500 space-y-0.5">
-              <p class="flex items-center gap-1.5">
-                <UIcon
-                  name="i-lucide-map-pin"
-                  class="w-3.5 h-3.5 text-violet-600 shrink-0"
-                />
-                <span class="font-medium text-slate-700">{{ slot.location }}</span>
-              </p>
-              <p class="text-[11px] text-slate-500 italic pl-5">
-                Consignes : {{ slot.instructions }}
-              </p>
+            <div class="print:hidden pt-1">
+              <UButton
+                to="/espace-benevole/planning"
+                color="primary"
+                variant="subtle"
+                size="sm"
+                label="Accéder au planning"
+              />
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Aucun créneau réservé -->
-      <div
-        v-else
-        class="py-8 text-center text-slate-400 space-y-2"
-      >
-        <UIcon
-          name="i-lucide-calendar-x"
-          class="w-8 h-8 mx-auto text-slate-300"
-        />
-        <p class="text-xs font-medium">
-          Vous n'avez pas encore choisi de créneau de bénévolat.
-        </p>
-        <div class="print:hidden pt-1">
-          <UButton
-            to="/espace-benevole/planning"
-            color="primary"
-            variant="subtle"
-            size="sm"
-            label="Accéder au planning"
-          />
-        </div>
-      </div>
-    </div>
+        <!-- 3. Contacts d'urgence & Assistance Bénévoles -->
+        <div
+          v-if="summary"
+          class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-3"
+        >
+          <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <UIcon
+              name="i-lucide-phone-call"
+              class="w-4 h-4 text-violet-600"
+            />
+            <h3>Contacts d'urgence & Assistance Bénévoles</h3>
+          </div>
+          <p class="text-xs text-slate-500">
+            En cas de retard, d'empêchement ou pour toute question sur place, contactez immédiatement la régie :
+          </p>
 
-    <!-- ======================================================== -->
-    <!-- CONTACTS D'URGENCE & ASSISTANCE                           -->
-    <!-- ======================================================== -->
-    <div
-      v-if="summary"
-      class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-3"
-    >
-      <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
-        <UIcon
-          name="i-lucide-phone-call"
-          class="w-4 h-4 text-violet-600"
-        />
-        <h3>Contacts d'urgence & Assistance Bénévoles</h3>
-      </div>
-      <p class="text-xs text-slate-500">
-        En cas de retard, d'empêchement ou pour toute question sur place, contactez immédiatement la régie :
-      </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
+              <span class="text-slate-400 font-semibold uppercase text-[10px]">Permanence téléphonique</span>
+              <p class="font-bold text-slate-900 text-sm">
+                <a
+                  :href="'tel:' + summary.emergencyContact.phone.replace(/\s/g, '')"
+                  class="text-violet-700 hover:underline"
+                >
+                  {{ summary.emergencyContact.phone }}
+                </a>
+              </p>
+              <p class="text-slate-500 text-[11px]">
+                {{ summary.emergencyContact.coordinator }}
+              </p>
+            </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
-          <span class="text-slate-400 font-semibold uppercase text-[10px]">Permanence téléphonique</span>
-          <p class="font-bold text-slate-900 text-sm">
-            <a
-              :href="'tel:' + summary.emergencyContact.phone.replace(/\s/g, '')"
-              class="text-violet-700 hover:underline"
-            >
-              {{ summary.emergencyContact.phone }}
-            </a>
-          </p>
-          <p class="text-slate-500 text-[11px]">
-            {{ summary.emergencyContact.coordinator }}
-          </p>
-        </div>
-
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
-          <span class="text-slate-400 font-semibold uppercase text-[10px]">Point de ralliement / QG</span>
-          <p class="font-bold text-slate-900 text-xs">
-            {{ summary.emergencyContact.qgLocation }}
-          </p>
-          <p class="text-slate-500 text-[11px]">
-            E-mail : {{ summary.emergencyContact.email }}
-          </p>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/60 space-y-1">
+              <span class="text-slate-400 font-semibold uppercase text-[10px]">Point de ralliement / QG</span>
+              <p class="font-bold text-slate-900 text-xs">
+                {{ summary.emergencyContact.qgLocation }}
+              </p>
+              <p class="text-slate-500 text-[11px]">
+                E-mail : {{ summary.emergencyContact.email }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
