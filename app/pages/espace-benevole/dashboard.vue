@@ -103,113 +103,111 @@ function handlePrint() {
     </div>
 
     <!-- ======================================================== -->
-    <!-- CARTE BADGE MEMBRE BÉNÉVOLE & ACCRÉDITATION               -->
+    <!-- SECTION HAUTE : BADGE À GAUCHE & STATUT PLANNING À DROITE -->
     <!-- ======================================================== -->
     <div
       v-if="summary"
-      class="print:hidden w-full flex justify-center"
+      class="print:hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
     >
-      <VolunteerBadge
-        :volunteer="summary.volunteer"
-        @open-qr="isQrModalOpen = true"
-      />
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- SECTION ONBOARDING & STATUT DU PLANNING                   -->
-    <!-- ======================================================== -->
-    <div
-      v-if="summary"
-      class="print:hidden bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
-    >
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
-            SD
-          </div>
-          <div>
-            <span class="text-xs font-semibold text-violet-600 uppercase tracking-wider block">Événement officiel</span>
-            <h2 class="text-base font-bold text-slate-900">
-              Salon de la Danse d'Angers • 14, 15 & 16 Mai 2027
-            </h2>
-          </div>
-        </div>
-
-        <!-- Statut du planning -->
-        <div>
-          <UBadge
-            v-if="isConfirmed"
-            color="success"
-            variant="solid"
-            size="md"
-            class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 shadow-2xs"
-          >
-            <UIcon
-              name="i-lucide-check-circle-2"
-              class="w-4 h-4"
-            />
-            <span>Planning validé & verrouillé</span>
-          </UBadge>
-          <NuxtLink
-            v-else
-            to="/espace-benevole/planning"
-            class="inline-block"
-          >
-            <UBadge
-              color="warning"
-              variant="solid"
-              size="md"
-              class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
-            >
-              <UIcon
-                name="i-lucide-clock"
-                class="w-4 h-4"
-              />
-              <span>En attente de validation (Brouillon)</span>
-            </UBadge>
-          </NuxtLink>
-        </div>
+      <!-- Badge bénévole rangé à gauche -->
+      <div class="lg:col-span-4 flex justify-center lg:justify-start">
+        <VolunteerBadge
+          :volunteer="summary.volunteer"
+          @open-qr="isQrModalOpen = true"
+        />
       </div>
 
-      <!-- Règles clés d'engagement bénévole -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-          <div class="flex items-center gap-1.5 font-bold text-slate-900">
-            <UIcon
-              name="i-lucide-clock-3"
-              class="w-4 h-4 text-violet-600"
-            />
-            <span>1. Ponctualité</span>
+      <!-- Informations de l'événement, statut du planning & règles -->
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
+              SD
+            </div>
+            <div>
+              <span class="text-xs font-semibold text-violet-600 uppercase tracking-wider block">Événement officiel</span>
+              <h2 class="text-base font-bold text-slate-900">
+                Salon de la Danse d'Angers • 14, 15 & 16 Mai 2027
+              </h2>
+            </div>
           </div>
-          <p class="text-slate-500 text-[11px] leading-relaxed">
-            Se présenter 15 minutes avant le début de chaque tranche horaire au point d'accueil.
-          </p>
+
+          <!-- Statut du planning -->
+          <div>
+            <UBadge
+              v-if="isConfirmed"
+              color="success"
+              variant="solid"
+              size="md"
+              class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="w-4 h-4"
+              />
+              <span>Planning validé & verrouillé</span>
+            </UBadge>
+            <NuxtLink
+              v-else
+              to="/espace-benevole/planning"
+              class="inline-block"
+            >
+              <UBadge
+                color="warning"
+                variant="solid"
+                size="md"
+                class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
+              >
+                <UIcon
+                  name="i-lucide-clock"
+                  class="w-4 h-4"
+                />
+                <span>En attente de validation (Brouillon)</span>
+              </UBadge>
+            </NuxtLink>
+          </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-          <div class="flex items-center gap-1.5 font-bold text-slate-900">
-            <UIcon
-              name="i-lucide-shirt"
-              class="w-4 h-4 text-violet-600"
-            />
-            <span>2. Tenue & Badge</span>
+        <!-- Règles clés d'engagement bénévole -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+            <div class="flex items-center gap-1.5 font-bold text-slate-900">
+              <UIcon
+                name="i-lucide-clock-3"
+                class="w-4 h-4 text-violet-600"
+              />
+              <span>1. Ponctualité</span>
+            </div>
+            <p class="text-slate-500 text-[11px] leading-relaxed">
+              Se présenter 15 minutes avant le début de chaque tranche horaire au point d'accueil.
+            </p>
           </div>
-          <p class="text-slate-500 text-[11px] leading-relaxed">
-            T-shirt officiel remis à votre arrivée. Le port du badge est obligatoire sur tout le site.
-          </p>
-        </div>
 
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-          <div class="flex items-center gap-1.5 font-bold text-slate-900">
-            <UIcon
-              name="i-lucide-utensils"
-              class="w-4 h-4 text-violet-600"
-            />
-            <span>3. Repas & Pause</span>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+            <div class="flex items-center gap-1.5 font-bold text-slate-900">
+              <UIcon
+                name="i-lucide-shirt"
+                class="w-4 h-4 text-violet-600"
+              />
+              <span>2. Tenue & Badge</span>
+            </div>
+            <p class="text-slate-500 text-[11px] leading-relaxed">
+              T-shirt officiel remis à votre arrivée. Le port du badge est obligatoire sur tout le site.
+            </p>
           </div>
-          <p class="text-slate-500 text-[11px] leading-relaxed">
-            Panier repas et rafraîchissements fournis dès 2 créneaux d'engagement dans la même journée.
-          </p>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+            <div class="flex items-center gap-1.5 font-bold text-slate-900">
+              <UIcon
+                name="i-lucide-utensils"
+                class="w-4 h-4 text-violet-600"
+              />
+              <span>3. Repas & Pause</span>
+            </div>
+            <p class="text-slate-500 text-[11px] leading-relaxed">
+              Panier repas et rafraîchissements fournis dès 2 créneaux d'engagement dans la même journée.
+            </p>
+          </div>
         </div>
       </div>
     </div>
