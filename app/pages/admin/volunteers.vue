@@ -479,102 +479,271 @@ const columns: TableColumn<VolunteerItem>[] = [
 
     <!-- Tableau Nuxt UI UTable -->
     <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs overflow-hidden">
-      <UTable
-        :data="volunteers"
-        :columns="columns"
-        class="w-full"
-      >
-        <!-- Cellule Bénévole -->
-        <template #volunteer-cell="{ row }">
-          <div class="flex items-center gap-3 py-1">
-            <div class="w-9 h-9 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0 border border-violet-200/60">
-              {{ getInitials(row.original.firstName, row.original.lastName) }}
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-sm text-slate-900">
-                  {{ row.original.fullName }}
-                </span>
-                <!-- Pastille Mineur -->
-                <UBadge
-                  v-if="row.original.isMinor"
-                  color="warning"
-                  variant="subtle"
-                  size="xs"
-                  class="text-[10px]"
-                >
-                  Mineur {{ row.original.isApprovedMinor ? '✓' : '(Attente accord)' }}
-                </UBadge>
+      <!-- Vue Desktop : Tableau UTable -->
+      <div class="hidden md:block">
+        <UTable
+          :data="volunteers"
+          :columns="columns"
+          class="w-full"
+        >
+          <!-- Cellule Bénévole -->
+          <template #volunteer-cell="{ row }">
+            <div class="flex items-center gap-3 py-1">
+              <div class="w-9 h-9 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0 border border-violet-200/60">
+                {{ getInitials(row.original.firstName, row.original.lastName) }}
               </div>
-              <span class="text-[11px] text-slate-400 font-mono">ID: {{ row.original.id.slice(0, 8) }}</span>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-sm text-slate-900">
+                    {{ row.original.fullName }}
+                  </span>
+                  <!-- Pastille Mineur -->
+                  <UBadge
+                    v-if="row.original.isMinor"
+                    color="warning"
+                    variant="solid"
+                    size="sm"
+                    class="font-semibold text-[11px] px-2 py-0.5 rounded-md shadow-2xs"
+                  >
+                    Mineur {{ row.original.isApprovedMinor ? '✓' : '(Attente accord)' }}
+                  </UBadge>
+                </div>
+                <span class="text-[11px] text-slate-400 font-mono">ID: {{ row.original.id.slice(0, 8) }}</span>
+              </div>
             </div>
-          </div>
-        </template>
+          </template>
 
-        <!-- Cellule Coordonnées -->
-        <template #contact-cell="{ row }">
-          <div class="text-xs space-y-0.5">
-            <p class="text-slate-700 font-medium">
-              {{ row.original.email }}
-            </p>
-            <a
-              v-if="row.original.phone"
-              :href="'tel:' + row.original.phone"
-              class="text-violet-600 hover:underline inline-flex items-center gap-1 text-[11px]"
-            >
-              <UIcon
-                name="i-lucide-phone"
-                class="w-3 h-3"
+          <!-- Cellule Coordonnées -->
+          <template #contact-cell="{ row }">
+            <div class="text-xs space-y-0.5">
+              <p class="text-slate-700 font-medium">
+                {{ row.original.email }}
+              </p>
+              <a
+                v-if="row.original.phone"
+                :href="'tel:' + row.original.phone"
+                class="text-violet-600 hover:underline inline-flex items-center gap-1 text-[11px]"
+              >
+                <UIcon
+                  name="i-lucide-phone"
+                  class="w-3 h-3"
+                />
+                <span>{{ row.original.phone }}</span>
+              </a>
+            </div>
+          </template>
+
+          <!-- Cellule Statut Planning -->
+          <template #planningStatus-cell="{ row }">
+            <div class="space-y-1">
+              <UBadge
+                v-if="row.original.planningStatus === 'CONFIRMED'"
+                color="success"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+              >
+                <UIcon
+                  name="i-lucide-lock"
+                  class="w-3.5 h-3.5"
+                />
+                <span>Validé</span>
+              </UBadge>
+              <UBadge
+                v-else
+                color="warning"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+              >
+                <UIcon
+                  name="i-lucide-file-edit"
+                  class="w-3.5 h-3.5"
+                />
+                <span>Brouillon</span>
+              </UBadge>
+
+              <span class="text-[11px] text-slate-400 block font-medium">
+                {{ row.original.registrationsCount }} créneau(x)
+              </span>
+            </div>
+          </template>
+
+          <!-- Cellule Missions affectées -->
+          <template #missions-cell="{ row }">
+            <div class="flex flex-wrap gap-1.5 max-w-md py-1">
+              <template v-if="row.original.registrations.length > 0">
+                <span
+                  v-for="reg in row.original.registrations"
+                  :key="reg.id"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold shadow-2xs"
+                  :class="[
+                    reg.isSensitive
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-slate-700 text-white'
+                  ]"
+                >
+                  <UIcon
+                    :name="reg.isSensitive ? 'i-lucide-shield-alert' : 'i-lucide-calendar'"
+                    class="w-3.5 h-3.5 shrink-0 text-white"
+                  />
+                  <span>{{ reg.missionName }}</span>
+                  <span class="opacity-80">({{ formatSlotDate(reg.date) }} {{ reg.startTime }})</span>
+                </span>
+              </template>
+              <span
+                v-else
+                class="text-xs text-slate-400 italic"
+              >
+                Aucun créneau sélectionné
+              </span>
+            </div>
+          </template>
+
+          <!-- Cellule Actions -->
+          <template #actions-cell="{ row }">
+            <div class="flex items-center gap-1.5">
+              <UButton
+                color="primary"
+                variant="subtle"
+                size="xs"
+                icon="i-lucide-sliders-horizontal"
+                label="Gérer le planning"
+                class="cursor-pointer font-medium"
+                @click="openManageModal(row.original)"
               />
-              <span>{{ row.original.phone }}</span>
-            </a>
-          </div>
-        </template>
 
-        <!-- Cellule Statut Planning -->
-        <template #planningStatus-cell="{ row }">
-          <div class="space-y-1">
+              <!-- Réinitialiser le mot de passe -->
+              <UButton
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                icon="i-lucide-key-round"
+                title="Réinitialiser le mot de passe"
+                class="cursor-pointer text-slate-500 hover:text-violet-600"
+                @click="openResetPasswordModal(row.original)"
+              />
+
+              <!-- Toggle accord parental si mineur -->
+              <UButton
+                v-if="row.original.isMinor"
+                :color="row.original.isApprovedMinor ? 'neutral' : 'warning'"
+                variant="ghost"
+                size="xs"
+                :icon="row.original.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
+                :title="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
+                @click="toggleMinorApproval(row.original)"
+              />
+            </div>
+          </template>
+        </UTable>
+      </div>
+
+      <!-- Vue Mobile : Liste de Cartes empilées -->
+      <div
+        v-if="volunteers.length > 0"
+        class="block md:hidden divide-y divide-slate-100"
+      >
+        <div
+          v-for="volunteer in volunteers"
+          :key="volunteer.id"
+          class="p-4 space-y-3 bg-white"
+        >
+          <!-- En-tête de la carte : Avatar + Nom + Statut planning -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0 border border-violet-200">
+                {{ getInitials(volunteer.firstName, volunteer.lastName) }}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-bold text-sm text-slate-900 truncate">
+                    {{ volunteer.fullName }}
+                  </span>
+                  <UBadge
+                    v-if="volunteer.isMinor"
+                    color="warning"
+                    variant="solid"
+                    size="sm"
+                    class="font-semibold text-[11px] px-2 py-0.5 rounded-md shadow-2xs"
+                  >
+                    Mineur {{ volunteer.isApprovedMinor ? '✓' : '' }}
+                  </UBadge>
+                </div>
+                <span class="text-[11px] text-slate-400 font-mono block">ID: {{ volunteer.id.slice(0, 8) }}</span>
+              </div>
+            </div>
+
+            <!-- Statut Badge -->
             <UBadge
-              v-if="row.original.planningStatus === 'CONFIRMED'"
+              v-if="volunteer.planningStatus === 'CONFIRMED'"
               color="success"
-              variant="subtle"
-              size="xs"
-              class="font-medium inline-flex items-center gap-1"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
             >
               <UIcon
                 name="i-lucide-lock"
-                class="w-3 h-3"
+                class="w-3.5 h-3.5"
               />
               <span>Validé</span>
             </UBadge>
             <UBadge
               v-else
               color="warning"
-              variant="subtle"
-              size="xs"
-              class="font-medium inline-flex items-center gap-1"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
             >
               <UIcon
                 name="i-lucide-file-edit"
-                class="w-3 h-3"
+                class="w-3.5 h-3.5"
               />
               <span>Brouillon</span>
             </UBadge>
-
-            <span class="text-[11px] text-slate-400 block font-medium">
-              {{ row.original.registrationsCount }} créneau(x)
-            </span>
           </div>
-        </template>
 
-        <!-- Cellule Missions affectées -->
-        <template #missions-cell="{ row }">
-          <div class="flex flex-wrap gap-1.5 max-w-md py-1">
-            <template v-if="row.original.registrations.length > 0">
+          <!-- Coordonnées -->
+          <div class="text-xs space-y-1 p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div class="flex items-center gap-1.5 text-slate-700 font-medium">
+              <UIcon
+                name="i-lucide-mail"
+                class="w-3.5 h-3.5 text-slate-400 shrink-0"
+              />
+              <span class="truncate">{{ volunteer.email }}</span>
+            </div>
+            <div
+              v-if="volunteer.phone"
+              class="flex items-center gap-1.5 pt-0.5"
+            >
+              <UIcon
+                name="i-lucide-phone"
+                class="w-3.5 h-3.5 text-slate-400 shrink-0"
+              />
+              <a
+                :href="'tel:' + volunteer.phone"
+                class="text-violet-600 font-semibold hover:underline"
+              >
+                {{ volunteer.phone }}
+              </a>
+            </div>
+          </div>
+
+          <!-- Créneaux / Missions -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+              <span>Missions affectées :</span>
+              <span class="font-bold text-slate-700">{{ volunteer.registrationsCount }} créneau(x)</span>
+            </div>
+
+            <div
+              v-if="volunteer.registrations.length > 0"
+              class="flex flex-wrap gap-1.5 pt-0.5"
+            >
               <span
-                v-for="reg in row.original.registrations"
+                v-for="reg in volunteer.registrations"
                 :key="reg.id"
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium border"
+                class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium border"
                 :class="[
                   reg.isSensitive
                     ? 'bg-violet-50 text-violet-700 border-violet-200'
@@ -589,53 +758,50 @@ const columns: TableColumn<VolunteerItem>[] = [
                 <span class="font-semibold">{{ reg.missionName }}</span>
                 <span class="text-slate-400">({{ formatSlotDate(reg.date) }} {{ reg.startTime }})</span>
               </span>
-            </template>
-            <span
+            </div>
+            <p
               v-else
               class="text-xs text-slate-400 italic"
             >
-              Aucun créneau sélectionné
-            </span>
+              Aucun créneau sélectionné pour le moment.
+            </p>
           </div>
-        </template>
 
-        <!-- Cellule Actions -->
-        <template #actions-cell="{ row }">
-          <div class="flex items-center gap-1.5">
+          <!-- Actions tactiles -->
+          <div class="pt-2 flex items-center gap-2">
             <UButton
               color="primary"
               variant="subtle"
-              size="xs"
+              size="sm"
               icon="i-lucide-sliders-horizontal"
               label="Gérer le planning"
-              class="cursor-pointer font-medium"
-              @click="openManageModal(row.original)"
+              class="flex-1 justify-center font-semibold cursor-pointer py-2"
+              @click="openManageModal(volunteer)"
             />
 
-            <!-- Réinitialiser le mot de passe -->
             <UButton
               color="neutral"
-              variant="ghost"
-              size="xs"
+              variant="subtle"
+              size="sm"
               icon="i-lucide-key-round"
-              title="Réinitialiser le mot de passe"
-              class="cursor-pointer text-slate-500 hover:text-violet-600"
-              @click="openResetPasswordModal(row.original)"
+              title="Mot de passe"
+              class="cursor-pointer px-3 py-2"
+              @click="openResetPasswordModal(volunteer)"
             />
 
-            <!-- Toggle accord parental si mineur -->
             <UButton
-              v-if="row.original.isMinor"
-              :color="row.original.isApprovedMinor ? 'neutral' : 'warning'"
-              variant="ghost"
-              size="xs"
-              :icon="row.original.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
-              :title="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
-              @click="toggleMinorApproval(row.original)"
+              v-if="volunteer.isMinor"
+              :color="volunteer.isApprovedMinor ? 'neutral' : 'warning'"
+              variant="subtle"
+              size="sm"
+              :icon="volunteer.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
+              :title="volunteer.isApprovedMinor ? 'Accord validé' : 'Valider accord'"
+              class="cursor-pointer px-3 py-2"
+              @click="toggleMinorApproval(volunteer)"
             />
           </div>
-        </template>
-      </UTable>
+        </div>
+      </div>
 
       <!-- État vide -->
       <div
@@ -717,8 +883,9 @@ const columns: TableColumn<VolunteerItem>[] = [
                   </h4>
                   <UBadge
                     :color="activeVolunteer.planningStatus === 'CONFIRMED' ? 'success' : 'warning'"
-                    variant="subtle"
-                    size="xs"
+                    variant="solid"
+                    size="sm"
+                    class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
                   >
                     {{ activeVolunteer.planningStatus === 'CONFIRMED' ? 'Validé & Verrouillé' : 'Brouillon' }}
                   </UBadge>
@@ -768,10 +935,10 @@ const columns: TableColumn<VolunteerItem>[] = [
                         <span class="font-bold text-slate-900">{{ reg.missionName }}</span>
                         <UBadge
                           v-if="reg.isSensitive"
-                          color="primary"
-                          variant="subtle"
-                          size="xs"
-                          class="text-[9px]"
+                          color="warning"
+                          variant="solid"
+                          size="sm"
+                          class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs"
                         >
                           Poste sensible
                         </UBadge>

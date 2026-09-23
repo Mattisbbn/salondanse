@@ -133,22 +133,22 @@ const userInitials = computed(() => {
           </div>
         </div>
 
-        <!-- Badge discret de rôle -->
+        <!-- Badge de rôle -->
         <UBadge
           v-if="isAdmin"
           color="primary"
-          variant="subtle"
-          size="xs"
-          class="font-medium shrink-0"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shrink-0 shadow-2xs"
         >
           Admin
         </UBadge>
         <UBadge
           v-else-if="isBenevole"
           color="neutral"
-          variant="subtle"
-          size="xs"
-          class="font-medium shrink-0"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shrink-0 shadow-2xs"
         >
           Bénévole
         </UBadge>
@@ -266,18 +266,18 @@ const userInitials = computed(() => {
         <UBadge
           v-if="isAdmin"
           color="primary"
-          variant="subtle"
-          size="xs"
-          class="font-medium"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
         >
           Admin
         </UBadge>
         <UBadge
           v-else-if="isBenevole"
           color="neutral"
-          variant="subtle"
-          size="xs"
-          class="font-medium"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
         >
           Bénévole
         </UBadge>
@@ -294,7 +294,7 @@ const userInitials = computed(() => {
     </header>
 
     <!-- ======================================================== -->
-    <!-- MOBILE DRAWER / OVERLAY MENU                              -->
+    <!-- MOBILE DRAWER / SLIDEOVER MENU                            -->
     <!-- ======================================================== -->
     <Teleport to="body">
       <Transition
@@ -307,78 +307,140 @@ const userInitials = computed(() => {
       >
         <div
           v-if="isMobileMenuOpen"
-          class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs md:hidden"
+          class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs md:hidden"
           @click="isMobileMenuOpen = false"
         >
           <div
-            class="fixed inset-y-0 right-0 w-72 bg-white shadow-xl flex flex-col p-4 border-l border-slate-200"
+            class="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-white shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-200"
             @click.stop
           >
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-              <span class="text-sm font-bold text-slate-900">Menu</span>
+            <!-- Header du menu mobile -->
+            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  SD
+                </div>
+                <div>
+                  <span class="text-sm font-bold text-slate-900 block leading-tight">
+                    Salon de la Danse
+                  </span>
+                  <span class="text-[10px] text-slate-500 font-medium">
+                    Édition 2027 • Angers
+                  </span>
+                </div>
+              </div>
+
               <UButton
                 icon="i-lucide-x"
                 color="neutral"
                 variant="ghost"
                 size="sm"
+                aria-label="Fermer le menu"
                 @click="isMobileMenuOpen = false"
               />
             </div>
 
-            <!-- Profil dans le Drawer -->
+            <!-- Profil connecté & Accès rapide Badge -->
             <div
               v-if="isAuthenticated"
-              class="py-3 border-b border-slate-100"
+              class="p-4 border-b border-slate-100 bg-violet-50/30 space-y-3"
             >
-              <p class="text-xs font-semibold text-slate-900 truncate">
-                {{ fullName }}
-              </p>
-              <p class="text-[11px] text-slate-500 truncate">
-                {{ user?.email }}
-              </p>
-              <div class="mt-1.5">
-                <UBadge
-                  :color="isAdmin ? 'primary' : 'neutral'"
-                  variant="subtle"
-                  size="xs"
-                >
-                  {{ isAdmin ? 'Administrateur' : 'Bénévole' }}
-                </UBadge>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-200">
+                  {{ userInitials }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <p class="text-xs font-bold text-slate-900 truncate">
+                      {{ fullName }}
+                    </p>
+                    <UBadge
+                      :color="isAdmin ? 'primary' : 'neutral'"
+                      variant="solid"
+                      size="sm"
+                      class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+                    >
+                      {{ isAdmin ? 'Admin' : 'Bénévole' }}
+                    </UBadge>
+                  </div>
+                  <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                    {{ user?.email }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Bouton d'accès rapide Badge & QR Code -->
+              <div>
+                <UButton
+                  v-if="isBenevole"
+                  to="/espace-benevole/dashboard"
+                  color="primary"
+                  variant="soft"
+                  size="sm"
+                  block
+                  icon="i-lucide-qr-code"
+                  label="Mon Badge Membre & QR Code"
+                  class="font-semibold shadow-xs text-xs justify-center"
+                  @click="isMobileMenuOpen = false"
+                />
+                <UButton
+                  v-else-if="isAdmin"
+                  to="/admin/badges"
+                  color="primary"
+                  variant="soft"
+                  size="sm"
+                  block
+                  icon="i-lucide-id-card"
+                  label="Contrôle Badges & QR Codes"
+                  class="font-semibold shadow-xs text-xs justify-center"
+                  @click="isMobileMenuOpen = false"
+                />
               </div>
             </div>
 
-            <nav class="flex-1 py-4 space-y-1 overflow-y-auto">
+            <!-- Liens de navigation complets -->
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+              <div class="px-2 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                {{ isAdmin ? 'Menu Administration' : isBenevole ? 'Menu Bénévole' : 'Navigation' }}
+              </div>
+
               <NuxtLink
                 v-for="item in navItems"
                 :key="item.to"
                 :to="item.to"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
                 :class="[
                   route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                    ? 'bg-violet-50 text-violet-700'
-                    : 'text-slate-600 hover:bg-slate-50'
+                    ? 'bg-violet-600 text-white shadow-xs'
+                    : 'text-slate-700 hover:bg-slate-100'
                 ]"
                 @click="isMobileMenuOpen = false"
               >
                 <UIcon
                   :name="item.icon"
-                  class="w-4 h-4 text-violet-600"
+                  class="w-4 h-4 shrink-0"
+                  :class="[
+                    route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
+                      ? 'text-white'
+                      : 'text-slate-400'
+                  ]"
                 />
-                <span>{{ item.label }}</span>
+                <span class="truncate">{{ item.label }}</span>
               </NuxtLink>
             </nav>
 
-            <div class="pt-3 border-t border-slate-200">
+            <!-- Déconnexion ou Connexion en bas -->
+            <div class="p-3 border-t border-slate-200 bg-slate-50">
               <UButton
                 v-if="isAuthenticated"
                 icon="i-lucide-log-out"
-                color="neutral"
-                variant="outline"
+                color="error"
+                variant="subtle"
                 size="sm"
                 block
                 label="Se déconnecter"
-                class="text-red-600 border-red-200 hover:bg-red-50"
-                @click="logout"
+                class="font-medium justify-center cursor-pointer text-xs"
+                @click="() => { isMobileMenuOpen = false; logout(); }"
               />
               <UButton
                 v-else
@@ -387,7 +449,9 @@ const userInitials = computed(() => {
                 variant="solid"
                 size="sm"
                 block
-                label="Connexion"
+                icon="i-lucide-log-in"
+                label="Se connecter"
+                class="font-semibold justify-center text-xs"
                 @click="isMobileMenuOpen = false"
               />
             </div>
@@ -400,43 +464,9 @@ const userInitials = computed(() => {
     <!-- ZONE CENTRALE (<slot />) SUR FOND #F8FAFC                -->
     <!-- ======================================================== -->
     <main class="flex-1 md:pl-64 flex flex-col min-h-screen bg-[#F8FAFC]">
-      <div class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
+      <div class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-8">
         <slot />
       </div>
     </main>
-
-    <!-- ======================================================== -->
-    <!-- MOBILE BOTTOM NAVIGATION (Compacte, icônes Lucide)       -->
-    <!-- ======================================================== -->
-    <nav
-      v-if="navItems.length > 0"
-      class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E2E8F0] h-16 px-2 flex items-center justify-around"
-      aria-label="Navigation mobile"
-    >
-      <NuxtLink
-        v-for="item in navItems"
-        :key="item.to"
-        :to="item.to"
-        class="flex flex-col items-center justify-center flex-1 py-1 px-1 transition-colors min-w-0"
-        :class="[
-          route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-            ? 'text-violet-600 font-semibold'
-            : 'text-slate-500 hover:text-slate-800'
-        ]"
-      >
-        <UIcon
-          :name="item.icon"
-          class="w-5 h-5 mb-0.5"
-          :class="[
-            route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-              ? 'text-violet-600'
-              : 'text-slate-400'
-          ]"
-        />
-        <span class="text-[10px] leading-tight truncate w-full text-center">
-          {{ (item.label.split('&')[0] ?? item.label).trim() }}
-        </span>
-      </NuxtLink>
-    </nav>
   </div>
 </template>

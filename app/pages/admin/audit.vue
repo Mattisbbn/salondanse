@@ -201,7 +201,8 @@ function getActionLabel(action: string): string {
       v-else
       class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden"
     >
-      <div class="overflow-x-auto">
+      <!-- Vue Desktop : Tableau -->
+      <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
             <tr>
@@ -247,9 +248,9 @@ function getActionLabel(action: string): string {
               <td class="py-3 px-4 whitespace-nowrap">
                 <UBadge
                   :color="getActionBadgeColor(log.action)"
-                  variant="subtle"
+                  variant="solid"
                   size="sm"
-                  class="font-semibold"
+                  class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
                 >
                   {{ getActionLabel(log.action) }}
                 </UBadge>
@@ -269,6 +270,64 @@ function getActionLabel(action: string): string {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Vue Mobile : Liste de Cartes empilées -->
+      <div class="block md:hidden divide-y divide-slate-100">
+        <div
+          v-for="log in filteredLogs"
+          :key="log.id"
+          class="p-4 space-y-2.5 bg-white"
+        >
+          <!-- En-tête : Badge Action + Date & Heure -->
+          <div class="flex items-start justify-between gap-2">
+            <UBadge
+              :color="getActionBadgeColor(log.action)"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 shrink-0 shadow-2xs"
+            >
+              {{ getActionLabel(log.action) }}
+            </UBadge>
+
+            <span class="font-mono text-[11px] text-slate-500 shrink-0">
+              {{ formatDate(log.createdAt) }}
+            </span>
+          </div>
+
+          <!-- Administrateur -->
+          <div class="flex items-center gap-2 text-xs">
+            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <UIcon
+                name="i-lucide-user"
+                class="w-3.5 h-3.5"
+              />
+            </div>
+            <div class="min-w-0">
+              <span class="font-bold text-slate-900 block truncate">{{ log.adminName }}</span>
+              <span class="text-[11px] text-slate-400 block truncate">{{ log.adminEmail }}</span>
+            </div>
+          </div>
+
+          <!-- Détails de l'opération -->
+          <div
+            v-if="log.details"
+            class="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"
+          >
+            {{ log.details }}
+          </div>
+
+          <!-- ID Cible si présent -->
+          <div
+            v-if="log.targetId"
+            class="flex items-center justify-between text-[11px] pt-0.5 text-slate-400 font-mono"
+          >
+            <span>Cible concernée :</span>
+            <span class="font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+              {{ log.targetId.slice(0, 8).toUpperCase() }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

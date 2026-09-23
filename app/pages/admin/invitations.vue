@@ -292,127 +292,214 @@ const columns: TableColumn<InvitationItem>[] = [
           <span class="text-sm font-bold text-slate-900">Historique des invitations</span>
           <UBadge
             color="neutral"
-            variant="subtle"
-            size="xs"
+            variant="solid"
+            size="sm"
+            class="font-semibold text-xs px-2.5 py-0.5 rounded-md"
           >
             {{ invitations.length }} code(s)
           </UBadge>
         </div>
       </div>
 
-      <UTable
-        :data="invitations"
-        :columns="columns"
-        class="w-full"
-      >
-        <!-- Cellule E-mail Destinataire -->
-        <template #email-cell="{ row }">
-          <div class="flex items-center gap-1.5 text-xs text-slate-800 font-medium">
-            <UIcon
-              name="i-lucide-mail"
-              class="w-3.5 h-3.5 text-slate-400 shrink-0"
-            />
-            <span
-              v-if="row.original.email"
-              class="truncate max-w-[200px] text-slate-900 font-semibold"
-              :title="row.original.email"
-            >
-              {{ row.original.email }}
+      <!-- Vue Desktop : Tableau UTable -->
+      <div class="hidden md:block">
+        <UTable
+          :data="invitations"
+          :columns="columns"
+          class="w-full"
+        >
+          <!-- Cellule E-mail Destinataire -->
+          <template #email-cell="{ row }">
+            <div class="flex items-center gap-1.5 text-xs text-slate-800 font-medium">
+              <UIcon
+                name="i-lucide-mail"
+                class="w-3.5 h-3.5 text-slate-400 shrink-0"
+              />
+              <span
+                v-if="row.original.email"
+                class="truncate max-w-[200px] text-slate-900 font-semibold"
+                :title="row.original.email"
+              >
+                {{ row.original.email }}
+              </span>
+              <span
+                v-else-if="row.original.usedBy?.email"
+                class="truncate max-w-[200px] text-slate-900 font-semibold"
+                :title="row.original.usedBy.email"
+              >
+                {{ row.original.usedBy.email }}
+              </span>
+              <span
+                v-else
+                class="text-slate-400 italic text-[11px]"
+              >
+                — Non renseigné —
+              </span>
+            </div>
+          </template>
+
+          <!-- Cellule Code -->
+          <template #code-cell="{ row }">
+            <span class="font-mono font-bold text-xs text-violet-700 bg-violet-50 px-2.5 py-1 rounded-md border border-violet-200/70 inline-block">
+              {{ row.original.code }}
             </span>
-            <span
-              v-else-if="row.original.usedBy?.email"
-              class="truncate max-w-[200px] text-slate-900 font-semibold"
-              :title="row.original.usedBy.email"
+          </template>
+
+          <!-- Cellule Statut -->
+          <template #isUsed-cell="{ row }">
+            <UBadge
+              v-if="row.original.isUsed"
+              color="success"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
             >
-              {{ row.original.usedBy.email }}
-            </span>
+              <UIcon
+                name="i-lucide-check"
+                class="w-3.5 h-3.5"
+              />
+              <span>Utilisé</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="warning"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-clock"
+                class="w-3.5 h-3.5"
+              />
+              <span>En attente</span>
+            </UBadge>
+          </template>
+
+          <!-- Cellule Bénévole -->
+          <template #usedBy-cell="{ row }">
+            <div
+              v-if="row.original.usedBy"
+              class="text-xs"
+            >
+              <p class="font-semibold text-slate-900">
+                {{ row.original.usedBy.name }}
+              </p>
+              <p class="text-slate-400 text-[11px]">
+                {{ row.original.usedBy.email }}
+              </p>
+            </div>
             <span
               v-else
-              class="text-slate-400 italic text-[11px]"
+              class="text-xs text-slate-400"
             >
-              — Non renseigné —
+              — Non utilisé —
             </span>
-          </div>
-        </template>
+          </template>
 
-        <!-- Cellule Code -->
-        <template #code-cell="{ row }">
-          <span class="font-mono font-bold text-xs text-violet-700 bg-violet-50 px-2.5 py-1 rounded-md border border-violet-200/70 inline-block">
-            {{ row.original.code }}
-          </span>
-        </template>
+          <!-- Cellule Date -->
+          <template #createdAt-cell="{ row }">
+            <span class="text-xs text-slate-600 font-medium">
+              {{ formatDate(row.original.createdAt) }}
+            </span>
+          </template>
 
-        <!-- Cellule Statut -->
-        <template #isUsed-cell="{ row }">
-          <UBadge
-            v-if="row.original.isUsed"
-            color="success"
-            variant="subtle"
-            size="xs"
-            class="font-medium inline-flex items-center gap-1"
-          >
-            <UIcon
-              name="i-lucide-check"
-              class="w-3 h-3"
+          <!-- Cellule Actions -->
+          <template #actions-cell="{ row }">
+            <UButton
+              icon="i-lucide-copy"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              label="Copier le lien"
+              class="text-slate-600 hover:text-violet-700 cursor-pointer"
+              @click="copyLink(row.original.registrationUrl)"
             />
-            <span>Utilisé</span>
-          </UBadge>
-          <UBadge
-            v-else
-            color="warning"
-            variant="subtle"
-            size="xs"
-            class="font-medium inline-flex items-center gap-1"
-          >
-            <UIcon
-              name="i-lucide-clock"
-              class="w-3 h-3"
-            />
-            <span>En attente</span>
-          </UBadge>
-        </template>
+          </template>
+        </UTable>
+      </div>
 
-        <!-- Cellule Bénévole -->
-        <template #usedBy-cell="{ row }">
-          <div
-            v-if="row.original.usedBy"
-            class="text-xs"
-          >
-            <p class="font-semibold text-slate-900">
-              {{ row.original.usedBy.name }}
-            </p>
-            <p class="text-slate-400 text-[11px]">
-              {{ row.original.usedBy.email }}
-            </p>
+      <!-- Vue Mobile : Liste de Cartes empilées -->
+      <div
+        v-if="invitations.length > 0"
+        class="block md:hidden divide-y divide-slate-100"
+      >
+        <div
+          v-for="invitation in invitations"
+          :key="invitation.id"
+          class="p-4 space-y-3 bg-white"
+        >
+          <!-- En-tête de la carte : Code + Badge Statut -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="space-y-1 min-w-0">
+              <span class="font-mono font-bold text-xs text-violet-700 bg-violet-50 px-2.5 py-1 rounded-md border border-violet-200/70 inline-block">
+                {{ invitation.code }}
+              </span>
+              <p class="text-xs font-semibold text-slate-900 truncate flex items-center gap-1.5 mt-1">
+                <UIcon
+                  name="i-lucide-mail"
+                  class="w-3.5 h-3.5 text-slate-400 shrink-0"
+                />
+                <span class="truncate">{{ invitation.email || invitation.usedBy?.email || '— Non renseigné —' }}</span>
+              </p>
+            </div>
+
+            <UBadge
+              v-if="invitation.isUsed"
+              color="success"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-check"
+                class="w-3.5 h-3.5"
+              />
+              <span>Utilisé</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="warning"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-clock"
+                class="w-3.5 h-3.5"
+              />
+              <span>En attente</span>
+            </UBadge>
           </div>
-          <span
-            v-else
-            class="text-xs text-slate-400"
-          >
-            — Non utilisé —
-          </span>
-        </template>
 
-        <!-- Cellule Date -->
-        <template #createdAt-cell="{ row }">
-          <span class="text-xs text-slate-600 font-medium">
-            {{ formatDate(row.original.createdAt) }}
-          </span>
-        </template>
+          <!-- Corps de la carte -->
+          <div class="text-xs space-y-1.5 p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-600">
+            <div
+              v-if="invitation.usedBy"
+              class="flex justify-between items-center"
+            >
+              <span class="text-slate-400 font-medium">Bénévole associé :</span>
+              <span class="font-semibold text-slate-900">{{ invitation.usedBy.name }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 font-medium">Date d'émission :</span>
+              <span class="font-medium text-slate-700">{{ formatDate(invitation.createdAt) }}</span>
+            </div>
+          </div>
 
-        <!-- Cellule Actions -->
-        <template #actions-cell="{ row }">
-          <UButton
-            icon="i-lucide-copy"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            label="Copier le lien"
-            class="text-slate-600 hover:text-violet-700 cursor-pointer"
-            @click="copyLink(row.original.registrationUrl)"
-          />
-        </template>
-      </UTable>
+          <!-- Actions de la carte -->
+          <div class="pt-0.5">
+            <UButton
+              icon="i-lucide-copy"
+              color="neutral"
+              variant="subtle"
+              size="sm"
+              label="Copier le lien d'inscription"
+              class="w-full justify-center text-xs font-semibold cursor-pointer py-2"
+              @click="copyLink(invitation.registrationUrl)"
+            />
+          </div>
+        </div>
+      </div>
 
       <!-- Message si liste vide -->
       <div

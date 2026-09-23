@@ -308,16 +308,16 @@ async function handleAddDay() {
               color="primary"
               variant="solid"
               size="sm"
-              class="font-bold shadow-xs"
+              class="font-bold text-xs px-2.5 py-1 shadow-2xs"
             >
               Édition en cours
             </UBadge>
             <UBadge
               v-else
               color="neutral"
-              variant="subtle"
+              variant="solid"
               size="sm"
-              class="text-slate-500"
+              class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
             >
               Archivée / En attente
             </UBadge>
@@ -615,18 +615,18 @@ async function handleAddDay() {
                       <UBadge
                         v-if="day.isActive"
                         color="success"
-                        variant="subtle"
-                        size="xs"
-                        class="font-medium"
+                        variant="solid"
+                        size="sm"
+                        class="font-semibold text-xs px-2 py-0.5 shadow-2xs"
                       >
                         Actif
                       </UBadge>
                       <UBadge
                         v-else
                         color="neutral"
-                        variant="subtle"
-                        size="xs"
-                        class="text-slate-500"
+                        variant="solid"
+                        size="sm"
+                        class="font-semibold text-xs px-2 py-0.5 shadow-2xs"
                       >
                         Désactivé
                       </UBadge>

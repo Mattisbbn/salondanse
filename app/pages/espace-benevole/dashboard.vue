@@ -147,17 +147,17 @@ function handlePrint() {
               <UBadge
                 color="primary"
                 variant="solid"
-                size="xs"
-                class="font-extrabold uppercase tracking-wider bg-violet-500 text-white"
+                size="sm"
+                class="font-extrabold uppercase tracking-wider text-xs px-2.5 py-1 shadow-2xs"
               >
                 BÉNÉVOLE OFFICIEL
               </UBadge>
               <UBadge
                 v-if="summary.volunteer.isMinor"
                 color="warning"
-                variant="subtle"
-                size="xs"
-                class="font-semibold"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
               >
                 Mineur ({{ summary.volunteer.minorValidationStatus === 'VALIDATED' ? 'Autorisation validée' : 'En attente' }})
               </UBadge>
@@ -238,9 +238,9 @@ function handlePrint() {
           <UBadge
             v-if="isConfirmed"
             color="success"
-            variant="subtle"
+            variant="solid"
             size="md"
-            class="font-semibold inline-flex items-center gap-1.5"
+            class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 shadow-2xs"
           >
             <UIcon
               name="i-lucide-check-circle-2"
@@ -255,9 +255,9 @@ function handlePrint() {
           >
             <UBadge
               color="warning"
-              variant="subtle"
+              variant="solid"
               size="md"
-              class="font-semibold inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+              class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
             >
               <UIcon
                 name="i-lucide-clock"
@@ -331,9 +331,9 @@ function handlePrint() {
         </div>
         <UBadge
           color="neutral"
-          variant="subtle"
-          size="xs"
-          class="font-medium"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
         >
           Données vérifiées
         </UBadge>
@@ -418,8 +418,9 @@ function handlePrint() {
         <UBadge
           v-if="summary.totalSlots > 0"
           color="primary"
-          variant="subtle"
-          size="xs"
+          variant="solid"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
         >
           {{ summary.totalSlots }} créneau(x)
         </UBadge>
@@ -440,10 +441,10 @@ function handlePrint() {
               <span class="font-bold text-sm text-slate-900">{{ slot.missionName }}</span>
               <UBadge
                 v-if="slot.isSensitive"
-                color="primary"
-                variant="subtle"
-                size="xs"
-                class="text-[10px]"
+                color="warning"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs"
               >
                 Poste sensible
               </UBadge>

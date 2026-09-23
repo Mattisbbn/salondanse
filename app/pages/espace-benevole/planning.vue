@@ -444,9 +444,9 @@ async function confirmPlanning() {
         <UBadge
           v-if="isConfirmed"
           color="success"
-          variant="subtle"
+          variant="solid"
           size="sm"
-          class="font-medium inline-flex items-center gap-1.5"
+          class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1.5 shadow-2xs"
         >
           <UIcon
             name="i-lucide-lock"
@@ -648,9 +648,9 @@ async function confirmPlanning() {
             <div v-if="selectedBySlotMap.has(slot.id)">
               <UBadge
                 color="primary"
-                variant="subtle"
-                size="xs"
-                class="font-medium"
+                variant="solid"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
               >
                 1 mission choisie
               </UBadge>
@@ -762,8 +762,9 @@ async function confirmPlanning() {
                 </span>
                 <UBadge
                   color="primary"
-                  variant="subtle"
-                  size="xs"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
                 >
                   Attribution Admin
                 </UBadge>
@@ -782,10 +783,10 @@ async function confirmPlanning() {
                   Accès restreint
                 </span>
                 <UBadge
-                  color="neutral"
-                  variant="subtle"
-                  size="xs"
-                  class="text-slate-500"
+                  color="warning"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
                 >
                   Attribution Admin
                 </UBadge>
@@ -803,27 +804,27 @@ async function confirmPlanning() {
                 <UBadge
                   v-if="mission.availablePlaces > 1"
                   color="success"
-                  variant="subtle"
-                  size="xs"
-                  class="text-[10px] font-medium"
+                  variant="solid"
+                  size="sm"
+                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
                 >
                   {{ mission.availablePlaces }} places dispo
                 </UBadge>
                 <UBadge
                   v-else-if="mission.availablePlaces === 1"
                   color="warning"
-                  variant="subtle"
-                  size="xs"
-                  class="text-[10px] font-medium"
+                  variant="solid"
+                  size="sm"
+                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
                 >
                   1 place restante !
                 </UBadge>
                 <UBadge
                   v-else
                   color="neutral"
-                  variant="outline"
-                  size="xs"
-                  class="text-[10px] font-medium text-slate-400"
+                  variant="solid"
+                  size="sm"
+                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
                 >
                   Complet
                 </UBadge>
@@ -902,9 +903,9 @@ async function confirmPlanning() {
                   <UBadge
                     v-if="item.isAssignedByAdmin"
                     color="primary"
-                    variant="subtle"
-                    size="xs"
-                    class="text-[10px]"
+                    variant="solid"
+                    size="sm"
+                    class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
                   >
                     Affecté par l'organisation
                   </UBadge>

@@ -319,7 +319,7 @@ const columns: TableColumn<MissionItem>[] = [
 
     <!-- Filtres & Recherche -->
     <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-      <div class="flex-1 max-w-sm">
+      <div class="w-full sm:max-w-sm">
         <UInput
           v-model="searchQuery"
           icon="i-lucide-search"
@@ -329,12 +329,12 @@ const columns: TableColumn<MissionItem>[] = [
         />
       </div>
 
-      <div class="flex items-center gap-2 flex-wrap">
+      <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
         <!-- Filtre Type -->
-        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl flex-1 sm:flex-initial justify-between sm:justify-start">
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedType === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedType = 'ALL'"
           >
@@ -342,7 +342,7 @@ const columns: TableColumn<MissionItem>[] = [
           </button>
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedType === 'PUBLIC' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedType = 'PUBLIC'"
           >
@@ -350,7 +350,7 @@ const columns: TableColumn<MissionItem>[] = [
           </button>
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedType === 'SENSITIVE' ? 'bg-white text-violet-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedType = 'SENSITIVE'"
           >
@@ -359,10 +359,10 @@ const columns: TableColumn<MissionItem>[] = [
         </div>
 
         <!-- Filtre Statut -->
-        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl flex-1 sm:flex-initial justify-between sm:justify-start">
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedStatus === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedStatus = 'ALL'"
           >
@@ -370,7 +370,7 @@ const columns: TableColumn<MissionItem>[] = [
           </button>
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedStatus === 'ACTIVE' ? 'bg-white text-emerald-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedStatus = 'ACTIVE'"
           >
@@ -378,7 +378,7 @@ const columns: TableColumn<MissionItem>[] = [
           </button>
           <button
             type="button"
-            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex-1 sm:flex-initial text-center"
             :class="selectedStatus === 'ARCHIVED' ? 'bg-white text-slate-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'"
             @click="selectedStatus = 'ARCHIVED'"
           >
@@ -395,138 +395,294 @@ const columns: TableColumn<MissionItem>[] = [
           <span class="text-sm font-bold text-slate-900">Catalogue des missions</span>
           <UBadge
             color="neutral"
-            variant="subtle"
-            size="xs"
+            variant="solid"
+            size="sm"
+            class="font-semibold text-xs px-2.5 py-0.5 rounded-md"
           >
             {{ filteredMissions.length }} mission(s)
           </UBadge>
         </div>
       </div>
 
-      <UTable
-        :data="filteredMissions"
-        :columns="columns"
-        class="w-full"
-      >
-        <!-- Cellule Nom de la Mission -->
-        <template #name-cell="{ row }">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-              :class="[
-                row.original.isSensitive
-                  ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                  : 'bg-violet-100 text-violet-700 border border-violet-200'
-              ]"
+      <!-- Vue Desktop : Tableau UTable -->
+      <div class="hidden md:block">
+        <UTable
+          :data="filteredMissions"
+          :columns="columns"
+          class="w-full"
+        >
+          <!-- Cellule Nom de la Mission -->
+          <template #name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
+                :class="[
+                  row.original.isSensitive
+                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                    : 'bg-violet-100 text-violet-700 border border-violet-200'
+                ]"
+              >
+                <UIcon
+                  :name="row.original.isSensitive ? 'i-lucide-lock' : 'i-lucide-briefcase'"
+                  class="w-4 h-4"
+                />
+              </div>
+              <div class="min-w-0">
+                <span class="font-bold text-slate-900 text-xs sm:text-sm block truncate">
+                  {{ row.original.name }}
+                </span>
+                <span class="text-[11px] text-slate-400 block">
+                  {{ row.original.stats.slotsCount }} créneaux rattachés
+                </span>
+              </div>
+            </div>
+          </template>
+
+          <!-- Cellule Description -->
+          <template #description-cell="{ row }">
+            <div class="max-w-xs text-xs text-slate-600 line-clamp-2">
+              {{ row.original.description || 'Aucune consigne particulière.' }}
+            </div>
+          </template>
+
+          <!-- Cellule Type de poste (Sensible / Public) -->
+          <template #isSensitive-cell="{ row }">
+            <UBadge
+              v-if="row.original.isSensitive"
+              color="warning"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
             >
               <UIcon
-                :name="row.original.isSensitive ? 'i-lucide-lock' : 'i-lucide-briefcase'"
-                class="w-4 h-4"
+                name="i-lucide-shield-alert"
+                class="w-3.5 h-3.5"
+              />
+              <span>Poste sensible (Manuel)</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="neutral"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-globe"
+                class="w-3.5 h-3.5"
+              />
+              <span>Public (Planning bénévole)</span>
+            </UBadge>
+          </template>
+
+          <!-- Cellule Capacité par créneau -->
+          <template #defaultCapacity-cell="{ row }">
+            <div class="text-xs">
+              <span class="font-bold text-slate-900">
+                {{ row.original.defaultCapacity }} pers. / créneau
+              </span>
+              <span class="text-[11px] text-slate-400 block mt-0.5">
+                {{ row.original.stats.registrationsCount }} inscrit(s) actuel(s)
+              </span>
+            </div>
+          </template>
+
+          <!-- Cellule Statut (Actif / Archivé) -->
+          <template #isActive-cell="{ row }">
+            <UBadge
+              v-if="row.original.isActive"
+              color="success"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-3.5 h-3.5"
+              />
+              <span>Active</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="neutral"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-archive"
+                class="w-3.5 h-3.5"
+              />
+              <span>Archivée</span>
+            </UBadge>
+          </template>
+
+          <!-- Cellule Actions -->
+          <template #actions-cell="{ row }">
+            <div class="flex items-center gap-1.5">
+              <UButton
+                color="neutral"
+                variant="subtle"
+                size="xs"
+                icon="i-lucide-pencil"
+                class="cursor-pointer"
+                title="Modifier la mission"
+                @click="openEditModal(row.original)"
+              />
+
+              <UButton
+                color="error"
+                variant="subtle"
+                size="xs"
+                icon="i-lucide-trash-2"
+                class="cursor-pointer"
+                title="Supprimer ou archiver la mission"
+                @click="openDeleteModal(row.original)"
               />
             </div>
-            <div class="min-w-0">
-              <span class="font-bold text-slate-900 text-xs sm:text-sm block truncate">
-                {{ row.original.name }}
-              </span>
-              <span class="text-[11px] text-slate-400 block">
-                {{ row.original.stats.slotsCount }} créneaux rattachés
-              </span>
+          </template>
+        </UTable>
+      </div>
+
+      <!-- Vue Mobile : Liste de Cartes empilées -->
+      <div
+        v-if="filteredMissions.length > 0"
+        class="block md:hidden divide-y divide-slate-100"
+      >
+        <div
+          v-for="mission in filteredMissions"
+          :key="mission.id"
+          class="p-4 space-y-3 bg-white"
+        >
+          <!-- En-tête : Titre + Type & Statut -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div
+                class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
+                :class="[
+                  mission.isSensitive
+                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                    : 'bg-violet-100 text-violet-700 border border-violet-200'
+                ]"
+              >
+                <UIcon
+                  :name="mission.isSensitive ? 'i-lucide-lock' : 'i-lucide-briefcase'"
+                  class="w-5 h-5"
+                />
+              </div>
+              <div class="min-w-0">
+                <span class="font-bold text-sm text-slate-900 block truncate">
+                  {{ mission.name }}
+                </span>
+                <span class="text-[11px] text-slate-400 block">
+                  {{ mission.stats.slotsCount }} créneau(x) rattaché(s)
+                </span>
+              </div>
+            </div>
+
+            <!-- Statut Badge -->
+            <UBadge
+              v-if="mission.isActive"
+              color="success"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-3.5 h-3.5"
+              />
+              <span>Active</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="neutral"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-archive"
+                class="w-3.5 h-3.5"
+              />
+              <span>Archivée</span>
+            </UBadge>
+          </div>
+
+          <!-- Type de poste tag -->
+          <div>
+            <UBadge
+              v-if="mission.isSensitive"
+              color="warning"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-shield-alert"
+                class="w-3.5 h-3.5"
+              />
+              <span>Poste sensible (Attribution manuelle)</span>
+            </UBadge>
+            <UBadge
+              v-else
+              color="neutral"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+            >
+              <UIcon
+                name="i-lucide-globe"
+                class="w-3.5 h-3.5"
+              />
+              <span>Poste public (Libre choix bénévole)</span>
+            </UBadge>
+          </div>
+
+          <!-- Description si disponible -->
+          <p
+            v-if="mission.description"
+            class="text-xs text-slate-600 line-clamp-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100"
+          >
+            {{ mission.description }}
+          </p>
+
+          <!-- Données clés (Capacité & Inscrits) -->
+          <div class="text-xs grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div>
+              <span class="text-slate-400 block text-[11px]">Capacité standard :</span>
+              <span class="font-bold text-slate-800">{{ mission.defaultCapacity }} pers. / créneau</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[11px]">Bénévoles inscrits :</span>
+              <span class="font-bold text-slate-800">{{ mission.stats.registrationsCount }} inscrit(s)</span>
             </div>
           </div>
-        </template>
 
-        <!-- Cellule Description -->
-        <template #description-cell="{ row }">
-          <div class="max-w-xs text-xs text-slate-600 line-clamp-2">
-            {{ row.original.description || 'Aucune consigne particulière.' }}
-          </div>
-        </template>
-
-        <!-- Cellule Type de poste (Sensible / Public) -->
-        <template #isSensitive-cell="{ row }">
-          <UBadge
-            v-if="row.original.isSensitive"
-            color="warning"
-            variant="subtle"
-            size="xs"
-            class="font-semibold inline-flex items-center gap-1"
-          >
-            <UIcon name="i-lucide-shield-alert" class="w-3 h-3" />
-            <span>Poste sensible (Manuel)</span>
-          </UBadge>
-          <UBadge
-            v-else
-            color="neutral"
-            variant="subtle"
-            size="xs"
-            class="font-medium text-slate-600 inline-flex items-center gap-1"
-          >
-            <UIcon name="i-lucide-globe" class="w-3 h-3 text-slate-400" />
-            <span>Public (Planning bénévole)</span>
-          </UBadge>
-        </template>
-
-        <!-- Cellule Capacité par créneau -->
-        <template #defaultCapacity-cell="{ row }">
-          <div class="text-xs">
-            <span class="font-bold text-slate-900">
-              {{ row.original.defaultCapacity }} pers. / créneau
-            </span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">
-              {{ row.original.stats.registrationsCount }} inscrit(s) actuel(s)
-            </span>
-          </div>
-        </template>
-
-        <!-- Cellule Statut (Actif / Archivé) -->
-        <template #isActive-cell="{ row }">
-          <UBadge
-            v-if="row.original.isActive"
-            color="success"
-            variant="subtle"
-            size="xs"
-            class="font-semibold inline-flex items-center gap-1"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>Active</span>
-          </UBadge>
-          <UBadge
-            v-else
-            color="neutral"
-            variant="subtle"
-            size="xs"
-            class="text-slate-500 inline-flex items-center gap-1"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400" />
-            <span>Archivée</span>
-          </UBadge>
-        </template>
-
-        <!-- Cellule Actions -->
-        <template #actions-cell="{ row }">
-          <div class="flex items-center gap-1.5">
+          <!-- Actions tactiles -->
+          <div class="pt-1 flex items-center gap-2">
             <UButton
-              color="neutral"
+              color="primary"
               variant="subtle"
-              size="xs"
+              size="sm"
               icon="i-lucide-pencil"
-              class="cursor-pointer"
-              title="Modifier la mission"
-              @click="openEditModal(row.original)"
+              label="Modifier"
+              class="flex-1 justify-center font-semibold cursor-pointer py-2"
+              @click="openEditModal(mission)"
             />
 
             <UButton
               color="error"
               variant="subtle"
-              size="xs"
+              size="sm"
               icon="i-lucide-trash-2"
-              class="cursor-pointer"
-              title="Supprimer ou archiver la mission"
-              @click="openDeleteModal(row.original)"
+              :label="mission.isActive ? 'Archiver' : 'Supprimer'"
+              class="cursor-pointer font-semibold px-3 py-2"
+              @click="openDeleteModal(mission)"
             />
           </div>
-        </template>
-      </UTable>
+        </div>
+      </div>
 
       <!-- Message si aucune mission -->
       <div

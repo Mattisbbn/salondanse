@@ -422,9 +422,9 @@ onMounted(() => {
           <UBadge
             v-if="!isCodeValid"
             color="primary"
-            variant="subtle"
+            variant="solid"
             size="sm"
-            class="font-semibold"
+            class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
           >
             Étape 1 sur 2
           </UBadge>
@@ -591,18 +591,18 @@ onMounted(() => {
                 <UBadge
                   v-if="isMinor"
                   color="warning"
-                  variant="subtle"
-                  size="xs"
-                  class="font-semibold"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
                 >
                   Mineur(e) au Salon ({{ userAgeAtEvent }} ans)
                 </UBadge>
                 <UBadge
                   v-else
                   color="success"
-                  variant="subtle"
-                  size="xs"
-                  class="font-semibold"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
                 >
                   Majeur(e) au Salon ({{ userAgeAtEvent }} ans)
                 </UBadge>

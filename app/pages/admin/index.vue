@@ -112,9 +112,7 @@ async function handleToggleRegistrations() {
         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
           Tableau de bord Administrateur
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Supervision en temps réel • Salon de la Danse d'Angers 2027
-        </p>
+       
       </div>
 
       <div class="flex items-center gap-2">
@@ -140,56 +138,7 @@ async function handleToggleRegistrations() {
       </div>
     </div>
 
-    <!-- BANDEAU GESTION CAMPAGNE D'INSCRIPTIONS (TEMPS RÉEL) -->
-    <div
-      v-if="stats?.edition"
-      class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-    >
-      <div class="flex items-center gap-3">
-        <div
-          class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
-          :class="stats.edition.isRegistrationOpen ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'"
-        >
-          <UIcon
-            :name="stats.edition.isRegistrationOpen ? 'i-lucide-calendar-check-2' : 'i-lucide-lock'"
-            class="w-5 h-5"
-          />
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h3 class="text-sm font-bold text-slate-900">
-              Campagne d'inscriptions {{ stats.edition.year }}
-            </h3>
-            <UBadge
-              :color="stats.edition.isRegistrationOpen ? 'success' : 'warning'"
-              variant="subtle"
-              size="xs"
-              class="font-semibold"
-            >
-              {{ stats.edition.isRegistrationOpen ? 'Ouverte aux bénévoles' : 'Fermée (Consultation seule)' }}
-            </UBadge>
-          </div>
-          <p class="text-xs text-slate-500 mt-0.5">
-            {{ stats.edition.isRegistrationOpen
-              ? 'Les bénévoles peuvent sélectionner, modifier et confirmer leurs créneaux.'
-              : 'Les créneaux sont verrouillés. Le planning bénévole est consultable en lecture seule.'
-            }}
-          </p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <UButton
-          :color="stats.edition.isRegistrationOpen ? 'warning' : 'success'"
-          :variant="stats.edition.isRegistrationOpen ? 'outline' : 'solid'"
-          size="sm"
-          :icon="stats.edition.isRegistrationOpen ? 'i-lucide-lock' : 'i-lucide-unlock'"
-          :label="stats.edition.isRegistrationOpen ? 'Fermer les inscriptions' : 'Ouvrir les inscriptions'"
-          class="font-semibold cursor-pointer shrink-0"
-          @click="openToggleConfirm"
-        />
-      </div>
-    </div>
+  
 
     <!-- ======================================================== -->
     <!-- 1. CARTES D'INDICATEURS CLÉS (KPIs)                      -->
@@ -290,9 +239,7 @@ async function handleToggleRegistrations() {
             <h2 class="text-sm sm:text-base font-bold text-slate-900">
               Remplissage par jour d'événement
             </h2>
-            <p class="text-xs text-slate-500">
-              Suivi des créneaux pourvus sur le week-end
-            </p>
+         
           </div>
           <UIcon
             name="i-lucide-calendar-range"
@@ -329,9 +276,7 @@ async function handleToggleRegistrations() {
             <h2 class="text-sm sm:text-base font-bold text-slate-900">
               Taux d'occupation par mission
             </h2>
-            <p class="text-xs text-slate-500">
-              Couverture des besoins selon les postes
-            </p>
+         
           </div>
           <UIcon
             name="i-lucide-clipboard-check"
@@ -350,10 +295,10 @@ async function handleToggleRegistrations() {
                 <span class="font-semibold text-slate-900 truncate">{{ m.name }}</span>
                 <UBadge
                   v-if="m.isSensitive"
-                  color="primary"
-                  variant="subtle"
-                  size="xs"
-                  class="text-[9px] shrink-0"
+                  color="warning"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs shrink-0"
                 >
                   Sensible
                 </UBadge>
@@ -384,11 +329,9 @@ async function handleToggleRegistrations() {
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-sm sm:text-base font-bold text-slate-900">
-            Exports multi-formats & Rapports terrain
+            Exports
           </h2>
-          <p class="text-xs text-slate-500">
-            Téléchargement direct au format CSV compatible Microsoft Excel et tableurs
-          </p>
+         
         </div>
       </div>
 

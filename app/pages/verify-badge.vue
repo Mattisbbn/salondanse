@@ -110,16 +110,16 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
                 color="primary"
                 variant="solid"
                 size="sm"
-                class="font-bold tracking-wider"
+                class="font-bold tracking-wider text-xs px-2.5 py-1 shadow-2xs"
               >
                 BÉNÉVOLE
               </UBadge>
               <UBadge
                 v-if="data.volunteer.isMinor"
                 :color="data.volunteer.isApprovedMinor ? 'success' : 'warning'"
-                variant="subtle"
+                variant="solid"
                 size="sm"
-                class="text-[10px]"
+                class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
               >
                 {{ data.volunteer.isApprovedMinor ? 'Mineur (Autorisé)' : 'Mineur (En attente)' }}
               </UBadge>
