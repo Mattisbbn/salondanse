@@ -15,6 +15,12 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const q = typeof query.q === 'string' ? query.q.trim() : ''
   const statusFilter = typeof query.status === 'string' ? query.status.trim() : 'ALL'
+  const missionId = typeof query.missionId === 'string' && query.missionId.trim() && query.missionId !== 'ALL'
+    ? query.missionId.trim()
+    : undefined
+  const day = typeof query.day === 'string' && query.day.trim() && query.day !== 'ALL'
+    ? query.day.trim()
+    : undefined
 
   const whereClause: Prisma.UserWhereInput = {
     role: 'BENEVOLE',
@@ -34,6 +40,35 @@ export default defineEventHandler(async (event) => {
       { email: { contains: q, mode: 'insensitive' } },
       { phone: { contains: q, mode: 'insensitive' } }
     ]
+  }
+
+  const registrationWhere: Prisma.RegistrationWhereInput = {}
+
+  if (missionId) {
+    registrationWhere.slotMission = {
+      ...(registrationWhere.slotMission as Prisma.SlotMissionWhereInput || {}),
+      missionId
+    }
+  }
+
+  if (day) {
+    const dayStart = new Date(`${day}T00:00:00.000Z`)
+    const dayEnd = new Date(`${day}T23:59:59.999Z`)
+    registrationWhere.slotMission = {
+      ...(registrationWhere.slotMission as Prisma.SlotMissionWhereInput || {}),
+      timeSlot: {
+        date: {
+          gte: dayStart,
+          lte: dayEnd
+        }
+      }
+    }
+  }
+
+  if (missionId || day) {
+    whereClause.registrations = {
+      some: registrationWhere
+    }
   }
 
   const volunteers = await prisma.user.findMany({
@@ -121,8 +156,58 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  // Récupérer les options de filtres pour l'édition courante
+  const currentEdition = await prisma.edition.findFirst({
+    where: { isCurrent: true },
+    include: {
+      missions: {
+        where: { isActive: true },
+        orderBy: { name: 'asc' },
+        select: { id: true, name: true, isSensitive: true }
+      },
+      timeSlots: {
+        orderBy: [
+          { date: 'asc' },
+          { orderIndex: 'asc' }
+        ],
+        select: { date: true }
+      }
+    }
+  })
+
+  const uniqueDaysMap = new Map<string, string>()
+  if (currentEdition?.timeSlots) {
+    for (const ts of currentEdition.timeSlots) {
+      const iso = ts.date.toISOString().split('T')[0]!
+      if (!uniqueDaysMap.has(iso)) {
+        const d = new Date(ts.date)
+        const label = d.toLocaleDateString('fr-FR', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          timeZone: 'UTC'
+        })
+        uniqueDaysMap.set(iso, label.charAt(0).toUpperCase() + label.slice(1))
+      }
+    }
+  }
+
+  const daysOptions = Array.from(uniqueDaysMap.entries()).map(([value, label]) => ({
+    value,
+    label
+  }))
+
+  const missionsOptions = (currentEdition?.missions || []).map(m => ({
+    id: m.id,
+    name: m.name + (m.isSensitive ? ' (Sensible)' : '')
+  }))
+
   return {
     volunteers: formatted,
-    total: formatted.length
+    total: formatted.length,
+    filterOptions: {
+      missions: missionsOptions,
+      days: daysOptions
+    }
   }
 })

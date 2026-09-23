@@ -47,6 +47,67 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  const query = getQuery(event)
+  const format = typeof query.format === 'string' ? query.format.toLowerCase() : 'csv'
+
+  if (format === 'xlsx') {
+    const columns = [
+      { header: 'Nom', key: 'lastName', width: 18 },
+      { header: 'Prénom', key: 'firstName', width: 18 },
+      { header: 'Email', key: 'email', width: 28 },
+      { header: 'Téléphone', key: 'phone', width: 16 },
+      { header: 'Statut Planning', key: 'status', width: 20 },
+      { header: 'Date Verrouillage', key: 'lockedAt', width: 20 },
+      { header: 'Nombre de créneaux', key: 'count', width: 18 },
+      { header: 'Heures totales', key: 'hours', width: 15 },
+      { header: 'Détail des créneaux', key: 'slotsDetails', width: 45 }
+    ]
+
+    const data = volunteers.map((v) => {
+      const statusLabel = v.planningStatus === 'CONFIRMED' ? 'Validé et Verrouillé' : 'Brouillon'
+      const lockedDateFormatted = v.planningLockedAt
+        ? new Date(v.planningLockedAt).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        : ''
+
+      const slotsDetails = v.registrations.map((r) => {
+        const ts = r.slotMission.timeSlot
+        const m = r.slotMission.mission
+        const d = new Date(ts.date)
+        const dayShort = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
+        const sensitiveNotice = m.isSensitive ? ' [Sensible]' : ''
+        return `${dayShort} ${ts.startTime}-${ts.endTime} (${m.name}${sensitiveNotice})`
+      }).join(' | ')
+
+      return {
+        lastName: v.lastName,
+        firstName: v.firstName,
+        email: v.email,
+        phone: v.phone || '',
+        status: statusLabel,
+        lockedAt: lockedDateFormatted,
+        count: v.registrations.length,
+        hours: v.registrations.length * 2,
+        slotsDetails
+      }
+    })
+
+    const buffer = await generateExcelBuffer({
+      sheetName: 'Bénévoles 2027',
+      columns,
+      rows: data
+    })
+
+    setHeader(event, 'Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    setHeader(event, 'Content-Disposition', 'attachment; filename="benevoles-salondanse-2027.xlsx"')
+    return buffer
+  }
+
   // En-têtes CSV
   const headers = [
     'Nom',

@@ -70,7 +70,7 @@ async function main() {
     }
   })
 
-  // 4c. Bénévole mineur - En attente de validation
+  // 4c. Bénévole mineur - En attente de validation (PENDING)
   await prisma.user.create({
     data: {
       email: 'mineur.attente@salondeladanse.fr',
@@ -83,6 +83,46 @@ async function main() {
       isMinor: true,
       parentalAuthorizationUrl: '/uploads/parental-authorizations/sample-test.pdf',
       minorValidationStatus: 'PENDING',
+      isApprovedMinor: false,
+      planningStatus: RegistrationStatus.DRAFT,
+      planningLockedAt: null,
+      editionId: edition.id
+    }
+  })
+
+  // 4d. Bénévole mineur - Validé par l'admin (VALIDATED)
+  await prisma.user.create({
+    data: {
+      email: 'mineur.valide@salondeladanse.fr',
+      firstName: 'Manon',
+      lastName: 'Dubois',
+      phone: '0633445566',
+      passwordHash: commonPasswordHash,
+      role: Role.BENEVOLE,
+      birthDate: new Date('2009-11-20'), // 17 ans en mai 2027
+      isMinor: true,
+      parentalAuthorizationUrl: '/uploads/parental-authorizations/sample-test.pdf',
+      minorValidationStatus: 'VALIDATED',
+      isApprovedMinor: true,
+      planningStatus: RegistrationStatus.DRAFT,
+      planningLockedAt: null,
+      editionId: edition.id
+    }
+  })
+
+  // 4e. Bénévole mineur - Rejeté par l'admin (REJECTED)
+  await prisma.user.create({
+    data: {
+      email: 'mineur.refuse@salondeladanse.fr',
+      firstName: 'Lucas',
+      lastName: 'Roux',
+      phone: '0644556677',
+      passwordHash: commonPasswordHash,
+      role: Role.BENEVOLE,
+      birthDate: new Date('2011-02-10'), // 16 ans en mai 2027
+      isMinor: true,
+      parentalAuthorizationUrl: '/uploads/parental-authorizations/sample-test.pdf',
+      minorValidationStatus: 'REJECTED',
       isApprovedMinor: false,
       planningStatus: RegistrationStatus.DRAFT,
       planningLockedAt: null,
@@ -185,7 +225,9 @@ async function main() {
   console.log('Mot de passe commun :', commonPassword)
   console.log('1. Admin : admin@salondeladanse.fr')
   console.log('2. Bénévole majeur : benevole@salondeladanse.fr')
-  console.log('3. Mineur en attente : mineur.attente@salondeladanse.fr')
+  console.log('3. Mineur en attente (PENDING) : mineur.attente@salondeladanse.fr')
+  console.log('4. Mineur validé (VALIDATED) : mineur.valide@salondeladanse.fr')
+  console.log('5. Mineur refusé (REJECTED) : mineur.refuse@salondeladanse.fr')
   console.log('--- Invitations Démonstration ---')
   console.log('Code non utilisé : SD2027-NOUVEAU')
   console.log('Invitation active : SD2027-ACTIF (invitation.active@test.fr)')

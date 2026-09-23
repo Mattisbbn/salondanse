@@ -75,6 +75,66 @@ export default defineEventHandler(async (event) => {
     ]
   })
 
+  const format = typeof query.format === 'string' ? query.format.toLowerCase() : 'csv'
+
+  if (format === 'xlsx') {
+    const columns = [
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Tranche Horaire', key: 'timeSlot', width: 18 },
+      { header: 'Mission', key: 'missionName', width: 24 },
+      { header: 'Poste Sensible', key: 'isSensitive', width: 16 },
+      { header: 'Nom', key: 'lastName', width: 18 },
+      { header: 'Prénom', key: 'firstName', width: 18 },
+      { header: 'Email', key: 'email', width: 28 },
+      { header: 'Téléphone', key: 'phone', width: 16 },
+      { header: 'Statut Planning', key: 'status', width: 18 },
+      { header: 'Profil', key: 'minor', width: 14 }
+    ]
+
+    const data = registrations.map((reg) => {
+      const ts = reg.slotMission.timeSlot
+      const m = reg.slotMission.mission
+      const u = reg.user
+      const d = new Date(ts.date)
+      const formattedDate = d.toLocaleDateString('fr-FR', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC'
+      })
+
+      return {
+        date: formattedDate,
+        timeSlot: `${ts.startTime} - ${ts.endTime}`,
+        missionName: m.name,
+        isSensitive: m.isSensitive ? 'OUI' : 'NON',
+        lastName: u.lastName,
+        firstName: u.firstName,
+        email: u.email,
+        phone: u.phone || '',
+        status: u.planningStatus === 'CONFIRMED' ? 'Validé' : 'Brouillon',
+        minor: u.isMinor ? 'Mineur' : 'Majeur'
+      }
+    })
+
+    const buffer = await generateExcelBuffer({
+      sheetName: 'Émargement Missions',
+      columns,
+      rows: data
+    })
+
+    const xlsxFilename = missionId
+      ? `planning-mission-${missionId.slice(0, 8)}.xlsx`
+      : dayFilter
+        ? `planning-jour-${dayFilter}.xlsx`
+        : 'planning-missions-global.xlsx'
+
+    setHeader(event, 'Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    setHeader(event, 'Content-Disposition', `attachment; filename="${xlsxFilename}"`)
+    return buffer
+  }
+
   const headers = [
     'Date',
     'Tranche Horaire',

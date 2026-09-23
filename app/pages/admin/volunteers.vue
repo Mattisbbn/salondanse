@@ -36,9 +36,23 @@ interface VolunteerItem {
   registrations: VolunteerRegistration[]
 }
 
+interface FilterMissionOption {
+  id: string
+  name: string
+}
+
+interface FilterDayOption {
+  value: string
+  label: string
+}
+
 interface VolunteersApiResponse {
   volunteers: VolunteerItem[]
   total: number
+  filterOptions?: {
+    missions: FilterMissionOption[]
+    days: FilterDayOption[]
+  }
 }
 
 interface AvailableMission {
@@ -71,17 +85,86 @@ const toast = useToast()
 // Filtres
 const searchQuery = ref('')
 const statusFilter = ref<'ALL' | 'DRAFT' | 'CONFIRMED'>('ALL')
+const missionFilter = ref('ALL')
+const dayFilter = ref('ALL')
 
 // Chargement des bénévoles
 const { data, status, refresh } = await useFetch<VolunteersApiResponse>('/api/admin/volunteers', {
   query: computed(() => ({
     q: searchQuery.value.trim(),
-    status: statusFilter.value
+    status: statusFilter.value,
+    missionId: missionFilter.value !== 'ALL' ? missionFilter.value : undefined,
+    day: dayFilter.value !== 'ALL' ? dayFilter.value : undefined
   })),
   lazy: false
 })
 
 const volunteers = computed(() => data.value?.volunteers || [])
+const availableFilterMissions = computed(() => data.value?.filterOptions?.missions || [])
+const availableFilterDays = computed(() => data.value?.filterOptions?.days || [])
+
+// Nombre total de bénévoles validés
+const confirmedVolunteersCount = computed(() => volunteers.value.filter(v => v.planningStatus === 'CONFIRMED').length)
+
+// État des rappels
+const sendingReminderId = ref<string | null>(null)
+const isBulkRemindModalOpen = ref(false)
+const isSendingBulkReminders = ref(false)
+
+async function sendIndividualReminder(volunteer: VolunteerItem) {
+  if (sendingReminderId.value) return
+  sendingReminderId.value = volunteer.id
+
+  try {
+    const res = await $fetch<{ success: boolean, message: string }>('/api/admin/volunteers/remind', {
+      method: 'POST',
+      body: { volunteerId: volunteer.id }
+    })
+
+    toast.add({
+      title: 'Rappel envoyé !',
+      description: res.message,
+      color: 'success'
+    })
+  } catch (err: unknown) {
+    const errorObj = err as { data?: { statusMessage?: string }, statusMessage?: string }
+    toast.add({
+      title: 'Erreur',
+      description: errorObj?.data?.statusMessage || 'Impossible d\'envoyer le rappel.',
+      color: 'error'
+    })
+  } finally {
+    sendingReminderId.value = null
+  }
+}
+
+async function handleBulkRemind() {
+  if (isSendingBulkReminders.value) return
+  isSendingBulkReminders.value = true
+
+  try {
+    const res = await $fetch<{ success: boolean, count: number, message: string }>('/api/admin/volunteers/remind', {
+      method: 'POST',
+      body: { all: true }
+    })
+
+    toast.add({
+      title: 'Rappels groupés envoyés !',
+      description: res.message,
+      color: 'success'
+    })
+    isBulkRemindModalOpen.value = false
+  } catch (err: unknown) {
+    const errorObj = err as { data?: { statusMessage?: string }, statusMessage?: string }
+    toast.add({
+      title: 'Erreur',
+      description: errorObj?.data?.statusMessage || 'Impossible d\'envoyer les rappels groupés.',
+      color: 'error'
+    })
+  } finally {
+    isSendingBulkReminders.value = false
+  }
+}
 
 // Chargement de l'ensemble des créneaux et missions (y compris sensibles)
 const { data: allSlotsData, refresh: refreshSlots } = await useFetch<AllSlotsApiResponse>('/api/admin/missions/all-slots', {
@@ -422,58 +505,116 @@ const columns: TableColumn<VolunteerItem>[] = [
       </div>
     </div>
 
-    <!-- Barre d'outils supérieure (Recherche + Filtres) -->
-    <div class="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-      <!-- Recherche en temps réel -->
-      <div class="w-full sm:w-80">
-        <UInput
-          v-model="searchQuery"
-          type="search"
-          icon="i-lucide-search"
-          placeholder="Rechercher nom, prénom, e-mail..."
-          size="sm"
-          class="w-full"
-        />
+    <!-- Barre d'outils supérieure (Recherche + Filtres multi-critères) -->
+    <div class="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-xs space-y-3">
+      <!-- Ligne 1 : Recherche + Sélecteurs Mission et Jour -->
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+        <!-- Recherche en temps réel (sm:col-span-5) -->
+        <div class="sm:col-span-5">
+          <UInput
+            v-model="searchQuery"
+            type="search"
+            icon="i-lucide-search"
+            placeholder="Rechercher nom, prénom, e-mail..."
+            size="sm"
+            class="w-full"
+          />
+        </div>
+
+        <!-- Filtre par Mission (sm:col-span-4) -->
+        <div class="sm:col-span-4">
+          <select
+            v-model="missionFilter"
+            class="w-full bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 cursor-pointer transition-colors"
+          >
+            <option value="ALL">
+              Toutes les missions
+            </option>
+            <option
+              v-for="m in availableFilterMissions"
+              :key="m.id"
+              :value="m.id"
+            >
+              {{ m.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtre par Jour (sm:col-span-3) -->
+        <div class="sm:col-span-3">
+          <select
+            v-model="dayFilter"
+            class="w-full bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 cursor-pointer transition-colors"
+          >
+            <option value="ALL">
+              Tous les jours
+            </option>
+            <option
+              v-for="d in availableFilterDays"
+              :key="d.value"
+              :value="d.value"
+            >
+              {{ d.label }}
+            </option>
+          </select>
+        </div>
       </div>
 
-      <!-- Filtre statut -->
-      <div class="flex items-center gap-1.5 self-stretch sm:self-auto overflow-x-auto">
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
-          :class="[
-            statusFilter === 'ALL'
-              ? 'bg-violet-600 text-white shadow-xs'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
-          ]"
-          @click="statusFilter = 'ALL'"
-        >
-          Tous ({{ volunteers.length }})
-        </button>
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
-          :class="[
-            statusFilter === 'CONFIRMED'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
-          ]"
-          @click="statusFilter = 'CONFIRMED'"
-        >
-          Validés / Verrouillés
-        </button>
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
-          :class="[
-            statusFilter === 'DRAFT'
-              ? 'bg-amber-600 text-white shadow-xs'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
-          ]"
-          @click="statusFilter = 'DRAFT'"
-        >
-          Brouillons
-        </button>
+      <!-- Ligne 2 : Filtres Statuts + Bouton Rappel Global -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100">
+        <!-- Filtre statut -->
+        <div class="flex items-center gap-1.5 overflow-x-auto">
+          <button
+            type="button"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
+            :class="[
+              statusFilter === 'ALL'
+                ? 'bg-violet-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+            ]"
+            @click="statusFilter = 'ALL'"
+          >
+            Tous ({{ volunteers.length }})
+          </button>
+          <button
+            type="button"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
+            :class="[
+              statusFilter === 'CONFIRMED'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+            ]"
+            @click="statusFilter = 'CONFIRMED'"
+          >
+            Validés / Verrouillés ({{ confirmedVolunteersCount }})
+          </button>
+          <button
+            type="button"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0"
+            :class="[
+              statusFilter === 'DRAFT'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+            ]"
+            @click="statusFilter = 'DRAFT'"
+          >
+            Brouillons
+          </button>
+        </div>
+
+        <!-- Déclenchement du rappel groupé -->
+        <div class="flex items-center gap-2">
+          <UButton
+            color="primary"
+            variant="soft"
+            size="sm"
+            icon="i-lucide-bell"
+            label="Rappeler tous les validés"
+            class="font-semibold text-xs cursor-pointer shadow-2xs"
+            :disabled="confirmedVolunteersCount === 0"
+            @click="isBulkRemindModalOpen = true"
+          />
+        </div>
       </div>
     </div>
 
@@ -633,6 +774,19 @@ const columns: TableColumn<VolunteerItem>[] = [
                 :icon="row.original.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
                 :title="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
                 @click="toggleMinorApproval(row.original)"
+              />
+
+              <!-- Envoyer un rappel de convocation si planning validé -->
+              <UButton
+                v-if="row.original.planningStatus === 'CONFIRMED'"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                icon="i-lucide-bell"
+                title="Envoyer un rappel de convocation"
+                :loading="sendingReminderId === row.original.id"
+                class="cursor-pointer text-slate-500 hover:text-amber-600 hover:bg-amber-50"
+                @click="sendIndividualReminder(row.original)"
               />
             </div>
           </template>
@@ -798,6 +952,18 @@ const columns: TableColumn<VolunteerItem>[] = [
               :title="volunteer.isApprovedMinor ? 'Accord validé' : 'Valider accord'"
               class="cursor-pointer px-3 py-2"
               @click="toggleMinorApproval(volunteer)"
+            />
+
+            <UButton
+              v-if="volunteer.planningStatus === 'CONFIRMED'"
+              color="neutral"
+              variant="subtle"
+              size="sm"
+              icon="i-lucide-bell"
+              title="Envoyer un rappel de convocation"
+              :loading="sendingReminderId === volunteer.id"
+              class="cursor-pointer px-3 py-2 text-amber-700 bg-amber-50 hover:bg-amber-100"
+              @click="sendIndividualReminder(volunteer)"
             />
           </div>
         </div>
@@ -1258,6 +1424,89 @@ const columns: TableColumn<VolunteerItem>[] = [
                   Confirmer la réinitialisation
                 </UButton>
               </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ======================================================== -->
+    <!-- MODALE DE CONFIRMATION RAPPEL GROUPÉ                      -->
+    <!-- ======================================================== -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="isBulkRemindModalOpen"
+          class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          @click="isBulkRemindModalOpen = false"
+        >
+          <div
+            class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-5 my-8"
+            @click.stop
+          >
+            <!-- En-tête -->
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <UIcon
+                  name="i-lucide-bell-ring"
+                  class="w-5 h-5"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-slate-900">
+                  Rappel général de convocation
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">
+                  Notification e-mail des bénévoles dont le planning est validé
+                </p>
+              </div>
+            </div>
+
+            <!-- Détails -->
+            <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 space-y-2">
+              <p class="font-semibold">
+                Vous vous apprêtez à envoyer un e-mail de rappel à :
+              </p>
+              <div class="text-sm font-extrabold text-amber-950 flex items-center gap-1.5">
+                <UIcon
+                  name="i-lucide-users"
+                  class="w-4 h-4 text-amber-700"
+                />
+                <span>{{ confirmedVolunteersCount }} bénévole(s) validé(s)</span>
+              </div>
+              <p class="text-[11px] text-amber-800 leading-relaxed pt-1 border-t border-amber-200/60">
+                Cet e-mail leur rappellera la liste précise de leurs créneaux, les horaires de présentation au QG (15 min avant) et le lien direct vers leur badge numérique.
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-end gap-2.5 pt-1">
+              <UButton
+                color="neutral"
+                variant="subtle"
+                size="sm"
+                label="Annuler"
+                :disabled="isSendingBulkReminders"
+                @click="isBulkRemindModalOpen = false"
+              />
+
+              <UButton
+                color="primary"
+                variant="solid"
+                size="sm"
+                icon="i-lucide-send"
+                :loading="isSendingBulkReminders"
+                label="Envoyer les rappels"
+                class="font-semibold shadow-xs cursor-pointer"
+                @click="handleBulkRemind"
+              />
             </div>
           </div>
         </div>

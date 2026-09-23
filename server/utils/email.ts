@@ -414,3 +414,158 @@ export async function sendPlanningConfirmationEmail(options: SendPlanningConfirm
     simulated: false
   }
 }
+
+export interface SendPlanningReminderOptions {
+  to: string
+  name: string
+  slots: PlanningSlotSummary[]
+  dashboardUrl: string
+}
+
+export async function sendPlanningReminderEmail(options: SendPlanningReminderOptions) {
+  const config = useRuntimeConfig()
+
+  const host = process.env.SMTP_HOST || config.smtpHost
+  const port = Number(process.env.SMTP_PORT || config.smtpPort) || 587
+  const user = process.env.SMTP_USER || config.smtpUser
+  const pass = process.env.SMTP_PASS || config.smtpPass
+  const from = process.env.SMTP_FROM || config.smtpFrom || 'Salon de la Danse <no-reply@salondeladanse.fr>'
+
+  const isSmtpConfigured = Boolean(host && user && pass)
+
+  const slotsListHtml = options.slots.map((s) => {
+    return `
+      <tr style="border-bottom: 1px solid #F1F5F9;">
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #0F172A;">
+          ${s.date}
+        </td>
+        <td style="padding: 12px 16px; font-size: 14px; color: #64748B; font-family: monospace;">
+          ${s.startTime} - ${s.endTime}
+        </td>
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #7C3AED;">
+          ${s.missionName}
+        </td>
+      </tr>
+    `
+  }).join('')
+
+  const emailHtml = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rappel de convocation - Salon de la Danse 2027</title>
+</head>
+<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #0F172A;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
+    <tr>
+      <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
+        <div style="display: inline-block; background-color: #D97706; color: #FFFFFF; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; margin-bottom: 16px;">
+          Rappel Convocation ⏰
+        </div>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
+          Salon de la Danse d'Angers 2027
+        </h1>
+        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748B;">
+          Rappel de vos créneaux et consignes pour votre engagement bénévole
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 32px;">
+        <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+          Bonjour <strong>${options.name || ''}</strong>,<br><br>
+          Le <strong>Salon de la Danse d'Angers</strong> approche à grands pas ! Nous vous envoyons ce rappel récapitulant vos tranches horaires et missions validées :
+        </p>
+
+        <h3 style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 700; color: #0F172A;">
+          Vos créneaux de bénévolat :
+        </h3>
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 24px; overflow: hidden; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0;">
+              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Jour</th>
+              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Horaire</th>
+              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Mission</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${slotsListHtml}
+          </tbody>
+        </table>
+
+        <!-- Consignes importantes -->
+        <div style="background-color: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+          <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #92400E;">
+            📍 Rappel des consignes importantes :
+          </h4>
+          <p style="margin: 0; font-size: 13px; color: #78350F; line-height: 1.5;">
+            • Présentation obligatoire <strong>15 minutes avant l'heure</strong> au QG Bénévoles (Parc des Expositions d'Angers).<br>
+            • Munissez-vous d'une <strong>pièce d'identité</strong> pour le retrait de votre badge officiel et t-shirt.<br>
+            • En cas d'empêchement ou retard, contactez immédiatement la régie au <strong>06 12 34 56 78</strong>.
+          </p>
+        </div>
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+          <tr>
+            <td align="center">
+              <a href="${options.dashboardUrl}" style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);">
+                Accéder à mon badge & planning →
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 24px 32px; background-color: #F8FAFC; border-top: 1px solid #F1F5F9; font-size: 12px; color: #94A3B8; text-align: center;">
+        Association JayDance Fam • Salon de la Danse d'Angers 2027<br>
+        14-16 mai 2027 • Parc des Expositions d'Angers
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
+
+  if (!isSmtpConfigured) {
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.log('⏰ [DEV PLANNING REMINDER SIMULATOR - Salon de la Danse 2027]')
+    console.log(`➡️  Destinataire : ${options.to} (${options.name})`)
+    console.log(`📋  Missions     : ${options.slots.length} créneau(x) rappelé(s)`)
+    options.slots.forEach((s) => {
+      console.log(`    - ${s.date} ${s.startTime}-${s.endTime} : ${s.missionName}`)
+    })
+    console.log(`🔗  Espace       : ${options.dashboardUrl}`)
+    console.log('ℹ️  SMTP non configuré. Envoi simulé avec succès en local.')
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    return {
+      success: true,
+      simulated: true
+    }
+  }
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass
+    }
+  })
+
+  await transporter.sendMail({
+    from,
+    to: options.to,
+    subject: 'Salon de la Danse 2027 • Rappel de convocation bénévolat',
+    html: emailHtml
+  })
+
+  return {
+    success: true,
+    simulated: false
+  }
+}

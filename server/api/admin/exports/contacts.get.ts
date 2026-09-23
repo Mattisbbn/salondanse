@@ -48,6 +48,52 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  const query = getQuery(event)
+  const format = typeof query.format === 'string' ? query.format.toLowerCase() : 'csv'
+
+  if (format === 'xlsx') {
+    const columns = [
+      { header: 'Nom', key: 'lastName', width: 18 },
+      { header: 'Prénom', key: 'firstName', width: 18 },
+      { header: 'Téléphone', key: 'phone', width: 18 },
+      { header: 'Email', key: 'email', width: 28 },
+      { header: 'Statut Mineur', key: 'isMinor', width: 18 },
+      { header: 'Accord Parental Validé', key: 'parentalApproval', width: 24 },
+      { header: 'Statut Planning', key: 'status', width: 18 },
+      { header: 'Nombre de créneaux', key: 'count', width: 18 },
+      { header: 'Heures prévues', key: 'hours', width: 16 }
+    ]
+
+    const data = volunteers.map((v) => {
+      const isMinorLabel = v.isMinor ? 'OUI (Mineur)' : 'NON (Majeur)'
+      const parentalApproval = v.isMinor
+        ? (v.isApprovedMinor ? 'VALIDÉ' : 'EN ATTENTE')
+        : 'N/A'
+
+      return {
+        lastName: v.lastName,
+        firstName: v.firstName,
+        phone: v.phone || '',
+        email: v.email,
+        isMinor: isMinorLabel,
+        parentalApproval,
+        status: v.planningStatus === 'CONFIRMED' ? 'Validé' : 'Brouillon',
+        count: v._count.registrations,
+        hours: v._count.registrations * 2
+      }
+    })
+
+    const buffer = await generateExcelBuffer({
+      sheetName: 'Contacts Bénévoles',
+      columns,
+      rows: data
+    })
+
+    setHeader(event, 'Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    setHeader(event, 'Content-Disposition', 'attachment; filename="contacts-urgence-salondanse-2027.xlsx"')
+    return buffer
+  }
+
   const headers = [
     'Nom',
     'Prénom',

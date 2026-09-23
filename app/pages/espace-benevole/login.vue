@@ -18,6 +18,11 @@ const state = reactive({
   password: ''
 })
 
+interface FormRef {
+  clear: (name?: string) => void
+}
+
+const form = ref<FormRef | null>(null)
 const showPassword = ref(false)
 const isLoading = ref(false)
 
@@ -72,9 +77,12 @@ const demoAccounts: DemoAccount[] = [
   }
 ]
 
-function applyDemoAccount(account: DemoAccount) {
+async function applyDemoAccount(account: DemoAccount) {
   state.email = account.email
   state.password = account.password
+  form.value?.clear()
+  await nextTick()
+  form.value?.clear()
   toast.add({
     title: 'Compte chargé',
     description: `${account.label} sélectionné (${account.email})`,
@@ -175,6 +183,7 @@ const onSubmit = async () => {
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-violet-50 hover:border-violet-300'
               ]"
               :title="acc.description"
+              @mousedown.prevent
               @click="applyDemoAccount(acc)"
             >
               <span>{{ acc.label }}</span>
@@ -184,6 +193,7 @@ const onSubmit = async () => {
 
         <!-- Formulaire de connexion -->
         <UForm
+          ref="form"
           :schema="schema"
           :state="state"
           class="space-y-4"
@@ -204,7 +214,6 @@ const onSubmit = async () => {
               size="md"
               class="w-full"
               autocomplete="email"
-              autofocus
             />
           </UFormField>
 
