@@ -115,26 +115,20 @@ const glareStyle = computed(() => {
       <!-- CONTENU & HIÉRARCHIE VISUELLE DU BADGE                   -->
       <!-- ======================================================== -->
 
-      <!-- HAUT : Perforation tour de cou + En-tête -->
+      <!-- HAUT : En-tête -->
       <div class="relative z-10 space-y-3">
-        <!-- Encoche / perforation ovale stylisée de tour de cou -->
-       
-
         <!-- Logo et Édition -->
         <div class="flex items-center justify-between px-0.5">
-          <div class="flex items-center gap-1.5">
-           
-            <span class="font-extrabold text-sm tracking-tight text-slate-800">
-              Salon de la Danse
-            </span>
-          </div>
+          <span class="font-extrabold text-sm tracking-tight text-slate-800">
+            Salon de la Danse
+          </span>
           <span class="px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 font-bold text-[10px] tracking-wide border border-violet-100 shadow-2xs">
             Édition {{ volunteer.editionYear || 2027 }}
           </span>
         </div>
       </div>
 
-      <!-- MILIEU HAUT : Photo d'identité ronde + Badge violet BÉNÉVOLE -->
+      <!-- MILIEU HAUT : Photo d'identité ronde -->
       <div class="relative z-10 flex flex-col items-center my-auto">
         <div class="relative w-20 h-20 sm:w-22 sm:h-22">
           <img
@@ -151,13 +145,10 @@ const glareStyle = computed(() => {
           </div>
         </div>
 
-        <!-- Badge plein violet « BÉNÉVOLE » -->
-      
-
         <!-- Pastille statut mineur si applicable -->
         <div
           v-if="volunteer.isMinor"
-          
+          class="mt-1.5"
         >
           <span
             class="text-[9px] font-bold px-2 py-0.5 rounded-full inline-block"
@@ -204,10 +195,9 @@ const glareStyle = computed(() => {
         </div>
       </div>
 
-      <!-- BAS : Identifiant unique & Contrôle d'accès -->
-      <div class="relative z-10 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400 px-0.5">
+      <!-- BAS : Identifiant unique -->
+      <div class="relative z-10 pt-2 flex items-center justify-center text-[10px] font-mono text-slate-400 px-0.5">
         <span class="tracking-wider">ID: {{ volunteer.id.slice(0, 8).toUpperCase() }}</span>
-      
       </div>
     </div>
   </div>

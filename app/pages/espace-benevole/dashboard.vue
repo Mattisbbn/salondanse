@@ -632,23 +632,6 @@ function handlePrint() {
               </a>
             </div>
           </div>
-
-          <!-- Bouton Fermer en bas -->
-          <div
-            class="w-full max-w-sm pt-2"
-            @click.stop
-          >
-            <UButton
-              color="neutral"
-              variant="outline"
-              size="lg"
-              block
-              icon="i-lucide-arrow-left"
-              label="Quitter le mode plein écran"
-              class="text-white border-white/20 hover:bg-white/10 font-semibold cursor-pointer shadow-xs"
-              @click="isQrModalOpen = false"
-            />
-          </div>
         </div>
       </Transition>
     </Teleport>
