@@ -160,20 +160,8 @@ const glareStyle = computed(() => {
           v-else-if="data?.valid && data.volunteer"
           class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-3 pt-1 transition-opacity duration-300"
         >
-          <!-- Photo + Pastille de statut -->
+          <!-- Photo + Identité + Statut -->
           <div class="flex flex-col items-center">
-            <!-- Pastille de statut -->
-            <div class="mb-2">
-              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold shadow-xs">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <UIcon
-                  name="i-lucide-shield-check"
-                  class="w-3.5 h-3.5 text-emerald-600"
-                />
-                <span>Badge valide</span>
-              </div>
-            </div>
-
             <!-- Photo ronde comme volunteer badge -->
             <div class="relative w-20 h-20 sm:w-22 sm:h-22">
               <img
@@ -208,6 +196,18 @@ const glareStyle = computed(() => {
               <h3 class="text-slate-900 font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
                 {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
               </h3>
+            </div>
+
+            <!-- Pastille de statut en dessous du nom et de la pp -->
+            <div class="mt-2.5">
+              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold shadow-xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <UIcon
+                  name="i-lucide-shield-check"
+                  class="w-3.5 h-3.5 text-emerald-600"
+                />
+                <span>Badge valide</span>
+              </div>
             </div>
           </div>
 
