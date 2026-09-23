@@ -1,6 +1,6 @@
 import { Role, RegistrationStatus } from '@prisma/client'
-import QRCode from 'qrcode'
 import { getAuthenticatedUser } from '../../utils/auth'
+import { generateBadgeQrCode } from '../../utils/badge'
 import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
@@ -54,25 +54,10 @@ export default defineEventHandler(async (event) => {
     ]
   })
 
-  // Génération des QR codes en Data URL
+  // Génération des QR codes en Data URL avec URL absolue complète
   const badges = await Promise.all(
     volunteers.map(async (v) => {
-      // URL de vérification encodée dans le QR code
-      const verifyUrl = `/verify-badge?userId=${v.id}`
-      let qrCodeUrl = ''
-
-      try {
-        qrCodeUrl = await QRCode.toDataURL(verifyUrl, {
-          margin: 1,
-          width: 160,
-          color: {
-            dark: '#0F172A',
-            light: '#FFFFFF'
-          }
-        })
-      } catch (err: unknown) {
-        console.error(`Erreur génération QR code pour ${v.id}:`, err)
-      }
+      const { verifyUrl, qrCodeUrl } = await generateBadgeQrCode(v.id, event, { width: 160 })
 
       const missionsSummary = v.registrations.map(r => ({
         id: r.id,

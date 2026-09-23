@@ -28,11 +28,15 @@ interface VolunteerSummaryResponse {
     phone: string
     photoUrl: string | null
     isMinor: boolean
+    minorValidationStatus?: string
+    isApprovedMinor?: boolean
     planningStatus: 'DRAFT' | 'CONFIRMED'
     planningLockedAt: string | null
     isLocked: boolean
     editionName: string
     editionYear: number
+    qrCodeUrl?: string
+    verifyUrl?: string
   }
   emergencyContact: {
     organization: string
@@ -52,6 +56,9 @@ const { data } = await useFetch<VolunteerSummaryResponse>('/api/volunteer/me/sum
 
 const summary = computed(() => data.value)
 const isConfirmed = computed(() => summary.value?.volunteer.planningStatus === 'CONFIRMED')
+
+// Modale plein écran QR code
+const isQrModalOpen = ref(false)
 
 function handlePrint() {
   if (typeof window !== 'undefined') {
@@ -92,6 +99,117 @@ function handlePrint() {
           label="Modifier mes créneaux"
           class="font-semibold shadow-xs"
         />
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- CARTE BADGE MEMBRE BÉNÉVOLE & ACCRÉDITATION               -->
+    <!-- ======================================================== -->
+    <div
+      v-if="summary"
+      class="print:hidden bg-gradient-to-br from-violet-900 via-indigo-950 to-slate-950 text-white rounded-3xl p-6 sm:p-7 shadow-lg relative overflow-hidden border border-violet-800/40 cursor-pointer group transition-all hover:shadow-violet-900/20 hover:shadow-xl"
+      title="Cliquer pour afficher le QR Code en plein écran"
+      @click="isQrModalOpen = true"
+    >
+      <!-- Effets de fond esthétiques -->
+      <div class="absolute -right-12 -top-12 w-48 h-48 bg-violet-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <!-- Informations Profil du Badge -->
+        <div class="flex items-start sm:items-center gap-4 sm:gap-5 min-w-0">
+          <!-- Photo d'identité -->
+          <div class="relative shrink-0">
+            <img
+              v-if="summary.volunteer.photoUrl"
+              :src="summary.volunteer.photoUrl"
+              alt="Photo bénévole"
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-violet-400/60 shadow-md ring-4 ring-white/10"
+            >
+            <div
+              v-else
+              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-violet-600 text-white flex items-center justify-center font-bold text-2xl border-2 border-violet-400/60 shadow-md ring-4 ring-white/10"
+            >
+              {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
+            </div>
+            <!-- Pastille de statut -->
+            <span
+              class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-950 flex items-center justify-center"
+              title="Bénévole vérifié"
+            >
+              <span class="w-2 h-2 rounded-full bg-white animate-pulse" />
+            </span>
+          </div>
+
+          <!-- Nom, Rôle et Édition -->
+          <div class="space-y-1.5 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <UBadge
+                color="primary"
+                variant="solid"
+                size="xs"
+                class="font-extrabold uppercase tracking-wider bg-violet-500 text-white"
+              >
+                BÉNÉVOLE OFFICIEL
+              </UBadge>
+              <UBadge
+                v-if="summary.volunteer.isMinor"
+                color="warning"
+                variant="subtle"
+                size="xs"
+                class="font-semibold"
+              >
+                Mineur ({{ summary.volunteer.minorValidationStatus === 'VALIDATED' ? 'Autorisation validée' : 'En attente' }})
+              </UBadge>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight truncate">
+              {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
+            </h2>
+
+            <p class="text-xs sm:text-sm text-violet-200/90 font-medium">
+              {{ summary.volunteer.editionName || 'Salon de la Danse 2027' }} • Angers
+            </p>
+
+            <div class="flex items-center gap-2 pt-1 text-xs text-slate-300">
+              <span class="inline-flex items-center gap-1">
+                <UIcon
+                  name="i-lucide-calendar-check"
+                  class="w-3.5 h-3.5 text-violet-400"
+                />
+                {{ summary.totalSlots }} créneau(x) confirmé(s)
+              </span>
+              <span class="text-slate-600">•</span>
+              <span class="text-violet-300 font-semibold group-hover:underline inline-flex items-center gap-1">
+                <UIcon
+                  name="i-lucide-maximize-2"
+                  class="w-3 h-3"
+                />
+                Agrandir le QR Code
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Miniature du QR Code -->
+        <div class="flex items-center md:flex-col justify-between md:justify-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-white/10 md:pl-6">
+          <div class="p-2 bg-white rounded-2xl shadow-md border border-white/30 group-hover:scale-105 transition-transform">
+            <img
+              v-if="summary.volunteer.qrCodeUrl"
+              :src="summary.volunteer.qrCodeUrl"
+              alt="QR Code"
+              class="w-20 h-20 sm:w-24 sm:h-24"
+            >
+          </div>
+          <div class="text-right md:text-center">
+            <span class="text-[11px] font-bold text-violet-200 block uppercase tracking-wider">
+              Accréditation
+            </span>
+            <span class="text-[10px] text-slate-400 block">
+              Scan à l'accueil
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -501,5 +619,137 @@ function handlePrint() {
         Présentation obligatoire 15 minutes avant l'heure de début au QG Bénévoles.
       </div>
     </div>
+
+    <!-- ======================================================== -->
+    <!-- MODALE FULLSCREEN QR CODE POUR SCAN FACILE               -->
+    <!-- ======================================================== -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div
+          v-if="isQrModalOpen && summary"
+          class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-between p-4 sm:p-8"
+          @click="isQrModalOpen = false"
+        >
+          <!-- Barre supérieure avec bouton Fermer -->
+          <div
+            class="w-full max-w-md flex items-center justify-between"
+            @click.stop
+          >
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                SD
+              </div>
+              <span class="text-xs font-semibold text-slate-300">Accréditation Officielle Bénévole</span>
+            </div>
+
+            <button
+              type="button"
+              class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              aria-label="Fermer"
+              @click="isQrModalOpen = false"
+            >
+              <UIcon
+                name="i-lucide-x"
+                class="w-6 h-6"
+              />
+            </button>
+          </div>
+
+          <!-- Carte Centrale Plein Écran -->
+          <div
+            class="w-full max-w-sm bg-white rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl my-auto border border-white/20"
+            @click.stop
+          >
+            <!-- En-tête avec identité -->
+            <div class="flex flex-col items-center space-y-2">
+              <img
+                v-if="summary.volunteer.photoUrl"
+                :src="summary.volunteer.photoUrl"
+                alt="Photo bénévole"
+                class="w-20 h-20 rounded-2xl object-cover border-2 border-violet-500 shadow-xs"
+              >
+              <div
+                v-else
+                class="w-20 h-20 rounded-2xl bg-violet-600 text-white flex items-center justify-center font-bold text-xl shadow-xs"
+              >
+                {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
+              </div>
+
+              <div>
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">
+                  {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
+                </h3>
+                <span class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-700">
+                  BÉNÉVOLE • {{ summary.volunteer.editionYear || 2027 }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Grand QR Code Haute Résolution -->
+            <div class="p-4 bg-slate-50 border-2 border-slate-200/80 rounded-2xl inline-block shadow-inner">
+              <img
+                v-if="summary.volunteer.qrCodeUrl"
+                :src="summary.volunteer.qrCodeUrl"
+                alt="QR Code haute résolution"
+                class="w-60 h-60 sm:w-64 sm:h-64 mx-auto"
+              >
+            </div>
+
+            <div class="space-y-1">
+              <p class="text-xs font-bold text-slate-900">
+                Présentez ce QR Code à l'accueil du Salon
+              </p>
+              <p class="text-[11px] text-slate-500">
+                Luminosité maximale recommandée pour faciliter le scan
+              </p>
+            </div>
+
+            <!-- Affichage du lien d'accréditation officiel -->
+            <div
+              v-if="summary.volunteer.verifyUrl"
+              class="pt-1"
+            >
+              <a
+                :href="summary.volunteer.verifyUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-50 text-violet-700 hover:bg-violet-100 text-xs font-medium transition-colors border border-violet-200/60 max-w-full"
+                title="Lien officiel encodé dans le QR Code"
+              >
+                <UIcon
+                  name="i-lucide-external-link"
+                  class="w-3.5 h-3.5 shrink-0"
+                />
+                <span class="truncate max-w-[260px] sm:max-w-xs">{{ summary.volunteer.verifyUrl }}</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Bouton Fermer en bas -->
+          <div
+            class="w-full max-w-sm pt-2"
+            @click.stop
+          >
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="lg"
+              block
+              icon="i-lucide-arrow-left"
+              label="Quitter le mode plein écran"
+              class="text-white border-white/20 hover:bg-white/10 font-semibold cursor-pointer shadow-xs"
+              @click="isQrModalOpen = false"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>

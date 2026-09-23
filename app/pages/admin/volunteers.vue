@@ -854,7 +854,7 @@ const columns: TableColumn<VolunteerItem>[] = [
                       :key="m.slotMissionId"
                       :value="m.slotMissionId"
                     >
-                      {{ m.name }} {{ m.isSensitive ? '🔒 [Poste sensible]' : '' }} ({{ m.registeredCount }}/{{ m.capacityMax }})
+                      {{ m.name }} {{ m.isSensitive ? '[Poste restrein]' : '' }} ({{ m.registeredCount }}/{{ m.capacityMax }})
                     </option>
                   </select>
                 </div>

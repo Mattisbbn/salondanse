@@ -25,6 +25,9 @@ model Edition {
   isRegistrationOpen    Boolean          @default(true)
   registrationStartDate DateTime?
   registrationEndDate   DateTime?
+  eventStartDate        DateTime?
+  eventEndDate          DateTime?
+  eventDays             String[]         @default([])
   timeSlots          TimeSlot[]
   users              User[]
   invitationCodes    InvitationCode[]
@@ -53,11 +56,14 @@ model User {
   phone            String
   photoUrl         String?
   role             Role               @default(BENEVOLE)
-  isMinor          Boolean            @default(false)
-  isApprovedMinor  Boolean            @default(false)
-  isLocked         Boolean            @default(false)
-  planningStatus   RegistrationStatus @default(DRAFT)
-  planningLockedAt DateTime?
+  birthDate                DateTime?
+  isMinor                  Boolean            @default(false)
+  isApprovedMinor          Boolean            @default(false)
+  parentalAuthorizationUrl String?
+  minorValidationStatus    String             @default("NONE")
+  isLocked                 Boolean            @default(false)
+  planningStatus           RegistrationStatus @default(DRAFT)
+  planningLockedAt         DateTime?
 
   resetPasswordToken   String?   @unique
   resetPasswordExpires DateTime?

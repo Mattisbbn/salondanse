@@ -11,8 +11,18 @@ const registerSchema = z.object({
   email: z.string().trim().email('Adresse e-mail invalide.').toLowerCase(),
   phone: z.string().trim().min(8, 'Le numéro de téléphone doit comporter au moins 8 caractères.'),
   password: z.string().min(8, 'Le mot de passe doit comporter au moins 8 caractères.'),
+  birthDate: z.string().min(1, 'La date de naissance est obligatoire.').refine(v => !isNaN(Date.parse(v)), 'Date de naissance invalide.'),
   isMinor: z.boolean().default(false),
+  parentalAuthorizationUrl: z.string().trim().optional().nullable(),
   photoUrl: z.string().min(10, 'La photo d\'identité est obligatoire pour générer votre accréditation.')
+}).refine(data => {
+  if (data.isMinor && !data.parentalAuthorizationUrl) {
+    return false
+  }
+  return true
+}, {
+  message: 'L\'autorisation parentale au format PDF est obligatoire pour les bénévoles mineurs.',
+  path: ['parentalAuthorizationUrl']
 })
 
 export default defineEventHandler(async (event) => {
@@ -33,7 +43,9 @@ export default defineEventHandler(async (event) => {
     email,
     phone,
     password,
+    birthDate,
     isMinor,
+    parentalAuthorizationUrl,
     photoUrl
   } = parseResult.data
 
@@ -98,7 +110,10 @@ export default defineEventHandler(async (event) => {
         phone,
         passwordHash,
         photoUrl,
+        birthDate: new Date(birthDate),
         isMinor,
+        parentalAuthorizationUrl: isMinor ? parentalAuthorizationUrl : null,
+        minorValidationStatus: isMinor ? 'PENDING' : 'NONE',
         isApprovedMinor: false,
         role: Role.BENEVOLE,
         planningStatus: RegistrationStatus.DRAFT,

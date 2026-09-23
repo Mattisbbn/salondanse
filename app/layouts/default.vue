@@ -28,6 +28,11 @@ const adminNavItems: NavItem[] = [
     icon: 'i-lucide-users'
   },
   {
+    label: 'Profils Mineurs',
+    to: '/admin/minors',
+    icon: 'i-lucide-shield-alert'
+  },
+  {
     label: 'Badges & QR Codes',
     to: '/admin/badges',
     icon: 'i-lucide-id-card'

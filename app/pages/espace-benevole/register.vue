@@ -15,7 +15,13 @@ const { fetchUser } = useAuth()
 const invitationCode = ref('')
 const isCheckingCode = ref(false)
 const isCodeValid = ref(false)
-const verifiedEdition = ref<{ id: string, name: string, year: number } | null>(null)
+const verifiedEdition = ref<{
+  id: string
+  name: string
+  year: number
+  eventStartDate?: string | null
+  eventDays?: string[]
+} | null>(null)
 
 // Étape 2 : Formulaire d'inscription
 const firstName = ref('')
@@ -23,12 +29,127 @@ const lastName = ref('')
 const email = ref('')
 const phone = ref('')
 const password = ref('')
+const birthDate = ref('')
 const isMinor = ref(false)
+const parentalAuthorizationUrl = ref<string | null>(null)
+const pdfFileName = ref('')
+const isUploadingPdf = ref(false)
+const pdfInputRef = ref<HTMLInputElement | null>(null)
+
 const photoUrl = ref<string | null>(null)
 const photoFileName = ref('')
 const photoInputRef = ref<HTMLInputElement | null>(null)
 
 const isRegistering = ref(false)
+
+// Calcul dynamique de l'âge par rapport aux dates du Salon
+const userAgeAtEvent = computed<number | null>(() => {
+  if (!birthDate.value) return null
+  const b = new Date(birthDate.value)
+  if (isNaN(b.getTime())) return null
+
+  // Date de référence de l'événement
+  let eventDate = new Date(`${verifiedEdition.value?.year || 2027}-05-14T00:00:00Z`)
+  if (verifiedEdition.value?.eventStartDate) {
+    eventDate = new Date(verifiedEdition.value.eventStartDate)
+  } else if (verifiedEdition.value?.eventDays && verifiedEdition.value.eventDays.length > 0) {
+    eventDate = new Date(verifiedEdition.value.eventDays[0]!)
+  }
+
+  let age = eventDate.getFullYear() - b.getFullYear()
+  const m = eventDate.getMonth() - b.getMonth()
+  if (m < 0 || (m === 0 && eventDate.getDate() < b.getDate())) {
+    age--
+  }
+  return age
+})
+
+// Synchronisation automatique de isMinor
+watch(userAgeAtEvent, (newAge) => {
+  if (newAge !== null) {
+    const minor = newAge < 18
+    isMinor.value = minor
+    if (!minor) {
+      parentalAuthorizationUrl.value = null
+      pdfFileName.value = ''
+      if (pdfInputRef.value) {
+        pdfInputRef.value.value = ''
+      }
+    }
+  } else {
+    isMinor.value = false
+  }
+})
+
+// Upload de l'autorisation parentale (PDF uniquement, max 10 Mo)
+async function handlePdfChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    toast.add({
+      title: 'Format non supporté',
+      description: 'Veuillez sélectionner un document au format PDF uniquement.',
+      color: 'warning'
+    })
+    target.value = ''
+    return
+  }
+
+  const maxSizeBytes = 10 * 1024 * 1024
+  if (file.size > maxSizeBytes) {
+    toast.add({
+      title: 'Fichier trop volumineux',
+      description: 'L\'autorisation parentale ne doit pas dépasser 10 Mo.',
+      color: 'warning'
+    })
+    target.value = ''
+    return
+  }
+
+  isUploadingPdf.value = true
+  pdfFileName.value = file.name
+
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await $fetch<{ url: string, message: string }>('/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+
+    parentalAuthorizationUrl.value = res.url
+    toast.add({
+      title: 'Document téléversé',
+      description: 'Votre autorisation parentale a été enregistrée avec succès.',
+      color: 'success'
+    })
+  } catch (err: unknown) {
+    parentalAuthorizationUrl.value = null
+    pdfFileName.value = ''
+    const errorObj = err as { data?: { statusMessage?: string }, statusMessage?: string, message?: string }
+    toast.add({
+      title: 'Échec du téléversement',
+      description: errorObj?.data?.statusMessage || errorObj?.statusMessage || errorObj?.message || 'Erreur lors de l\'envoi du PDF.',
+      color: 'error'
+    })
+    if (pdfInputRef.value) {
+      pdfInputRef.value.value = ''
+    }
+  } finally {
+    isUploadingPdf.value = false
+  }
+}
+
+function removePdf() {
+  parentalAuthorizationUrl.value = null
+  pdfFileName.value = ''
+  if (pdfInputRef.value) {
+    pdfInputRef.value.value = ''
+  }
+}
 
 // Vérification du code d'invitation
 async function verifyCode(silentOnEmpty = false) {
@@ -50,7 +171,13 @@ async function verifyCode(silentOnEmpty = false) {
     const res = await $fetch<{
       valid: boolean
       code: string
-      edition: { id: string, name: string, year: number }
+      edition: {
+        id: string
+        name: string
+        year: number
+        eventStartDate?: string | null
+        eventDays?: string[]
+      }
     }>('/api/auth/verify-code', {
       method: 'POST',
       body: { code: codeToTest }
@@ -156,6 +283,24 @@ async function handleRegister() {
     return
   }
 
+  if (!birthDate.value) {
+    toast.add({
+      title: 'Date de naissance obligatoire',
+      description: 'Veuillez renseigner votre date de naissance.',
+      color: 'warning'
+    })
+    return
+  }
+
+  if (isMinor.value && !parentalAuthorizationUrl.value) {
+    toast.add({
+      title: 'Autorisation parentale obligatoire',
+      description: 'En tant que bénévole mineur(e), vous devez obligatoirement joindre une autorisation parentale au format PDF.',
+      color: 'warning'
+    })
+    return
+  }
+
   if (!email.value.trim() || !email.value.includes('@')) {
     toast.add({
       title: 'E-mail requis',
@@ -201,10 +346,12 @@ async function handleRegister() {
         code: invitationCode.value.trim().toUpperCase(),
         firstName: firstName.value.trim(),
         lastName: lastName.value.trim(),
+        birthDate: birthDate.value,
+        isMinor: isMinor.value,
+        parentalAuthorizationUrl: isMinor.value ? parentalAuthorizationUrl.value : null,
         email: email.value.trim().toLowerCase(),
         phone: phone.value.trim(),
         password: password.value,
-        isMinor: isMinor.value,
         photoUrl: photoUrl.value
       }
     })
@@ -434,28 +581,157 @@ onMounted(() => {
             />
           </div>
 
-          <!-- Case Mineur -->
-          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-            <div class="flex items-center gap-2">
-              <input
-                id="isMinor"
-                v-model="isMinor"
-                type="checkbox"
-                class="w-4 h-4 rounded text-violet-600 border-slate-300 focus:ring-violet-500 cursor-pointer"
-              >
-              <label
-                for="isMinor"
-                class="text-xs font-semibold text-slate-900 cursor-pointer select-none"
-              >
-                Je suis mineur(e) (moins de 18 ans au 14 mai 2027)
+          <!-- Date de naissance & Détection automatique Mineur/Majeur -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-700">
+                Date de naissance <span class="text-red-500">*</span>
               </label>
+              <div v-if="userAgeAtEvent !== null">
+                <UBadge
+                  v-if="isMinor"
+                  color="warning"
+                  variant="subtle"
+                  size="xs"
+                  class="font-semibold"
+                >
+                  Mineur(e) au Salon ({{ userAgeAtEvent }} ans)
+                </UBadge>
+                <UBadge
+                  v-else
+                  color="success"
+                  variant="subtle"
+                  size="xs"
+                  class="font-semibold"
+                >
+                  Majeur(e) au Salon ({{ userAgeAtEvent }} ans)
+                </UBadge>
+              </div>
             </div>
-            <p
-              v-if="isMinor"
-              class="text-[11px] text-amber-700 font-medium pl-6"
-            >
-              ⚠️ Une autorisation parentale signée par votre représentant légal vous sera demandée par l'organisation avant le festival.
+
+            <UInput
+              v-model="birthDate"
+              type="date"
+              icon="i-lucide-calendar"
+              size="md"
+              class="w-full"
+              required
+            />
+            <p class="text-[11px] text-slate-500">
+              L'âge est calculé automatiquement à la date d'ouverture du festival (18 ans révolus requis pour le statut majeur).
             </p>
+          </div>
+
+          <!-- Section Spécifique Mineur(e) & Upload Autorisation Parentale (PDF) -->
+          <div
+            v-if="isMinor"
+            class="p-4 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-3"
+          >
+            <div class="flex items-start gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <UIcon
+                  name="i-lucide-shield-alert"
+                  class="w-4 h-4"
+                />
+              </div>
+              <div>
+                <h3 class="text-xs sm:text-sm font-bold text-amber-900">
+                  Bénévole mineur(e) — Autorisation parentale obligatoire
+                </h3>
+                <p class="text-[11px] sm:text-xs text-amber-800/90 mt-0.5 leading-relaxed">
+                  Conformément au règlement du Salon de la Danse, tout bénévole âgé de moins de 18 ans au moment de l'événement doit obligatoirement fournir une autorisation parentale signée par un représentant légal (format PDF).
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-1">
+              <input
+                ref="pdfInputRef"
+                type="file"
+                accept="application/pdf"
+                class="hidden"
+                @change="handlePdfChange"
+              >
+
+              <!-- Document déjà chargé -->
+              <div
+                v-if="parentalAuthorizationUrl"
+                class="flex items-center justify-between p-3 bg-white border border-amber-200 rounded-xl shadow-2xs"
+              >
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <UIcon
+                      name="i-lucide-file-check"
+                      class="w-4 h-4"
+                    />
+                  </div>
+                  <div class="min-w-0">
+                    <span class="block text-xs font-semibold text-slate-900 truncate">
+                      {{ pdfFileName || 'Autorisation-parentale.pdf' }}
+                    </span>
+                    <span class="block text-[10px] text-emerald-700 font-medium">
+                      Document PDF prêt pour vérification
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <a
+                    :href="parentalAuthorizationUrl"
+                    target="_blank"
+                    class="p-1.5 text-xs text-slate-600 hover:text-violet-700 font-medium rounded-lg hover:bg-slate-100 transition-colors"
+                    title="Aperçu du PDF"
+                  >
+                    <UIcon
+                      name="i-lucide-eye"
+                      class="w-4 h-4"
+                    />
+                  </a>
+                  <button
+                    type="button"
+                    class="p-1.5 text-xs text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                    title="Supprimer"
+                    @click="removePdf"
+                  >
+                    <UIcon
+                      name="i-lucide-trash-2"
+                      class="w-4 h-4"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Bouton d'upload si non encore chargé -->
+              <div v-else>
+                <button
+                  type="button"
+                  class="w-full flex flex-col items-center justify-center gap-1.5 p-4 border-2 border-dashed border-amber-300 hover:border-amber-400 bg-white/70 hover:bg-white rounded-xl transition-all cursor-pointer text-center"
+                  :disabled="isUploadingPdf"
+                  @click="pdfInputRef?.click()"
+                >
+                  <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                    <UIcon
+                      v-if="isUploadingPdf"
+                      name="i-lucide-loader-2"
+                      class="w-4 h-4 animate-spin"
+                    />
+                    <UIcon
+                      v-else
+                      name="i-lucide-upload-cloud"
+                      class="w-4 h-4"
+                    />
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-900 block">
+                      {{ isUploadingPdf ? 'Téléversement du PDF en cours...' : 'Téléverser l\'autorisation parentale signée' }}
+                    </span>
+                    <span class="text-[10px] text-slate-500">
+                      Document PDF uniquement (10 Mo maximum)
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Upload Photo d'identité (Obligatoire pour Badge) -->

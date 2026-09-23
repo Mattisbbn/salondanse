@@ -187,7 +187,7 @@ function formatDate(dateStr: string) {
 const columns: TableColumn<InvitationItem>[] = [
   {
     accessorKey: 'email',
-    header: 'Destinataire (E-mail)'
+    header: 'Destinataire'
   },
   {
     accessorKey: 'code',

@@ -137,6 +137,11 @@ export default defineEventHandler(async (event) => {
   )
 
   return {
+    edition: edition ? {
+      id: edition.id,
+      name: edition.name,
+      year: edition.year
+    } : null,
     planningStatus: user.planningStatus,
     planningLockedAt: user.planningLockedAt,
     isLocked: user.isLocked || user.planningStatus === 'CONFIRMED',

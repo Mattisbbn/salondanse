@@ -1,4 +1,5 @@
 import { getAuthenticatedUser } from '../../../utils/auth'
+import { generateBadgeQrCode } from '../../../utils/badge'
 import { prisma } from '../../../utils/prisma'
 
 const MISSION_GUIDELINES: Record<string, { location: string, instructions: string }> = {
@@ -119,6 +120,9 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  // Génération du QR code officiel pour le badge du bénévole avec URL absolue
+  const { verifyUrl, qrCodeUrl } = await generateBadgeQrCode(user.id, event, { width: 400 })
+
   return {
     volunteer: {
       id: user.id,
@@ -129,11 +133,15 @@ export default defineEventHandler(async (event) => {
       phone: user.phone,
       photoUrl: user.photoUrl,
       isMinor: user.isMinor,
+      minorValidationStatus: user.minorValidationStatus,
+      isApprovedMinor: user.isApprovedMinor,
       planningStatus: user.planningStatus,
       planningLockedAt: user.planningLockedAt,
       isLocked: user.isLocked || user.planningStatus === 'CONFIRMED',
       editionName: user.edition.name,
-      editionYear: user.edition.year
+      editionYear: user.edition.year,
+      qrCodeUrl,
+      verifyUrl
     },
     emergencyContact: {
       organization: 'JayDance Animation • Salon de la Danse d\'Angers 2027',

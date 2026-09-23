@@ -57,7 +57,9 @@ export default defineEventHandler(async (event) => {
     edition: {
       id: invitation.edition.id,
       name: invitation.edition.name,
-      year: invitation.edition.year
+      year: invitation.edition.year,
+      eventStartDate: invitation.edition.eventStartDate?.toISOString() || null,
+      eventDays: invitation.edition.eventDays || []
     }
   }
 })

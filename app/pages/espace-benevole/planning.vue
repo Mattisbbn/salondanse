@@ -37,6 +37,11 @@ interface DayData {
 }
 
 interface PlanningApiResponse {
+  edition?: {
+    id: string
+    name: string
+    year: number
+  } | null
   planningStatus: 'DRAFT' | 'CONFIRMED'
   planningLockedAt: string | null
   isLocked: boolean
@@ -50,6 +55,23 @@ interface PlanningApiResponse {
 // Chargement des créneaux
 const { data, status, refresh } = await useFetch<PlanningApiResponse>('/api/planning/slots', {
   lazy: false
+})
+
+const editionSubtitle = computed(() => {
+  const editionName = data.value?.edition?.name || 'Salon de la Danse'
+  const days = data.value?.days
+  if (!days || days.length === 0) {
+    return `${editionName} (Angers)`
+  }
+  const first = days[0]
+  if (days.length === 1 && first) {
+    return `${editionName} • ${first.dayLabel} (Angers)`
+  }
+  const last = days[days.length - 1]
+  if (first && last) {
+    return `${editionName} • Du ${first.dayLabel} au ${last.dayLabel} (${days.length} jours • Angers)`
+  }
+  return `${editionName} (Angers)`
 })
 
 // Liste des IDs sélectionnés dans l'UI (réactif)
@@ -413,7 +435,7 @@ async function confirmPlanning() {
           Mon Planning Bénévole
         </h1>
         <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Salon de la Danse 2027 • 14, 15 et 16 Mai (Angers)
+          {{ editionSubtitle }}
         </p>
       </div>
 

@@ -33,6 +33,55 @@ const schema = z.object({
   password: z.string().min(1, 'Le mot de passe est obligatoire')
 })
 
+// ========================================================
+// COMPTES DE DÉMONSTRATION
+// ========================================================
+interface DemoAccount {
+  label: string
+  roleLabel: string
+  badgeColor: 'primary' | 'neutral' | 'warning'
+  email: string
+  password: string
+  description: string
+}
+
+const demoAccounts: DemoAccount[] = [
+  {
+    label: 'Administrateur',
+    roleLabel: 'Admin',
+    badgeColor: 'primary',
+    email: 'admin@salondeladanse.fr',
+    password: 'Password123!',
+    description: 'Accès complet au Back-Office (inscriptions, mineurs, plannings, multi-éditions)'
+  },
+  {
+    label: 'Bénévole majeur',
+    roleLabel: 'Majeur (Vierge)',
+    badgeColor: 'neutral',
+    email: 'benevole@salondeladanse.fr',
+    password: 'Password123!',
+    description: 'Planning vierge pour tester la sélection et la validation'
+  },
+  {
+    label: 'Bénévole mineur (En attente)',
+    roleLabel: 'En attente',
+    badgeColor: 'warning',
+    email: 'mineur.attente@salondeladanse.fr',
+    password: 'Password123!',
+    description: 'Mineur avec autorisation PDF liée, en attente de validation admin'
+  }
+]
+
+function applyDemoAccount(account: DemoAccount) {
+  state.email = account.email
+  state.password = account.password
+  toast.add({
+    title: 'Compte chargé',
+    description: `${account.label} sélectionné (${account.email})`,
+    color: 'success'
+  })
+}
+
 const onSubmit = async () => {
   if (isLoading.value) return
   isLoading.value = true
@@ -93,6 +142,44 @@ const onSubmit = async () => {
             class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
           />
           <span class="leading-relaxed font-medium">{{ warningMessage }}</span>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- SÉLECTEUR DE COMPTES DÉMO (PROTOTYPE)                    -->
+        <!-- ======================================================== -->
+        <div class="mb-6 p-4 rounded-xl bg-violet-50/70 border border-violet-200/80 space-y-2.5">
+          <div class="flex items-center gap-2">
+            <UIcon
+              name="i-lucide-sparkles"
+              class="w-4 h-4 text-violet-600 shrink-0"
+            />
+            <span class="text-xs font-bold text-violet-950 uppercase tracking-wider">
+              Profils de Démonstration
+            </span>
+          </div>
+
+          <p class="text-[11px] text-slate-600">
+            Cliquez sur un profil pour pré-remplir instantanément les identifiants :
+          </p>
+
+          <!-- Boutons d'accès rapide -->
+          <div class="flex flex-wrap gap-2 pt-0.5">
+            <button
+              v-for="acc in demoAccounts"
+              :key="acc.email"
+              type="button"
+              class="px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 border cursor-pointer shadow-xs"
+              :class="[
+                state.email === acc.email
+                  ? 'bg-violet-600 text-white border-violet-600 ring-2 ring-violet-200 shadow-sm'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-violet-50 hover:border-violet-300'
+              ]"
+              :title="acc.description"
+              @click="applyDemoAccount(acc)"
+            >
+              <span>{{ acc.label }}</span>
+            </button>
+          </div>
         </div>
 
         <!-- Formulaire de connexion -->
