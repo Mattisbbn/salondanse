@@ -45,7 +45,10 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
     <!-- Carte physique de badge / effet carte bancaire -->
     <div class="relative w-full max-w-sm rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.7),0_0_30px_rgba(99,102,241,0.15)] backdrop-blur-xl p-4 sm:p-5 text-center text-white flex flex-col justify-between">
       <!-- Reflet lumineux animé (shimmer) -->
-      <div class="badge-shimmer pointer-events-none absolute inset-0" />
+      <div
+        data-shimmer
+        class="pointer-events-none absolute inset-0"
+      />
 
       <!-- Halo holographique d'angle -->
       <div class="pointer-events-none absolute -top-16 -right-16 w-36 h-36 bg-violet-500/20 rounded-full blur-2xl" />
@@ -194,7 +197,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
 </template>
 
 <style scoped>
-.badge-shimmer {
+[data-shimmer] {
   background: linear-gradient(
     115deg,
     transparent 20%,
