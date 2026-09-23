@@ -118,16 +118,12 @@ const glareStyle = computed(() => {
       <!-- HAUT : Perforation tour de cou + En-tête -->
       <div class="relative z-10 space-y-3">
         <!-- Encoche / perforation ovale stylisée de tour de cou -->
-        <div class="w-14 h-3 mx-auto rounded-full bg-slate-200/90 border border-slate-300/70 shadow-inner flex items-center justify-center">
-          <div class="w-8 h-1 rounded-full bg-slate-300/70" />
-        </div>
+       
 
         <!-- Logo et Édition -->
         <div class="flex items-center justify-between px-0.5">
           <div class="flex items-center gap-1.5">
-            <div class="w-6 h-6 rounded-lg bg-violet-600 text-white flex items-center justify-center font-black text-[11px] shadow-xs">
-              SD
-            </div>
+           
             <span class="font-extrabold text-sm tracking-tight text-slate-800">
               Salon de la Danse
             </span>
@@ -156,16 +152,12 @@ const glareStyle = computed(() => {
         </div>
 
         <!-- Badge plein violet « BÉNÉVOLE » -->
-        <div class="-mt-3 relative z-10">
-          <span class="inline-flex items-center px-3 py-0.5 rounded-full bg-violet-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-sm">
-            BÉNÉVOLE
-          </span>
-        </div>
+      
 
         <!-- Pastille statut mineur si applicable -->
         <div
           v-if="volunteer.isMinor"
-          class="mt-1"
+          
         >
           <span
             class="text-[9px] font-bold px-2 py-0.5 rounded-full inline-block"
@@ -184,7 +176,7 @@ const glareStyle = computed(() => {
       </div>
 
       <!-- MILIEU BAS : QR Code officiel contrasté -->
-      <div class="relative z-10 flex flex-col items-center">
+      <div class="relative z-10 flex flex-col items-center mb-8">
         <div
           class="p-2 bg-white border border-slate-200/90 rounded-2xl shadow-xs group-hover:border-violet-300 transition-colors"
           title="Toucher pour plein écran"
@@ -215,7 +207,7 @@ const glareStyle = computed(() => {
       <!-- BAS : Identifiant unique & Contrôle d'accès -->
       <div class="relative z-10 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400 px-0.5">
         <span class="tracking-wider">ID: {{ volunteer.id.slice(0, 8).toUpperCase() }}</span>
-        <span class="font-sans font-medium text-slate-500">Contrôle d'accès</span>
+      
       </div>
     </div>
   </div>
