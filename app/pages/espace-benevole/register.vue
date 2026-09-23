@@ -273,12 +273,13 @@ onMounted(() => {
             </p>
           </div>
           <UBadge
-            :color="isCodeValid ? 'success' : 'primary'"
+            v-if="!isCodeValid"
+            color="primary"
             variant="subtle"
             size="sm"
             class="font-semibold"
           >
-            {{ isCodeValid ? 'Code validé' : 'Étape 1 sur 2' }}
+            Étape 1 sur 2
           </UBadge>
         </div>
 

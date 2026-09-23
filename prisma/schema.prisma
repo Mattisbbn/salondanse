@@ -35,6 +35,7 @@ model Edition {
 model InvitationCode {
   id        String   @id @default(uuid())
   code      String   @unique
+  email     String?
   isUsed    Boolean  @default(false)
   editionId String
   edition   Edition  @relation(fields: [editionId], references: [id])

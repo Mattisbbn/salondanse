@@ -45,9 +45,6 @@ export async function sendInvitationEmail(options: SendInvitationOptions) {
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
     <tr>
       <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
-        <div style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; margin-bottom: 16px;">
-          SD 2027
-        </div>
         <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
           Salon de la Danse d'Angers 2027
         </h1>

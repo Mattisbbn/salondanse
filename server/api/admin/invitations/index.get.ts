@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
   const formattedInvitations = invitations.map(inv => ({
     id: inv.id,
     code: inv.code,
+    email: inv.email || inv.usedBy?.email || null,
     isUsed: inv.isUsed,
     createdAt: inv.createdAt,
     usedBy: inv.usedBy

@@ -4,7 +4,8 @@ import { generateInvitationCode, sendInvitationEmail } from '../../../utils/emai
 import { prisma } from '../../../utils/prisma'
 
 const sendSchema = z.object({
-  email: z.string().trim().email('Format d\'adresse e-mail invalide')
+  email: z.string().trim().email('Format d\'adresse e-mail invalide'),
+  replaceExisting: z.boolean().optional().default(false)
 })
 
 export default defineEventHandler(async (event) => {
@@ -28,7 +29,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { email } = parseResult.data
+  const { email, replaceExisting } = parseResult.data
+  const normalizedEmail = email.toLowerCase()
 
   // Récupération de l'édition courante
   const currentEdition = await prisma.edition.findFirst({
@@ -39,6 +41,41 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 500,
       statusMessage: 'Aucune édition courante n\'est configurée.'
+    })
+  }
+
+  // Vérification si une invitation active (non encore utilisée) existe déjà pour cet e-mail
+  const existingActiveInvitation = await prisma.invitationCode.findFirst({
+    where: {
+      editionId: currentEdition.id,
+      isUsed: false,
+      email: {
+        equals: normalizedEmail,
+        mode: 'insensitive'
+      }
+    }
+  })
+
+  if (existingActiveInvitation) {
+    if (!replaceExisting) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: `Une invitation active existe déjà pour l'adresse ${email}.`,
+        data: {
+          code: 'INVITATION_ALREADY_EXISTS',
+          email,
+          existingInvitation: {
+            id: existingActiveInvitation.id,
+            code: existingActiveInvitation.code,
+            createdAt: existingActiveInvitation.createdAt
+          }
+        }
+      })
+    }
+
+    // Confirmation de l'administrateur : suppression de l'ancienne invitation associée
+    await prisma.invitationCode.delete({
+      where: { id: existingActiveInvitation.id }
     })
   }
 
@@ -66,10 +103,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Enregistrement en base de données
+  // Enregistrement en base de données avec l'e-mail du destinataire
   const invitation = await prisma.invitationCode.create({
     data: {
       code,
+      email: normalizedEmail,
       editionId: currentEdition.id,
       isUsed: false
     }
@@ -89,13 +127,15 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    message: `Invitation envoyée avec succès à ${email}`,
+    message: replaceExisting
+      ? `Invitation régénérée et envoyée avec succès à ${email}`
+      : `Invitation envoyée avec succès à ${email}`,
     invitation: {
       id: invitation.id,
       code: invitation.code,
+      email: invitation.email,
       isUsed: invitation.isUsed,
       createdAt: invitation.createdAt,
-      email,
       registrationUrl
     }
   }

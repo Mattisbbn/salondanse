@@ -360,7 +360,7 @@ function openConfirmModal() {
   if (hasConsecutiveSlotsConflict.value) {
     toast.add({
       title: 'Pause obligatoire non respectée',
-      description: 'Vous avez sélectionné 3 créneaux consécutifs le même jour (6h d\'affilée). Veuillez intercaler une pause.',
+      description: 'Impossible d\'enchaîner 3 créneaux consécutifs le même jour (pause obligatoire de 2h)',
       color: 'error'
     })
     return
@@ -544,7 +544,7 @@ async function confirmPlanning() {
           name="i-lucide-alert-triangle"
           class="w-4 h-4 shrink-0"
         />
-        <span>Règle métier violée : Interdiction d'enchaîner 3 créneaux consécutifs le même jour (pause obligatoire de 2h).</span>
+        <span>Impossible d'enchaîner 3 créneaux consécutifs le même jour (pause obligatoire de 2h)</span>
       </div>
     </div>
 

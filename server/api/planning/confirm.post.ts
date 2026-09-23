@@ -122,7 +122,7 @@ export default defineEventHandler(async (event) => {
           if (o2 === o1 + 1 && o3 === o2 + 1) {
             throw createError({
               statusCode: 400,
-              statusMessage: 'Pause obligatoire : vous ne pouvez pas enchaîner 3 créneaux consécutifs le même jour (6h sans interruption).'
+              statusMessage: 'Impossible d\'enchaîner 3 créneaux consécutifs le même jour (pause obligatoire de 2h)'
             })
           }
         }
