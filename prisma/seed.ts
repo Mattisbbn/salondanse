@@ -119,28 +119,22 @@ async function main() {
     })
   }
 
-  // 6. Missions du cahier des charges
+  // 6. Missions clés représentatives (5 missions au lieu de 11)
   const missionsData = [
-    { name: 'Accueil exposants', isSensitive: false },
-    { name: 'Vestiaires', isSensitive: false },
-    { name: 'Point Info', isSensitive: false },
-    { name: 'Masterclass / Conférences', isSensitive: false },
-    { name: 'Loges danseurs', isSensitive: false },
-    { name: 'Logistique (Niveau 0 + -2)', isSensitive: false },
-    { name: 'Scène principale', isSensitive: false },
-    { name: 'Stand JayDance', isSensitive: false },
-    { name: 'Village Danses du Monde', isSensitive: false },
-    // Postes sensibles hors-planning public
-    { name: 'Billetterie', isSensitive: true },
-    { name: 'Caisse', isSensitive: true }
+    { name: 'Accueil exposants', isSensitive: false, capacity: 2 },
+    { name: 'Point Info', isSensitive: false, capacity: 1 },
+    { name: 'Masterclass / Conférences', isSensitive: false, capacity: 2 },
+    { name: 'Loges danseurs', isSensitive: false, capacity: 1 },
+    { name: 'Billetterie / Caisse', isSensitive: true, capacity: 1 }
   ]
 
   const createdMissions = await Promise.all(
     missionsData.map(m => prisma.mission.create({
       data: {
-        ...m,
+        name: m.name,
+        isSensitive: m.isSensitive,
         editionId: edition.id,
-        defaultCapacity: m.isSensitive ? 2 : 3,
+        defaultCapacity: m.capacity,
         isActive: true
       }
     }))
@@ -173,13 +167,13 @@ async function main() {
         }
       })
 
-      // Création des jauges réduites pour tester facilement les limites (2 pour sensibles, 3 pour publiques)
+      // Création des jauges très réduites (1 ou 2 personnes max) pour saturer facilement lors de la démo
       for (const mission of createdMissions) {
         await prisma.slotMission.create({
           data: {
             missionId: mission.id,
             timeSlotId: createdSlot.id,
-            capacityMax: mission.isSensitive ? 2 : 3
+            capacityMax: mission.defaultCapacity
           }
         })
       }

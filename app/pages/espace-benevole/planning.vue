@@ -427,7 +427,7 @@ async function confirmPlanning() {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto space-y-6">
+  <div class="w-full max-w-6xl xl:max-w-7xl mx-auto space-y-6">
     <!-- En-tête de la page -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
       <div>
@@ -453,6 +453,19 @@ async function confirmPlanning() {
             class="w-3.5 h-3.5"
           />
           <span>Planning validé et verrouillé</span>
+        </UBadge>
+        <UBadge
+          v-else
+          color="warning"
+          variant="subtle"
+          size="sm"
+          class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1.5 shadow-2xs border border-amber-200 text-amber-800 bg-amber-50"
+        >
+          <UIcon
+            name="i-lucide-clock"
+            class="w-3.5 h-3.5 text-amber-600"
+          />
+          <span>En attente de validation</span>
         </UBadge>
       </div>
     </div>

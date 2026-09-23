@@ -50,12 +50,19 @@ interface VolunteerSummaryResponse {
   totalHours: number
 }
 
-const { data } = await useFetch<VolunteerSummaryResponse>('/api/volunteer/me/summary', {
+const { user: authUser } = useAuth()
+
+const { data, status } = await useFetch<VolunteerSummaryResponse>('/api/volunteer/me/summary', {
   lazy: false
 })
 
 const summary = computed(() => data.value)
-const isConfirmed = computed(() => summary.value?.volunteer.planningStatus === 'CONFIRMED')
+const isConfirmed = computed(() => {
+  if (!summary.value) return false
+  const vol = summary.value.volunteer
+  if (vol.isMinor && !vol.isApprovedMinor) return false
+  return vol.planningStatus === 'CONFIRMED'
+})
 
 // Modale plein écran QR code
 const isQrModalOpen = ref(false)
@@ -68,7 +75,7 @@ function handlePrint() {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto space-y-6">
+  <div class="w-full max-w-6xl xl:max-w-7xl mx-auto space-y-6">
     <!-- EN-TÊTE ÉCRAN (Masqué à l'impression) -->
     <div class="print:hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
       <div>
@@ -103,49 +110,132 @@ function handlePrint() {
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION HAUTE : BADGE À GAUCHE & STATUT PLANNING À DROITE -->
+    <!-- SECTION HAUTE : BADGE À GAUCHE & INFOS PERSO À DROITE    -->
     <!-- ======================================================== -->
     <div
-      v-if="summary"
+      v-if="summary || status === 'pending'"
       class="print:hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
     >
       <!-- Badge bénévole rangé à gauche -->
       <div class="lg:col-span-4 flex justify-center lg:justify-start">
+        <!-- Badge officiel activé si planning validé -->
         <VolunteerBadge
+          v-if="isConfirmed && summary"
           :volunteer="summary.volunteer"
           @open-qr="isQrModalOpen = true"
         />
-      </div>
 
-      <!-- Informations de l'événement, statut du planning & règles -->
-      <div class="lg:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
-              SD
-            </div>
-            <div>
-              <span class="text-xs font-semibold text-violet-600 uppercase tracking-wider block">Événement officiel</span>
-              <h2 class="text-base font-bold text-slate-900">
-                Salon de la Danse d'Angers • 14, 15 & 16 Mai 2027
-              </h2>
+        <!-- Carte "En attente de validation" si bénévole non validé ou avant chargement complet -->
+        <div
+          v-else
+          class="relative w-full max-w-[320px] aspect-[9/14] min-h-[480px] bg-white/95 backdrop-blur-md rounded-3xl border-2 border-dashed border-amber-300 shadow-xl shadow-amber-950/5 p-5 flex flex-col justify-between overflow-hidden select-none text-center"
+        >
+          <!-- HAUT : En-tête -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between px-0.5">
+              <span class="font-extrabold text-sm tracking-tight text-slate-800">
+                Salon de la Danse
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 font-bold text-[10px] tracking-wide border border-violet-100 shadow-2xs">
+                Édition {{ summary?.volunteer.editionYear || 2027 }}
+              </span>
             </div>
           </div>
 
-          <!-- Statut du planning -->
-          <div>
+          <!-- MILIEU : Photo + Statut en attente -->
+          <div class="flex flex-col items-center my-auto space-y-3">
+            <!-- Photo ronde -->
+            <div class="relative w-20 h-20 sm:w-22 sm:h-22">
+              <img
+                v-if="summary?.volunteer.photoUrl"
+                :src="summary.volunteer.photoUrl"
+                :alt="`${summary?.volunteer.firstName || authUser?.firstName} ${summary?.volunteer.lastName || authUser?.lastName}`"
+                class="w-full h-full rounded-full object-cover border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+              >
+              <div
+                v-else
+                class="w-full h-full rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-2xl border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+              >
+                {{ (summary?.volunteer.firstName || authUser?.firstName || 'B').charAt(0) }}{{ (summary?.volunteer.lastName || authUser?.lastName || 'B').charAt(0) }}
+              </div>
+            </div>
+
+            <!-- Nom -->
+            <div class="text-center px-2">
+              <h3 class="text-slate-900 font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
+                {{ summary?.volunteer.firstName || authUser?.firstName }} {{ summary?.volunteer.lastName || authUser?.lastName }}
+              </h3>
+            </div>
+
+            <!-- Pastille de statut : En attente de validation -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-3.5 h-3.5 text-amber-600"
+              />
+              <span>En attente de validation</span>
+            </div>
+
+            <!-- Zone explicative badge inactif -->
+            <div class="w-full p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-center space-y-1.5 mt-2">
+              <div class="flex items-center justify-center gap-1.5 text-amber-900 font-semibold text-xs">
+                <UIcon
+                  name="i-lucide-qr-code"
+                  class="w-4 h-4 text-amber-600 opacity-70"
+                />
+                <span>QR Code inactif</span>
+              </div>
+              <p class="text-[11px] text-amber-800/90 leading-relaxed">
+                Votre badge et votre QR Code d'accès seront générés dès la validation de votre planning.
+              </p>
+            </div>
+
+            <!-- Bouton rapide vers le planning -->
+            <NuxtLink
+              to="/espace-benevole/planning"
+              class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-3.5 h-3.5"
+              />
+              <span>Voir mon planning</span>
+            </NuxtLink>
+          </div>
+
+          <!-- BAS : Identifiant unique -->
+          <div class="pt-2 flex items-center justify-center text-[10px] font-mono text-slate-400 px-0.5">
+            <span class="tracking-wider">ID: {{ (summary?.volunteer.id || authUser?.id || '').slice(0, 8).toUpperCase() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations personnelles à côté du badge -->
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <UIcon
+              name="i-lucide-user-check"
+              class="w-5 h-5 text-violet-600"
+            />
+            <h2 class="text-base font-bold text-slate-900">
+              Mes informations personnelles
+            </h2>
+          </div>
+          <div class="flex items-center gap-2">
             <UBadge
               v-if="isConfirmed"
               color="success"
               variant="solid"
-              size="md"
-              class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 shadow-2xs"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 shadow-2xs"
             >
               <UIcon
                 name="i-lucide-check-circle-2"
-                class="w-4 h-4"
+                class="w-3.5 h-3.5"
               />
-              <span>Planning validé & verrouillé</span>
+              <span>Planning validé</span>
             </UBadge>
             <NuxtLink
               v-else
@@ -155,146 +245,84 @@ function handlePrint() {
               <UBadge
                 color="warning"
                 variant="solid"
-                size="md"
-                class="font-semibold text-xs px-3 py-1.5 inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
+                size="sm"
+                class="font-semibold text-xs px-2.5 py-0.5 inline-flex items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer shadow-2xs"
               >
                 <UIcon
                   name="i-lucide-clock"
-                  class="w-4 h-4"
+                  class="w-3.5 h-3.5"
                 />
-                <span>En attente de validation (Brouillon)</span>
+                <span>Planning en attente</span>
               </UBadge>
             </NuxtLink>
+            <UBadge
+              color="neutral"
+              variant="solid"
+              size="sm"
+              class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
+            >
+              Données vérifiées
+            </UBadge>
           </div>
         </div>
 
-        <!-- Règles clés d'engagement bénévole -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-            <div class="flex items-center gap-1.5 font-bold text-slate-900">
-              <UIcon
-                name="i-lucide-clock-3"
-                class="w-4 h-4 text-violet-600"
-              />
-              <span>1. Ponctualité</span>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <!-- Photo d'identité ou Avatar avec initiales -->
+          <div class="shrink-0">
+            <img
+              v-if="summary.volunteer.photoUrl"
+              :src="summary.volunteer.photoUrl"
+              alt="Photo d'identité bénévole"
+              class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
+            >
+            <div
+              v-else
+              class="w-20 h-20 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border border-violet-200/60"
+            >
+              {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
             </div>
-            <p class="text-slate-500 text-[11px] leading-relaxed">
-              Se présenter 15 minutes avant le début de chaque tranche horaire au point d'accueil.
-            </p>
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-            <div class="flex items-center gap-1.5 font-bold text-slate-900">
-              <UIcon
-                name="i-lucide-shirt"
-                class="w-4 h-4 text-violet-600"
-              />
-              <span>2. Tenue & Badge</span>
+          <!-- Données en lecture seule -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Identité</span>
+              <p class="font-bold text-slate-900 text-sm">
+                {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
+              </p>
             </div>
-            <p class="text-slate-500 text-[11px] leading-relaxed">
-              T-shirt officiel remis à votre arrivée. Le port du badge est obligatoire sur tout le site.
-            </p>
-          </div>
 
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
-            <div class="flex items-center gap-1.5 font-bold text-slate-900">
-              <UIcon
-                name="i-lucide-utensils"
-                class="w-4 h-4 text-violet-600"
-              />
-              <span>3. Repas & Pause</span>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Adresse e-mail</span>
+              <p class="font-medium text-slate-900 truncate">
+                {{ summary.volunteer.email }}
+              </p>
             </div>
-            <p class="text-slate-500 text-[11px] leading-relaxed">
-              Panier repas et rafraîchissements fournis dès 2 créneaux d'engagement dans la même journée.
-            </p>
+
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
+              <p class="font-medium text-slate-900">
+                {{ summary.volunteer.phone || 'Non renseigné' }}
+              </p>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Statut légal</span>
+              <p class="font-medium text-slate-900">
+                {{ summary.volunteer.isMinor ? 'Mineur (accord parental requis)' : 'Majeur' }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- ======================================================== -->
-    <!-- SECTION DONNÉES PERSONNELLES (LECTURE SEULE STRICTE)     -->
-    <!-- ======================================================== -->
-    <div
-      v-if="summary"
-      class="print:hidden bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-5 sm:p-6 space-y-4"
-    >
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2.5">
+        <!-- Mention explicite obligatoire de verrouillage -->
+        <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
           <UIcon
-            name="i-lucide-user-check"
-            class="w-5 h-5 text-violet-600"
+            name="i-lucide-shield-alert"
+            class="w-4 h-4 text-violet-600 shrink-0"
           />
-          <h2 class="text-base font-bold text-slate-900">
-            Mes informations personnelles
-          </h2>
+          <span>Pour modifier vos informations personnelles, veuillez contacter l'administration du Salon.</span>
         </div>
-        <UBadge
-          color="neutral"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
-        >
-          Données vérifiées
-        </UBadge>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <!-- Photo d'identité ou Avatar avec initiales -->
-        <div class="shrink-0">
-          <img
-            v-if="summary.volunteer.photoUrl"
-            :src="summary.volunteer.photoUrl"
-            alt="Photo d'identité bénévole"
-            class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
-          >
-          <div
-            v-else
-            class="w-20 h-20 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border border-violet-200/60"
-          >
-            {{ summary.volunteer.firstName.charAt(0) }}{{ summary.volunteer.lastName.charAt(0) }}
-          </div>
-        </div>
-
-        <!-- Données en lecture seule -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-xs">
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Identité</span>
-            <p class="font-bold text-slate-900 text-sm">
-              {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
-            </p>
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Adresse e-mail</span>
-            <p class="font-medium text-slate-900 truncate">
-              {{ summary.volunteer.email }}
-            </p>
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
-            <p class="font-medium text-slate-900">
-              {{ summary.volunteer.phone || 'Non renseigné' }}
-            </p>
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Statut légal</span>
-            <p class="font-medium text-slate-900">
-              {{ summary.volunteer.isMinor ? 'Mineur (accord parental requis)' : 'Majeur' }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mention explicite obligatoire de verrouillage -->
-      <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
-        <UIcon
-          name="i-lucide-shield-alert"
-          class="w-4 h-4 text-violet-600 shrink-0"
-        />
-        <span>Pour modifier vos informations personnelles, veuillez contacter l'administration du Salon.</span>
       </div>
     </div>
 
@@ -543,13 +571,6 @@ function handlePrint() {
             class="w-full max-w-md flex items-center justify-between"
             @click.stop
           >
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                SD
-              </div>
-              <span class="text-xs font-semibold text-slate-300">Accréditation Officielle Bénévole</span>
-            </div>
-
             <button
               type="button"
               class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
@@ -606,9 +627,6 @@ function handlePrint() {
             <div class="space-y-1">
               <p class="text-xs font-bold text-slate-900">
                 Présentez ce QR Code à l'accueil du Salon
-              </p>
-              <p class="text-[11px] text-slate-500">
-                Luminosité maximale recommandée pour faciliter le scan
               </p>
             </div>
 

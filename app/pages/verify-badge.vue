@@ -229,7 +229,60 @@ const glareStyle = computed(() => {
           </div>
         </div>
 
-        <!-- Badge invalide -->
+        <!-- Bénévole trouvé mais en attente de validation -->
+        <div
+          v-else-if="data?.volunteer"
+          class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-3 pt-1 transition-opacity duration-300"
+        >
+          <!-- Photo + Identité + Statut En attente -->
+          <div class="flex flex-col items-center">
+            <div class="relative w-20 h-20 sm:w-22 sm:h-22">
+              <img
+                v-if="data.volunteer.photoUrl"
+                :src="data.volunteer.photoUrl"
+                :alt="`${data.volunteer.firstName} ${data.volunteer.lastName}`"
+                class="w-full h-full rounded-full object-cover border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+              >
+              <div
+                v-else
+                class="w-full h-full rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-2xl border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+              >
+                {{ data.volunteer.firstName.charAt(0) }}{{ data.volunteer.lastName.charAt(0) }}
+              </div>
+            </div>
+
+            <!-- Nom et Prénom -->
+            <div class="text-center px-2 mt-2">
+              <h3 class="text-slate-900 font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
+                {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
+              </h3>
+            </div>
+
+            <!-- Pastille En attente de validation -->
+            <div class="mt-2.5">
+              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <UIcon
+                  name="i-lucide-clock"
+                  class="w-3.5 h-3.5 text-amber-600"
+                />
+                <span>En attente de validation</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message explicatif -->
+          <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl text-center space-y-1">
+            <p class="text-xs font-bold text-amber-900">
+              Planning non finalisé
+            </p>
+            <p class="text-[11px] text-amber-800/90 leading-relaxed">
+              Le bénévole n'a pas encore validé définitivement ses créneaux d'engagement.
+            </p>
+          </div>
+        </div>
+
+        <!-- Badge invalide / non trouvé -->
         <div
           v-else
           class="relative z-10 space-y-3 py-6 my-auto text-center transition-opacity duration-300"
@@ -245,7 +298,7 @@ const glareStyle = computed(() => {
               Accréditation Invalide
             </h2>
             <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
-              {{ data?.message || 'Ce badge n\'est pas actif ou le planning du bénévole n\'est pas encore validé.' }}
+              {{ data?.message || 'Ce badge n\'est pas actif ou est inconnu de l\'organisation.' }}
             </p>
           </div>
         </div>
