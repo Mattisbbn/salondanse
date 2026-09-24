@@ -48,7 +48,7 @@ const missionsExportUrl = computed(() => {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Extractions & Données
         </span>
-        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Exports & Reporting
         </h1>
         <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -80,7 +80,7 @@ const missionsExportUrl = computed(() => {
               />
             </div>
             <div>
-              <h2 class="text-base font-serif italic font-semibold text-[#2A1512] leading-tight">
+              <h2 class="text-base font-bold text-[#2A1512] leading-tight">
                 Plannings & Bénévoles
               </h2>
               <span class="text-[11px] text-[#6E5A52] font-medium">Export exhaustif de l'équipe</span>
@@ -135,7 +135,7 @@ const missionsExportUrl = computed(() => {
               />
             </div>
             <div>
-              <h2 class="text-base font-serif italic font-semibold text-[#2A1512] leading-tight">
+              <h2 class="text-base font-bold text-[#2A1512] leading-tight">
                 Émargement par Mission
               </h2>
               <span class="text-[11px] text-[#6E5A52] font-medium">Affectations par poste & horaire</span>
@@ -228,7 +228,7 @@ const missionsExportUrl = computed(() => {
               />
             </div>
             <div>
-              <h2 class="text-base font-serif italic font-semibold text-[#2A1512] leading-tight">
+              <h2 class="text-base font-bold text-[#2A1512] leading-tight">
                 Contacts & Urgences
               </h2>
               <span class="text-[11px] text-[#6E5A52] font-medium">Répertoire opérationnel & mineurs</span>

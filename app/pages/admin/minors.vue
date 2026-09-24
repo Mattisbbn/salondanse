@@ -147,7 +147,7 @@ const columns: TableColumn<MinorItem>[] = [
       <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
         Direction artistique · Plateforme bénévoles
       </span>
-      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Validation des Profils Mineurs
       </h1>
       <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -159,22 +159,22 @@ const columns: TableColumn<MinorItem>[] = [
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <div class="p-4 bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs">
         <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#6E5A52] block">Total Mineurs</span>
-        <span class="text-3xl font-serif italic font-semibold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
+        <span class="text-3xl font-bold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
       </div>
 
       <div class="p-4 bg-[#F7E4C6]/40 border border-[#D9A660] rounded-2xl shadow-xs">
         <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#8A4B0F] block">À Valider</span>
-        <span class="text-3xl font-serif italic font-semibold text-[#8A4B0F] mt-1 block">{{ stats.pending }}</span>
+        <span class="text-3xl font-bold text-[#8A4B0F] mt-1 block">{{ stats.pending }}</span>
       </div>
 
       <div class="p-4 bg-[#E1E9DC]/60 border border-[#9DB79F] rounded-2xl shadow-xs">
         <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#2F5238] block">Validés</span>
-        <span class="text-3xl font-serif italic font-semibold text-[#2F5238] mt-1 block">{{ stats.validated }}</span>
+        <span class="text-3xl font-bold text-[#2F5238] mt-1 block">{{ stats.validated }}</span>
       </div>
 
       <div class="p-4 bg-[#F4D8D3]/60 border border-[#D9A79F] rounded-2xl shadow-xs">
         <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#9A2A22] block">Refusés</span>
-        <span class="text-3xl font-serif italic font-semibold text-[#9A2A22] mt-1 block">{{ stats.rejected }}</span>
+        <span class="text-3xl font-bold text-[#9A2A22] mt-1 block">{{ stats.rejected }}</span>
       </div>
     </div>
 

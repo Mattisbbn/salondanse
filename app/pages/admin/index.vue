@@ -112,7 +112,7 @@ async function handleToggleRegistrations() {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Direction artistique · Plateforme bénévoles
         </span>
-        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Tableau de bord Administrateur
         </h1>
         <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -154,7 +154,7 @@ async function handleToggleRegistrations() {
           </div>
         </div>
         <div class="mt-3">
-          <p class="text-3xl sm:text-4xl font-serif italic font-semibold text-[#2A1512]">
+          <p class="text-3xl sm:text-4xl font-bold text-[#2A1512]">
             {{ stats.overview.totalVolunteers }}
           </p>
           <p class="text-xs text-[#6E5A52] mt-1">
@@ -176,7 +176,7 @@ async function handleToggleRegistrations() {
           </div>
         </div>
         <div class="mt-3">
-          <p class="text-3xl sm:text-4xl font-serif italic font-semibold text-[#2A1512]">
+          <p class="text-3xl sm:text-4xl font-bold text-[#2A1512]">
             {{ stats.overview.confirmedPlannings }}
             <span class="text-base sm:text-lg font-sans font-normal text-[#6E5A52]">/ {{ stats.overview.totalVolunteers }}</span>
           </p>
@@ -200,7 +200,7 @@ async function handleToggleRegistrations() {
           </div>
         </div>
         <div class="mt-3">
-          <p class="text-3xl sm:text-4xl font-serif italic font-semibold text-[#7A291E]">
+          <p class="text-3xl sm:text-4xl font-bold text-[#7A291E]">
             {{ stats.overview.globalFillingRate }}%
           </p>
           <p class="text-xs text-[#6E5A52] mt-1">
@@ -221,7 +221,7 @@ async function handleToggleRegistrations() {
           </div>
         </div>
         <div class="mt-3">
-          <p class="text-3xl sm:text-4xl font-serif italic font-semibold text-[#2A1512]">
+          <p class="text-3xl sm:text-4xl font-bold text-[#2A1512]">
             {{ stats.overview.availableInvitations }}
           </p>
           <p class="text-xs text-[#6E5A52] mt-1">

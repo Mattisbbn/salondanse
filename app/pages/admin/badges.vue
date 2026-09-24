@@ -71,7 +71,7 @@ function printAllBadges() {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Accréditations & Émargement
         </span>
-        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Badges & Accréditations
         </h1>
         <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">

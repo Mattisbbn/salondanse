@@ -435,7 +435,7 @@ async function confirmPlanning() {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
           Espace Bénévoles · Choix des missions
         </span>
-        <h1 class="font-serif italic font-semibold text-2xl sm:text-3xl text-[#2A1512] leading-tight">
+        <h1 class="font-bold tracking-tight text-2xl sm:text-3xl text-[#2A1512] leading-tight">
           Mon Planning Bénévole
         </h1>
         <p class="text-xs text-[#6E5A52]">
@@ -654,7 +654,7 @@ async function confirmPlanning() {
         class="space-y-6 pt-2"
       >
         <div class="flex items-center justify-between">
-          <h2 class="font-serif italic font-semibold text-lg text-[#2A1512]">
+          <h2 class="font-bold text-lg text-[#2A1512]">
             {{ data.days[activeDayIndex]?.fullDayLabel }}
           </h2>
           <span class="text-xs text-[#6E5A52]">
@@ -909,7 +909,7 @@ async function confirmPlanning() {
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="font-serif italic font-semibold text-lg text-[#2A1512]">
+                <h3 class="font-bold text-lg text-[#2A1512]">
                   Confirmation définitive du planning
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">

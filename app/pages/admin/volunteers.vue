@@ -653,7 +653,7 @@ const columns: TableColumn<VolunteerItem>[] = [
       <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
         Direction artistique · Plateforme bénévoles
       </span>
-      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Bénévoles &amp; Plannings
       </h1>
       <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -1311,7 +1311,7 @@ const columns: TableColumn<VolunteerItem>[] = [
             @click.stop
           >
             <!-- En-tête -->
-            <div class="flex items-center justify-between pb-3 border-b border-[#E6D9CB]">
+            <div class="flex items-center justify-between  ">
               <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-sm shrink-0 border border-[#D9A79F]">
                   <UIcon
@@ -1362,7 +1362,7 @@ const columns: TableColumn<VolunteerItem>[] = [
             </div>
 
             <!-- Pied de page : Bouton Fermer -->
-            <div class="pt-2 flex justify-center border-t border-[#E6D9CB]">
+            <div class="pt-2 flex justify-center">
               <button
                 type="button"
                 class="h-9 px-4 rounded-full bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] border border-[#D8C6B4] text-xs font-semibold transition-colors cursor-pointer w-full justify-center"
@@ -1405,7 +1405,7 @@ const columns: TableColumn<VolunteerItem>[] = [
                 </div>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-base sm:text-lg font-serif italic font-semibold text-[#2A1512] truncate">
+                    <h3 class="text-base sm:text-lg font-bold text-[#2A1512] truncate">
                       Planning de {{ activeVolunteer.fullName }}
                     </h3>
                     <span

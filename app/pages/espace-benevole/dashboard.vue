@@ -82,7 +82,7 @@ function handlePrint() {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
           Espace Bénévoles · Mon Profil
         </span>
-        <h1 class="font-serif italic font-semibold text-2xl sm:text-3xl text-[#2A1512] leading-tight">
+        <h1 class="font-bold tracking-tight text-2xl sm:text-3xl text-[#2A1512] leading-tight">
           {{ summary?.volunteer.fullName || 'Mon Compte' }}
         </h1>
         <p class="text-xs text-[#6E5A52]">
@@ -134,7 +134,7 @@ function handlePrint() {
           <!-- HAUT : En-tête -->
           <div class="space-y-2">
             <div class="flex items-center justify-between px-0.5">
-              <span class="font-serif italic font-semibold text-base text-[#2A1512]">
+              <span class="font-bold text-base text-[#2A1512]">
                 Salon de la Danse
               </span>
               <span class="px-2.5 py-0.5 rounded-full bg-[#F3DCD5] text-[#7A291E] font-bold text-[10px] tracking-wide border border-[#ECCBC4]">
@@ -163,7 +163,7 @@ function handlePrint() {
 
             <!-- Nom -->
             <div class="text-center px-2">
-              <h3 class="text-[#2A1512] font-serif italic font-semibold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
+              <h3 class="text-[#2A1512] font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
                 {{ summary?.volunteer.firstName || authUser?.firstName }} {{ summary?.volunteer.lastName || authUser?.lastName }}
               </h3>
             </div>
@@ -588,7 +588,7 @@ function handlePrint() {
               </div>
 
               <div>
-                <h3 class="font-serif italic font-semibold text-2xl text-[#2A1512] leading-tight">
+                <h3 class="font-bold text-2xl text-[#2A1512] leading-tight">
                   {{ summary.volunteer.firstName }} {{ summary.volunteer.lastName }}
                 </h3>
                 <span class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-bold bg-[#F3DCD5] text-[#7A291E]">

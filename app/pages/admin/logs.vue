@@ -114,7 +114,7 @@ function getActionLabel(action: string): string {
       <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
         Traçabilité & Sécurité
       </span>
-      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Journal d'Audit
       </h1>
       <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -177,7 +177,7 @@ function getActionLabel(action: string): string {
             class="w-6 h-6"
           />
         </div>
-        <h3 class="text-base font-serif italic font-semibold text-[#2A1512]">
+        <h3 class="text-base font-bold text-[#2A1512]">
           Aucune action enregistrée
         </h3>
         <p class="text-xs text-[#6E5A52]">

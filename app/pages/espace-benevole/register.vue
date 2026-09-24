@@ -396,7 +396,7 @@ onMounted(() => {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
           Salon de la Danse · Angers 2027
         </span>
-        <h1 class="font-serif italic font-semibold text-3xl sm:text-4xl text-[#2A1512] leading-tight">
+        <h1 class="font-bold tracking-tight text-3xl sm:text-4xl text-[#2A1512] leading-tight">
           Rejoindre les équipes
         </h1>
         <p class="text-xs text-[#6E5A52] font-medium">

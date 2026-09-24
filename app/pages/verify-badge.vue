@@ -50,7 +50,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
         <!-- HAUT : En-tête -->
         <div class="relative z-10 flex items-center justify-between pb-3 border-b border-[#E6D9CB]">
           <div class="flex flex-col">
-            <span class="font-serif italic font-semibold text-base tracking-tight text-[#2A1512]">
+            <span class="font-bold text-base tracking-tight text-[#2A1512]">
               Salon de la Danse
             </span>
             <span class="text-[9px] font-bold uppercase tracking-[0.16em] text-[#7A291E]">
@@ -120,7 +120,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
 
             <!-- Nom et Prénom -->
             <div class="text-center px-2 mt-2.5 space-y-0.5">
-              <h2 class="font-serif italic font-semibold text-2xl sm:text-3xl text-[#2A1512] leading-tight truncate max-w-[280px]">
+              <h2 class="font-bold tracking-tight text-2xl sm:text-3xl text-[#2A1512] leading-tight truncate max-w-[280px]">
                 {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
               </h2>
             </div>
@@ -132,13 +132,13 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
                   name="i-lucide-badge-check"
                   class="w-4 h-4 text-[#2F5238]"
                 />
-                <span>Badge Accrédité</span>
+                <span>Badge Validé</span>
               </div>
             </div>
           </div>
 
           <!-- Récapitulatif missions -->
-          <div class="bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl p-3 shadow-2xs space-y-1.5">
+          <div class="bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl p-3 shadow-2xs space-y-1.5 mb-4">
             <div class="flex items-center justify-between px-0.5">
               <span class="text-[10px] font-bold text-[#7A291E] uppercase tracking-wider flex items-center gap-1.5">
                 <UIcon
@@ -188,7 +188,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
 
             <!-- Nom et Prénom -->
             <div class="text-center px-2 mt-3 space-y-0.5">
-              <h2 class="font-serif italic font-semibold text-2xl sm:text-3xl text-[#2A1512] leading-tight truncate max-w-[280px]">
+              <h2 class="font-bold tracking-tight text-2xl sm:text-3xl text-[#2A1512] leading-tight truncate max-w-[280px]">
                 {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
               </h2>
             </div>
@@ -242,7 +242,7 @@ const { data, status } = await useFetch<VerifyResponse>(() => `/api/verify-badge
         </div>
 
         <!-- BAS : Identifiant unique discret et élégant -->
-        <div class="relative z-10 pt-2 flex items-center justify-between text-[10px] font-mono text-[#6E5A52] tracking-wider border-t border-[#E6D9CB]">
+        <div class="relative z-10 pt-2 flex items-center justify-between text-[10px] font-mono text-[#6E5A52] tracking-wider ">
           <span>ID: {{ (data?.volunteer?.id || userId || '').slice(0, 8).toUpperCase() }}</span>
           <span class="font-sans font-semibold text-[9px] uppercase tracking-wider text-[#7A291E]">Salon de la Danse</span>
         </div>

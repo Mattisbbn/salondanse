@@ -135,7 +135,7 @@ const onSubmit = async () => {
           <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
             Espace Bénévoles
           </span>
-          <h1 class="font-serif italic font-semibold text-3xl text-[#2A1512] leading-tight">
+          <h1 class="font-bold tracking-tight text-3xl text-[#2A1512] leading-tight">
             Connexion
           </h1>
           <p class="text-xs text-[#6E5A52]">

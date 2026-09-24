@@ -542,7 +542,7 @@ async function handleUnscheduleSlotMission(smId: string) {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Exploitation & Grille horaire
         </span>
-        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Missions & Planning
         </h1>
         <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -619,28 +619,6 @@ async function handleUnscheduleSlotMission(smId: string) {
       v-if="currentView === 'planning'"
       class="space-y-4"
     >
-      <!-- Barre d'indicateurs synthétiques compacte -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="p-3.5 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
-          <span class="text-[10px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Jours au planning</span>
-          <span class="text-xl font-serif italic font-semibold text-[#2A1512] mt-0.5 block">{{ planningData?.days?.length || 0 }} jour(s)</span>
-        </div>
-
-        <div class="p-3.5 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
-          <span class="text-[10px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Tranches horaires</span>
-          <span class="text-xl font-serif italic font-semibold text-[#2A1512] mt-0.5 block">{{ timeRangeRows.length }} créneaux / jour</span>
-        </div>
-
-        <div class="p-3.5 bg-[#E1E9DC]/60 border border-[#9DB79F] rounded-2xl shadow-xs">
-          <span class="text-[10px] font-bold tracking-[0.14em] uppercase text-[#2F5238] block">Postes positionnés</span>
-          <span class="text-xl font-serif italic font-semibold text-[#2F5238] mt-0.5 block">{{ stats.totalSlotsCount }}</span>
-        </div>
-
-        <div class="p-3.5 bg-[#F3DCD5]/60 border border-[#D9A79F] rounded-2xl shadow-xs">
-          <span class="text-[10px] font-bold tracking-[0.14em] uppercase text-[#7A291E] block">Capacité globale requise</span>
-          <span class="text-xl font-serif italic font-semibold text-[#7A291E] mt-0.5 block">{{ stats.totalCapacityNeeded }} pers.</span>
-        </div>
-      </div>
 
       <!-- TABLEAU CALENDRIER CLASSIQUE (Multi-colonnes Jours x Lignes Horaires) -->
       <div class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs overflow-hidden">
@@ -789,25 +767,25 @@ async function handleUnscheduleSlotMission(smId: string) {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
           <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Missions Catalogue</span>
-          <span class="text-2xl font-serif italic font-semibold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
+          <span class="text-2xl font-bold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
           <span class="text-[11px] text-[#6E5A52] mt-0.5 block">Dont {{ stats.active }} active(s)</span>
         </div>
 
         <div class="p-4 bg-[#F3DCD5]/60 border border-[#D9A79F] rounded-2xl shadow-xs">
           <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#7A291E] block">Postes Sensibles (Manuel)</span>
-          <span class="text-2xl font-serif italic font-semibold text-[#7A291E] mt-1 block">{{ stats.sensitive }}</span>
+          <span class="text-2xl font-bold text-[#7A291E] mt-1 block">{{ stats.sensitive }}</span>
           <span class="text-[11px] text-[#7A291E]/80 mt-0.5 block">Attribution admin réservée</span>
         </div>
 
         <div class="p-4 bg-[#E1E9DC]/60 border border-[#9DB79F] rounded-2xl shadow-xs">
           <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#2F5238] block">Créneaux Planifiés</span>
-          <span class="text-2xl font-serif italic font-semibold text-[#2F5238] mt-1 block">{{ stats.totalSlotsCount }}</span>
+          <span class="text-2xl font-bold text-[#2F5238] mt-1 block">{{ stats.totalSlotsCount }}</span>
           <span class="text-[11px] text-[#2F5238]/80 mt-0.5 block">Affectations horaires actives</span>
         </div>
 
         <div class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
           <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Capacité Totale Requise</span>
-          <span class="text-2xl font-serif italic font-semibold text-[#2A1512] mt-1 block">{{ stats.totalCapacityNeeded }} pers.</span>
+          <span class="text-2xl font-bold text-[#2A1512] mt-1 block">{{ stats.totalCapacityNeeded }} pers.</span>
           <span class="text-[11px] text-[#6E5A52] mt-0.5 block">Somme des jauges planifiées</span>
         </div>
       </div>
@@ -1170,7 +1148,7 @@ async function handleUnscheduleSlotMission(smId: string) {
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-serif italic font-semibold text-[#2A1512]">
+                <h3 class="text-lg font-bold text-[#2A1512]">
                   {{ isEditing ? 'Modifier la mission (Catalogue)' : 'Nouvelle mission (Catalogue)' }}
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">
@@ -1307,7 +1285,7 @@ async function handleUnscheduleSlotMission(smId: string) {
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-serif italic font-semibold text-[#2A1512]">
+                <h3 class="text-lg font-bold text-[#2A1512]">
                   Planifier un poste sur le calendrier
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">
@@ -1446,7 +1424,7 @@ async function handleUnscheduleSlotMission(smId: string) {
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-base font-serif italic font-semibold text-[#2A1512] truncate">
+                <h3 class="text-base font-bold text-[#2A1512] truncate">
                   {{ currentAdjustSlotMission.mission.name }}
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">
@@ -1544,7 +1522,7 @@ async function handleUnscheduleSlotMission(smId: string) {
                 />
               </div>
               <div>
-                <h3 class="text-lg font-serif italic font-semibold text-[#2A1512]">
+                <h3 class="text-lg font-bold text-[#2A1512]">
                   Supprimer ou archiver la mission
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">

@@ -240,8 +240,8 @@ async function handleAddDay() {
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Saisons & Calendrier
         </span>
-        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
-          Gestion Multi-Éditions
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
+          Gestion éditions
         </h1>
         <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
           Consultez les éditions du festival, basculez l'édition courante ou préparez l'édition suivante

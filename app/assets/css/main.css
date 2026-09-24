@@ -101,12 +101,11 @@ main li a:hover {
   color: #7A291E;
 }
 
-/* Titre Playfair Display italique */
+/* Titres de pages et sections en Montserrat */
 .da-title {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 /* Scrollbars sobres et discrètes */

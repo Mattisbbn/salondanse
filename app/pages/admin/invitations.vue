@@ -219,7 +219,7 @@ const columns: TableColumn<InvitationItem>[] = [
       <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
         Recrutement & Accès
       </span>
-      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Invitations Bénévoles
       </h1>
       <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
@@ -237,7 +237,7 @@ const columns: TableColumn<InvitationItem>[] = [
           />
         </div>
         <div>
-          <h2 class="text-base font-serif italic font-semibold text-[#2A1512]">
+          <h2 class="text-base font-bold text-[#2A1512]">
             Envoyer une nouvelle invitation
           </h2>
           <p class="text-xs text-[#6E5A52]">
@@ -522,7 +522,7 @@ const columns: TableColumn<InvitationItem>[] = [
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-serif italic font-semibold text-[#2A1512]">
+                <h3 class="text-lg font-bold text-[#2A1512]">
                   Invitation déjà existante
                 </h3>
                 <p class="text-xs text-[#6E5A52] mt-0.5">

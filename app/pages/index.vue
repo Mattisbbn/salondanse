@@ -28,7 +28,7 @@ const targetUrl = computed(() => {
 
       <!-- Titres élégants Playfair Display -->
       <div class="space-y-3">
-        <h1 class="font-serif italic font-semibold text-4xl sm:text-5xl text-[#2A1512] leading-tight">
+        <h1 class="font-bold tracking-tight text-4xl sm:text-5xl text-[#2A1512] leading-tight">
           Le grand rendez-vous de toutes les danses
         </h1>
         <p class="text-base text-[#6E5A52] leading-relaxed">
