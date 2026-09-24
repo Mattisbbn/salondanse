@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
-import { getAuthenticatedUser } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
   // Optionnel : l'upload peut être appelé avant inscription (formulaire register public), ou par un utilisateur authentifié

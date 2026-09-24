@@ -305,7 +305,7 @@ function handlePrint() {
               <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
                 <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-0.5">Numéro de téléphone</span>
                 <p class="font-medium text-slate-900">
-                  {{ summary?.volunteer.phone || authUser?.phone || 'Non renseigné' }}
+                  {{ summary?.volunteer.phone || 'Non renseigné' }}
                 </p>
               </div>
 

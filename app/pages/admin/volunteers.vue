@@ -173,33 +173,206 @@ const { data: allSlotsData, refresh: refreshSlots } = await useFetch<AllSlotsApi
 
 const availableSlots = computed(() => allSlotsData.value?.slots || [])
 
-// Modal de gestion du bénévole
+// Modal de gestion du planning du bénévole
 const isModalOpen = ref(false)
 const activeVolunteer = ref<VolunteerItem | null>(null)
 
-// Formulaire d'assignation manuelle
-const selectedSlotId = ref('')
-const selectedSlotMissionId = ref('')
+// Modal d'aperçu œil des créneaux
+const isViewSlotsModalOpen = ref(false)
+const viewSlotsVolunteer = ref<VolunteerItem | null>(null)
+
+function openViewSlotsModal(volunteer: VolunteerItem) {
+  viewSlotsVolunteer.value = volunteer
+  isViewSlotsModalOpen.value = true
+}
+
+function closeViewSlotsModal() {
+  isViewSlotsModalOpen.value = false
+  viewSlotsVolunteer.value = null
+}
+
+// Modal de prévisualisation du badge officiel
+const isBadgeModalOpen = ref(false)
+const badgeVolunteer = ref<VolunteerItem | null>(null)
+const badgeData = ref<{
+  valid: boolean
+  status?: string
+  volunteer?: {
+    id: string
+    firstName: string
+    lastName: string
+    photoUrl: string | null
+    isMinor: boolean
+    isApprovedMinor: boolean
+    planningLockedAt: string | null
+    editionName: string
+    editionYear: number
+    qrCodeUrl?: string
+    verifyUrl?: string
+    missions: Array<{
+      id: string
+      missionName: string
+      isSensitive: boolean
+      date: string
+      timeSlot: string
+    }>
+  }
+} | null>(null)
+const isLoadingBadge = ref(false)
+
+async function openBadgeModal(volunteer: VolunteerItem) {
+  badgeVolunteer.value = volunteer
+  isBadgeModalOpen.value = true
+  isLoadingBadge.value = true
+  badgeData.value = null
+
+  try {
+    const res = await $fetch<{
+      valid: boolean
+      status?: string
+      volunteer?: {
+        id: string
+        firstName: string
+        lastName: string
+        photoUrl: string | null
+        isMinor: boolean
+        isApprovedMinor: boolean
+        planningLockedAt: string | null
+        editionName: string
+        editionYear: number
+        qrCodeUrl?: string
+        verifyUrl?: string
+        missions: Array<{
+          id: string
+          missionName: string
+          isSensitive: boolean
+          date: string
+          timeSlot: string
+        }>
+      }
+    }>(`/api/verify-badge?userId=${volunteer.id}`)
+    badgeData.value = res
+  } catch (err: unknown) {
+    console.error('Erreur chargement badge:', err)
+  } finally {
+    isLoadingBadge.value = false
+  }
+}
+
+function closeBadgeModal() {
+  isBadgeModalOpen.value = false
+  badgeVolunteer.value = null
+  badgeData.value = null
+}
+
+// État d'assignation
 const isAssigning = ref(false)
+const assigningSlotMissionId = ref<string | null>(null)
 const isUpdatingStatus = ref(false)
 const deletingRegistrationId = ref<string | null>(null)
 
-// Missions disponibles pour le créneau sélectionné dans la modale
-const missionsForSelectedSlot = computed(() => {
-  if (!selectedSlotId.value) return []
-  const slot = availableSlots.value.find(s => s.id === selectedSlotId.value)
-  return slot?.missions || []
+// Structuration du planning calendrier par journées
+interface DayPlanning {
+  dateIso: string
+  dayLabel: string
+  shortLabel: string
+  slots: AvailableSlot[]
+}
+
+const planningDays = computed<DayPlanning[]>(() => {
+  const map = new Map<string, AvailableSlot[]>()
+  for (const slot of availableSlots.value) {
+    const dateKey = slot.date.split('T')[0] || slot.date
+    if (!map.has(dateKey)) {
+      map.set(dateKey, [])
+    }
+    map.get(dateKey)!.push(slot)
+  }
+
+  const list: DayPlanning[] = []
+  for (const [dateIso, slots] of map.entries()) {
+    slots.sort((a, b) => a.orderIndex - b.orderIndex)
+    const d = new Date(dateIso + 'T00:00:00.000Z')
+    const dayLabel = d.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'UTC'
+    })
+    const shortLabel = d.toLocaleDateString('fr-FR', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      timeZone: 'UTC'
+    })
+    list.push({
+      dateIso,
+      dayLabel: dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1),
+      shortLabel: shortLabel.charAt(0).toUpperCase() + shortLabel.slice(1),
+      slots
+    })
+  }
+
+  list.sort((a, b) => a.dateIso.localeCompare(b.dateIso))
+  return list
 })
 
-// Réinitialiser la mission si le créneau change
-watch(selectedSlotId, () => {
-  selectedSlotMissionId.value = ''
+const activePlanningDayDate = ref('')
+
+const activeDayPlanning = computed(() => {
+  if (!activePlanningDayDate.value) {
+    return planningDays.value[0] || null
+  }
+  return planningDays.value.find(d => d.dateIso === activePlanningDayDate.value) || planningDays.value[0] || null
 })
+
+// Règles de gestion calculées en direct pour le bénévole actif
+const activeVolunteerHours = computed(() => {
+  return (activeVolunteer.value?.registrations?.length || 0) * 2
+})
+
+const hasConsecutiveSlotsAlert = computed(() => {
+  if (!activeVolunteer.value?.registrations) return false
+  const byDay: Record<string, number[]> = {}
+  for (const reg of activeVolunteer.value.registrations) {
+    const d = reg.date.split('T')[0] || reg.date
+    if (!byDay[d]) byDay[d] = []
+    byDay[d].push(reg.orderIndex)
+  }
+  for (const d in byDay) {
+    const indices = byDay[d]!
+    if (indices.length >= 3) {
+      indices.sort((a, b) => a - b)
+      for (let i = 0; i <= indices.length - 3; i++) {
+        const o1 = indices[i]
+        const o2 = indices[i + 1]
+        const o3 = indices[i + 2]
+        if (o1 !== undefined && o2 === o1 + 1 && o3 === o2 + 1) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+})
+
+function getVolunteerDayRegistrationsCount(dateIso: string) {
+  if (!activeVolunteer.value) return 0
+  return activeVolunteer.value.registrations.filter(r => r.date.startsWith(dateIso)).length
+}
 
 function openManageModal(volunteer: VolunteerItem) {
   activeVolunteer.value = volunteer
-  selectedSlotId.value = availableSlots.value[0]?.id || ''
-  selectedSlotMissionId.value = ''
+  if (planningDays.value.length > 0) {
+    const firstReg = volunteer.registrations[0]
+    if (firstReg) {
+      const regDate = firstReg.date.split('T')[0]
+      const match = planningDays.value.find(d => d.dateIso === regDate)
+      activePlanningDayDate.value = match ? match.dateIso : (planningDays.value[0]?.dateIso || '')
+    } else {
+      activePlanningDayDate.value = planningDays.value[0]?.dateIso || ''
+    }
+  }
   isModalOpen.value = true
 }
 
@@ -214,38 +387,32 @@ function getInitials(firstName: string, lastName: string) {
   return (f + l).toUpperCase() || 'B'
 }
 
-function formatSlotDate(dateStr: string) {
+function formatSlotFullDate(dateStr: string) {
   const d = new Date(dateStr)
   return d.toLocaleDateString('fr-FR', {
-    weekday: 'short',
+    weekday: 'long',
     day: 'numeric',
-    month: 'short',
+    month: 'long',
     timeZone: 'UTC'
   })
 }
 
-// Assigner une mission manuellement
-async function assignMission() {
-  if (!activeVolunteer.value || !selectedSlotMissionId.value) {
-    toast.add({
-      title: 'Sélection incomplète',
-      description: 'Veuillez choisir un créneau horaire et une mission.',
-      color: 'warning'
-    })
-    return
-  }
+// Assigner une mission manuellement en 1 clic depuis la grille ou le formulaire
+async function quickAssignMission(slotMissionId: string) {
+  if (!activeVolunteer.value) return
 
+  assigningSlotMissionId.value = slotMissionId
   isAssigning.value = true
   try {
     const res = await $fetch<{ message: string }>(`/api/admin/volunteers/${activeVolunteer.value.id}/assign`, {
       method: 'POST',
       body: {
-        slotMissionId: selectedSlotMissionId.value
+        slotMissionId
       }
     })
 
     toast.add({
-      title: 'Mission assignée',
+      title: 'Mission affectée',
       description: res.message,
       color: 'success'
     })
@@ -253,21 +420,20 @@ async function assignMission() {
     await refresh()
     await refreshSlots()
 
-    // Mettre à jour la vue du bénévole actif
     const updated = volunteers.value.find(v => v.id === activeVolunteer.value?.id)
     if (updated) {
       activeVolunteer.value = updated
     }
-    selectedSlotMissionId.value = ''
   } catch (err: unknown) {
     const errorObj = err as { data?: { statusMessage?: string }, statusMessage?: string, message?: string }
     toast.add({
-      title: 'Erreur d\'assignation',
-      description: errorObj?.data?.statusMessage || errorObj?.statusMessage || errorObj?.message || 'Impossible d\'assigner cette mission.',
+      title: 'Erreur d\'affectation',
+      description: errorObj?.data?.statusMessage || errorObj?.statusMessage || errorObj?.message || 'Impossible d\'affecter cette mission.',
       color: 'error'
     })
   } finally {
     isAssigning.value = false
+    assigningSlotMissionId.value = null
   }
 }
 
@@ -483,26 +649,13 @@ const columns: TableColumn<VolunteerItem>[] = [
 <template>
   <div class="space-y-6">
     <!-- En-tête de la page -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-          Bénévoles & Plannings
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Consultez, modifiez, annulez et forcez les attributions de missions
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <UButton
-          color="neutral"
-          variant="subtle"
-          size="sm"
-          icon="i-lucide-refresh-cw"
-          :loading="status === 'pending'"
-          @click="() => refresh()"
-        />
-      </div>
+    <div class="pb-4 border-b border-slate-200">
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+        Bénévoles & Plannings
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+        Consultez, modifiez, annulez et forcez les attributions de missions
+      </p>
     </div>
 
     <!-- Barre d'outils supérieure (Recherche + Filtres multi-critères) -->
@@ -712,25 +865,30 @@ const columns: TableColumn<VolunteerItem>[] = [
 
           <!-- Cellule Missions affectées -->
           <template #missions-cell="{ row }">
-            <div class="flex flex-wrap gap-1.5 max-w-md py-1">
-              <template v-if="row.original.registrations.length > 0">
+            <div class="flex items-center gap-2 py-1">
+              <template v-if="row.original.registrationsCount > 0">
                 <span
-                  v-for="reg in row.original.registrations"
-                  :key="reg.id"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold shadow-2xs"
-                  :class="[
-                    reg.isSensitive
-                      ? 'bg-amber-600 text-white'
-                      : 'bg-slate-700 text-white'
-                  ]"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/80 shadow-2xs transition-colors cursor-pointer select-none"
+                  @click="openViewSlotsModal(row.original)"
                 >
                   <UIcon
-                    :name="reg.isSensitive ? 'i-lucide-shield-alert' : 'i-lucide-calendar'"
-                    class="w-3.5 h-3.5 shrink-0 text-white"
+                    name="i-lucide-calendar-check-2"
+                    class="w-3.5 h-3.5 text-violet-600"
                   />
-                  <span>{{ reg.missionName }}</span>
-                  <span class="opacity-80">({{ formatSlotDate(reg.date) }} {{ reg.startTime }})</span>
+                  <span>{{ row.original.registrationsCount }} créneau(x)</span>
                 </span>
+
+                <UTooltip text="Voir le détail des créneaux">
+                  <UButton
+                    color="neutral"
+                    variant="ghost"
+                    size="xs"
+                    icon="i-lucide-eye"
+                    title="Voir le détail des créneaux"
+                    class="cursor-pointer text-slate-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg p-1"
+                    @click="openViewSlotsModal(row.original)"
+                  />
+                </UTooltip>
               </template>
               <span
                 v-else
@@ -743,51 +901,77 @@ const columns: TableColumn<VolunteerItem>[] = [
 
           <!-- Cellule Actions -->
           <template #actions-cell="{ row }">
-            <div class="flex items-center gap-1.5">
-              <UButton
-                color="primary"
-                variant="subtle"
-                size="xs"
-                icon="i-lucide-sliders-horizontal"
-                label="Gérer le planning"
-                class="cursor-pointer font-medium"
-                @click="openManageModal(row.original)"
-              />
+            <div class="flex items-center gap-1">
+              <!-- Gérer le planning -->
+              <UTooltip text="Gérer le planning">
+                <UButton
+                  color="primary"
+                  variant="subtle"
+                  size="xs"
+                  icon="i-lucide-sliders-horizontal"
+                  label="Planning"
+                  class="cursor-pointer font-medium"
+                  @click="openManageModal(row.original)"
+                />
+              </UTooltip>
+
+              <!-- Voir le badge officiel -->
+              <UTooltip text="Badge bénévole officiel">
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  icon="i-lucide-id-card"
+                  title="Badge bénévole officiel"
+                  class="cursor-pointer text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
+                  @click="openBadgeModal(row.original)"
+                />
+              </UTooltip>
 
               <!-- Réinitialiser le mot de passe -->
-              <UButton
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                icon="i-lucide-key-round"
-                title="Réinitialiser le mot de passe"
-                class="cursor-pointer text-slate-500 hover:text-violet-600"
-                @click="openResetPasswordModal(row.original)"
-              />
+              <UTooltip text="Réinitialiser le mot de passe">
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  icon="i-lucide-key-round"
+                  title="Réinitialiser le mot de passe"
+                  class="cursor-pointer text-slate-500 hover:text-violet-600"
+                  @click="openResetPasswordModal(row.original)"
+                />
+              </UTooltip>
 
               <!-- Toggle accord parental si mineur -->
-              <UButton
+              <UTooltip
                 v-if="row.original.isMinor"
-                :color="row.original.isApprovedMinor ? 'neutral' : 'warning'"
-                variant="ghost"
-                size="xs"
-                :icon="row.original.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
-                :title="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
-                @click="toggleMinorApproval(row.original)"
-              />
+                :text="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
+              >
+                <UButton
+                  :color="row.original.isApprovedMinor ? 'neutral' : 'warning'"
+                  variant="ghost"
+                  size="xs"
+                  :icon="row.original.isApprovedMinor ? 'i-lucide-check-check' : 'i-lucide-file-text'"
+                  :title="row.original.isApprovedMinor ? 'Accord parental validé' : 'Valider accord parental'"
+                  @click="toggleMinorApproval(row.original)"
+                />
+              </UTooltip>
 
               <!-- Envoyer un rappel de convocation si planning validé -->
-              <UButton
+              <UTooltip
                 v-if="row.original.planningStatus === 'CONFIRMED'"
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                icon="i-lucide-bell"
-                title="Envoyer un rappel de convocation"
-                :loading="sendingReminderId === row.original.id"
-                class="cursor-pointer text-slate-500 hover:text-amber-600 hover:bg-amber-50"
-                @click="sendIndividualReminder(row.original)"
-              />
+                text="Envoyer un rappel de convocation"
+              >
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  icon="i-lucide-bell"
+                  title="Envoyer un rappel de convocation"
+                  :loading="sendingReminderId === row.original.id"
+                  class="cursor-pointer text-slate-500 hover:text-amber-600 hover:bg-amber-50"
+                  @click="sendIndividualReminder(row.original)"
+                />
+              </UTooltip>
             </div>
           </template>
         </UTable>
@@ -887,38 +1071,25 @@ const columns: TableColumn<VolunteerItem>[] = [
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
               <span>Missions affectées :</span>
-              <span class="font-bold text-slate-700">{{ volunteer.registrationsCount }} créneau(x)</span>
-            </div>
-
-            <div
-              v-if="volunteer.registrations.length > 0"
-              class="flex flex-wrap gap-1.5 pt-0.5"
-            >
-              <span
-                v-for="reg in volunteer.registrations"
-                :key="reg.id"
-                class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium border"
-                :class="[
-                  reg.isSensitive
-                    ? 'bg-violet-50 text-violet-700 border-violet-200'
-                    : 'bg-slate-50 text-slate-700 border-slate-200'
-                ]"
+              <button
+                v-if="volunteer.registrationsCount > 0"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
+                @click="openViewSlotsModal(volunteer)"
               >
                 <UIcon
-                  :name="reg.isSensitive ? 'i-lucide-shield-alert' : 'i-lucide-calendar'"
-                  class="w-3 h-3 shrink-0"
-                  :class="reg.isSensitive ? 'text-violet-600' : 'text-slate-400'"
+                  name="i-lucide-eye"
+                  class="w-3.5 h-3.5 text-violet-600"
                 />
-                <span class="font-semibold">{{ reg.missionName }}</span>
-                <span class="text-slate-400">({{ formatSlotDate(reg.date) }} {{ reg.startTime }})</span>
+                <span>{{ volunteer.registrationsCount }} créneau(x)</span>
+              </button>
+              <span
+                v-else
+                class="text-xs text-slate-400 italic"
+              >
+                Aucun créneau sélectionné
               </span>
             </div>
-            <p
-              v-else
-              class="text-xs text-slate-400 italic"
-            >
-              Aucun créneau sélectionné pour le moment.
-            </p>
           </div>
 
           <!-- Actions tactiles -->
@@ -928,9 +1099,19 @@ const columns: TableColumn<VolunteerItem>[] = [
               variant="subtle"
               size="sm"
               icon="i-lucide-sliders-horizontal"
-              label="Gérer le planning"
+              label="Planning"
               class="flex-1 justify-center font-semibold cursor-pointer py-2"
               @click="openManageModal(volunteer)"
+            />
+
+            <UButton
+              color="neutral"
+              variant="subtle"
+              size="sm"
+              icon="i-lucide-id-card"
+              title="Badge officiel"
+              class="cursor-pointer px-3 py-2 text-indigo-700 bg-indigo-50 hover:bg-indigo-100"
+              @click="openBadgeModal(volunteer)"
             />
 
             <UButton
@@ -985,7 +1166,362 @@ const columns: TableColumn<VolunteerItem>[] = [
     </div>
 
     <!-- ======================================================== -->
-    <!-- MODALE DE GESTION DU PLANNING BÉNÉVOLE                   -->
+    <!-- MODALE 1 : APERÇU ŒIL DES CRÉNEAUX DU BÉNÉVOLE           -->
+    <!-- ======================================================== -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="isViewSlotsModalOpen && viewSlotsVolunteer"
+          class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          @click="closeViewSlotsModal"
+        >
+          <div
+            class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 space-y-5 my-8 text-left"
+            @click.stop
+          >
+            <!-- En-tête -->
+            <div class="flex items-start justify-between pb-3 border-b border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
+                  {{ getInitials(viewSlotsVolunteer.firstName, viewSlotsVolunteer.lastName) }}
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">
+                    Créneaux de {{ viewSlotsVolunteer.fullName }}
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    {{ viewSlotsVolunteer.registrationsCount }} créneau(x) • {{ viewSlotsVolunteer.registrationsCount * 2 }}h cumulées
+                  </p>
+                </div>
+              </div>
+
+              <UButton
+                icon="i-lucide-x"
+                color="neutral"
+                variant="ghost"
+                size="sm"
+                class="cursor-pointer"
+                @click="closeViewSlotsModal"
+              />
+            </div>
+
+            <!-- Statut du planning -->
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-600 font-medium">Statut du planning :</span>
+                <UBadge
+                  :color="viewSlotsVolunteer.planningStatus === 'CONFIRMED' ? 'success' : 'warning'"
+                  variant="solid"
+                  size="sm"
+                  class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+                >
+                  {{ viewSlotsVolunteer.planningStatus === 'CONFIRMED' ? 'Validé & Verrouillé' : 'Brouillon' }}
+                </UBadge>
+              </div>
+              <span class="text-xs text-slate-500 font-medium">
+                {{ viewSlotsVolunteer.registrationsCount * 2 }}h / 6h max
+              </span>
+            </div>
+
+            <!-- Liste des créneaux affectés -->
+            <div
+              v-if="viewSlotsVolunteer.registrations.length > 0"
+              class="space-y-3 max-h-96 overflow-y-auto pr-1"
+            >
+              <div
+                v-for="reg in viewSlotsVolunteer.registrations"
+                :key="reg.id"
+                class="p-4 rounded-2xl border border-slate-200 bg-[#F8FAFC] hover:border-violet-300 shadow-2xs space-y-2 transition-all"
+              >
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <span class="font-bold text-sm text-slate-900">
+                    {{ reg.missionName }}
+                  </span>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <UBadge
+                      v-if="reg.isSensitive"
+                      color="warning"
+                      variant="solid"
+                      size="sm"
+                      class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs inline-flex items-center gap-1 shrink-0"
+                    >
+                      <UIcon
+                        name="i-lucide-shield-alert"
+                        class="w-3 h-3"
+                      />
+                      <span>Poste sensible</span>
+                    </UBadge>
+                    <UBadge
+                      v-else
+                      color="neutral"
+                      variant="subtle"
+                      size="sm"
+                      class="font-medium text-[10px] px-2 py-0.5 rounded border border-slate-200 inline-flex items-center gap-1 shrink-0 text-slate-600"
+                    >
+                      <UIcon
+                        name="i-lucide-shield-check"
+                        class="w-3 h-3 text-slate-400"
+                      />
+                      <span>Mission standard</span>
+                    </UBadge>
+
+                    <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded border border-violet-200/60 font-mono">
+                      {{ reg.startTime }} - {{ reg.endTime }}
+                    </span>
+                  </div>
+                </div>
+
+                <p class="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+                  <UIcon
+                    name="i-lucide-calendar"
+                    class="w-3.5 h-3.5 text-violet-600"
+                  />
+                  <span>{{ formatSlotFullDate(reg.date) }}</span>
+                </p>
+              </div>
+            </div>
+
+            <div
+              v-else
+              class="p-8 text-center text-slate-400 italic text-xs bg-slate-50 rounded-2xl border border-slate-200"
+            >
+              Aucun créneau sélectionné pour le moment.
+            </div>
+
+            <!-- Pied de page -->
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+              <UButton
+                color="primary"
+                variant="subtle"
+                size="sm"
+                icon="i-lucide-sliders-horizontal"
+                label="Gérer le planning"
+                class="cursor-pointer font-semibold"
+                @click="() => {
+                  const v = viewSlotsVolunteer
+                  closeViewSlotsModal()
+                  if (v) openManageModal(v)
+                }"
+              />
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="sm"
+                label="Fermer"
+                class="cursor-pointer font-medium"
+                @click="closeViewSlotsModal"
+              />
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ======================================================== -->
+    <!-- MODALE 2 : PRÉVISUALISATION DU BADGE BÉNÉVOLE OFFICIEL   -->
+    <!-- ======================================================== -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="isBadgeModalOpen && badgeVolunteer"
+          class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          @click="closeBadgeModal"
+        >
+          <div
+            class="w-full max-w-2xl bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 space-y-6 my-8 text-left"
+            @click.stop
+          >
+            <!-- En-tête -->
+            <div class="flex items-start justify-between pb-3 border-b border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0 border border-indigo-100">
+                  <UIcon
+                    name="i-lucide-id-card"
+                    class="w-5 h-5"
+                  />
+                </div>
+                <div>
+                  <h3 class="text-base sm:text-lg font-bold text-slate-900">
+                    Badge officiel de {{ badgeVolunteer.fullName }}
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    Aperçu 3D holographique et vérification du QR Code
+                  </p>
+                </div>
+              </div>
+
+              <UButton
+                icon="i-lucide-x"
+                color="neutral"
+                variant="ghost"
+                size="sm"
+                class="cursor-pointer"
+                @click="closeBadgeModal"
+              />
+            </div>
+
+            <!-- Corps : Carte 3D + Détails -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6 pt-1">
+              <!-- Carte 3D Holographique -->
+              <div class="shrink-0 flex justify-center w-full sm:w-auto">
+                <div
+                  v-if="isLoadingBadge"
+                  class="w-[280px] h-[440px] rounded-3xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center gap-2"
+                >
+                  <UIcon
+                    name="i-lucide-loader-2"
+                    class="w-8 h-8 animate-spin text-violet-600"
+                  />
+                  <span class="text-xs text-slate-500 font-medium">Génération du badge 3D...</span>
+                </div>
+                <VolunteerBadge
+                  v-else
+                  :volunteer="{
+                    id: badgeVolunteer.id,
+                    firstName: badgeVolunteer.firstName,
+                    lastName: badgeVolunteer.lastName,
+                    photoUrl: badgeVolunteer.photoUrl,
+                    qrCodeUrl: badgeData?.volunteer?.qrCodeUrl,
+                    editionName: badgeData?.volunteer?.editionName,
+                    editionYear: badgeData?.volunteer?.editionYear,
+                    isMinor: badgeVolunteer.isMinor,
+                    minorValidationStatus: badgeVolunteer.isApprovedMinor ? 'VALIDATED' : 'PENDING'
+                  }"
+                />
+              </div>
+
+              <!-- Colonne Informations et Liens rapides -->
+              <div class="flex-1 w-full space-y-4">
+                <!-- Statut & Infos -->
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <UBadge
+                      :color="badgeVolunteer.planningStatus === 'CONFIRMED' ? 'success' : 'warning'"
+                      variant="solid"
+                      size="sm"
+                      class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+                    >
+                      <UIcon
+                        :name="badgeVolunteer.planningStatus === 'CONFIRMED' ? 'i-lucide-lock' : 'i-lucide-file-edit'"
+                        class="w-3.5 h-3.5"
+                      />
+                      <span>{{ badgeVolunteer.planningStatus === 'CONFIRMED' ? 'Planning Validé' : 'Statut Brouillon' }}</span>
+                    </UBadge>
+                    <span class="text-xs text-slate-400 font-mono">ID: {{ badgeVolunteer.id.slice(0, 8) }}</span>
+                  </div>
+
+                  <h4 class="text-base font-bold text-slate-900">
+                    {{ badgeVolunteer.fullName }}
+                  </h4>
+                  <p class="text-xs text-slate-500">
+                    {{ badgeVolunteer.email }}
+                    <span v-if="badgeVolunteer.phone">• {{ badgeVolunteer.phone }}</span>
+                  </p>
+                </div>
+
+                <!-- Récapitulatif -->
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500">Créneaux affectés :</span>
+                    <span class="font-bold text-slate-800">{{ badgeVolunteer.registrationsCount }} créneau(x) ({{ badgeVolunteer.registrationsCount * 2 }}h)</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500">Autorisation mineur :</span>
+                    <span
+                      v-if="badgeVolunteer.isMinor"
+                      :class="badgeVolunteer.isApprovedMinor ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'"
+                    >
+                      {{ badgeVolunteer.isApprovedMinor ? 'Accord validé' : 'En attente accord' }}
+                    </span>
+                    <span
+                      v-else
+                      class="text-slate-500 font-medium"
+                    >Majeur</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500">QR Code accréditation :</span>
+                    <span
+                      class="font-semibold"
+                      :class="badgeData?.valid ? 'text-emerald-700' : 'text-amber-700'"
+                    >
+                      {{ badgeData?.valid ? 'Actif & Scannable' : 'Mode Brouillon' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="space-y-2 pt-1">
+                  <a
+                    :href="`/verify-badge?userId=${badgeVolunteer.id}`"
+                    target="_blank"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-xs transition-colors shadow-xs"
+                  >
+                    <UIcon
+                      name="i-lucide-external-link"
+                      class="w-4 h-4"
+                    />
+                    <span>Ouvrir la page officielle du badge</span>
+                  </a>
+
+                  <NuxtLink
+                    to="/admin/badges"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors"
+                  >
+                    <UIcon
+                      name="i-lucide-printer"
+                      class="w-4 h-4 text-slate-500"
+                    />
+                    <span>Planches d'impression des badges</span>
+                  </NuxtLink>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pied de page -->
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+              <UButton
+                color="primary"
+                variant="subtle"
+                size="sm"
+                icon="i-lucide-sliders-horizontal"
+                label="Modifier le planning"
+                class="cursor-pointer font-semibold"
+                @click="() => {
+                  const v = badgeVolunteer
+                  closeBadgeModal()
+                  if (v) openManageModal(v)
+                }"
+              />
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="sm"
+                label="Fermer"
+                class="cursor-pointer font-medium"
+                @click="closeBadgeModal"
+              />
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ======================================================== -->
+    <!-- MODALE 3 : GESTION DU PLANNING BÉNÉVOLE (GRILLE VISUELLE) -->
     <!-- ======================================================== -->
     <Teleport to="body">
       <Transition
@@ -998,214 +1534,412 @@ const columns: TableColumn<VolunteerItem>[] = [
       >
         <div
           v-if="isModalOpen && activeVolunteer"
-          class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+          class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
           @click="closeModal"
         >
           <div
-            class="w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-6 my-8"
+            class="w-full max-w-5xl max-h-[92vh] flex flex-col bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden my-4 text-left"
             @click.stop
           >
-            <!-- En-tête Modale -->
-            <div class="flex items-start justify-between pb-4 border-b border-slate-200">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-100">
+            <!-- 1. En-tête Modale -->
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-4 bg-slate-50/50 shrink-0">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-base shrink-0 border border-violet-200/80">
                   {{ getInitials(activeVolunteer.firstName, activeVolunteer.lastName) }}
                 </div>
-                <div>
-                  <h3 class="text-base sm:text-lg font-bold text-slate-900">
-                    Planning de {{ activeVolunteer.fullName }}
-                  </h3>
-                  <p class="text-xs text-slate-500">
-                    {{ activeVolunteer.email }} • {{ activeVolunteer.phone || 'Pas de numéro' }}
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate">
+                      Planning de {{ activeVolunteer.fullName }}
+                    </h3>
+                    <UBadge
+                      :color="activeVolunteer.planningStatus === 'CONFIRMED' ? 'success' : 'warning'"
+                      variant="solid"
+                      size="sm"
+                      class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+                    >
+                      {{ activeVolunteer.planningStatus === 'CONFIRMED' ? 'Validé & Verrouillé' : 'Brouillon' }}
+                    </UBadge>
+                    <UBadge
+                      v-if="activeVolunteer.isMinor"
+                      color="warning"
+                      variant="solid"
+                      size="sm"
+                      class="font-semibold text-[11px] px-2 py-0.5 rounded-md shadow-2xs"
+                    >
+                      Mineur {{ activeVolunteer.isApprovedMinor ? '✓' : '' }}
+                    </UBadge>
+                  </div>
+                  <p class="text-xs text-slate-500 truncate mt-0.5">
+                    {{ activeVolunteer.email }} • {{ activeVolunteer.phone || 'Aucun numéro de téléphone' }}
                   </p>
                 </div>
               </div>
 
-              <div class="flex items-center gap-1.5">
-                <UButton
-                  icon="i-lucide-key-round"
-                  color="neutral"
-                  variant="subtle"
-                  size="xs"
-                  label="Mot de passe"
-                  @click="openResetPasswordModal(activeVolunteer)"
-                />
-                <UButton
-                  icon="i-lucide-x"
-                  color="neutral"
-                  variant="ghost"
-                  size="sm"
-                  @click="closeModal"
-                />
-              </div>
-            </div>
-
-            <!-- SECTION 1 : CRÉNEAUX ACTUELLEMENT ATTRIBUÉS -->
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Créneaux attribués ({{ activeVolunteer.registrations.length }})
-                  </h4>
-                  <UBadge
-                    :color="activeVolunteer.planningStatus === 'CONFIRMED' ? 'success' : 'warning'"
-                    variant="solid"
-                    size="sm"
-                    class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
-                  >
-                    {{ activeVolunteer.planningStatus === 'CONFIRMED' ? 'Validé & Verrouillé' : 'Brouillon' }}
-                  </UBadge>
-                </div>
-
-                <!-- Bascule Statut Général -->
+              <!-- Actions En-tête -->
+              <div class="flex items-center gap-2 shrink-0">
+                <!-- Bascule Statut -->
                 <UButton
                   v-if="activeVolunteer.planningStatus === 'CONFIRMED'"
                   color="warning"
                   variant="soft"
-                  size="xs"
+                  size="sm"
                   icon="i-lucide-unlock"
-                  label="Déverrouiller (Brouillon)"
+                  label="Déverrouiller"
                   :loading="isUpdatingStatus"
+                  class="cursor-pointer font-semibold"
                   @click="togglePlanningStatus('DRAFT')"
                 />
                 <UButton
                   v-else
                   color="success"
-                  variant="soft"
-                  size="xs"
+                  variant="solid"
+                  size="sm"
                   icon="i-lucide-lock"
-                  label="Verrouiller (Valider)"
+                  label="Valider & Verrouiller"
                   :loading="isUpdatingStatus"
+                  class="cursor-pointer font-semibold shadow-xs"
                   @click="togglePlanningStatus('CONFIRMED')"
                 />
+
+                <UButton
+                  icon="i-lucide-id-card"
+                  color="neutral"
+                  variant="subtle"
+                  size="sm"
+                  title="Voir le badge officiel"
+                  class="cursor-pointer"
+                  @click="() => {
+                    const v = activeVolunteer
+                    if (v) openBadgeModal(v)
+                  }"
+                />
+
+                <UButton
+                  icon="i-lucide-x"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                  class="cursor-pointer"
+                  @click="closeModal"
+                />
+              </div>
+            </div>
+
+            <!-- 2. Barre des règles de gestion & Cumul des heures (KPI) -->
+            <div class="px-6 py-3 bg-white border-b border-slate-100 shrink-0 space-y-2.5">
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                <!-- Cumul Heures -->
+                <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div class="flex items-center justify-between text-xs mb-1">
+                    <span class="text-slate-500 font-medium">Temps cumulé</span>
+                    <span class="font-bold text-slate-800">{{ activeVolunteerHours }}h / 6h max</span>
+                  </div>
+                  <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <div
+                      class="h-full rounded-full transition-all duration-300"
+                      :class="activeVolunteerHours > 6 ? 'bg-rose-500' : activeVolunteerHours >= 2 ? 'bg-emerald-500' : 'bg-amber-500'"
+                      :style="{ width: Math.min(100, (activeVolunteerHours / 6) * 100) + '%' }"
+                    />
+                  </div>
+                </div>
+
+                <!-- Règle 2h min -->
+                <div
+                  class="p-2.5 rounded-2xl border flex items-center gap-2 text-xs"
+                  :class="activeVolunteerHours >= 2 ? 'bg-emerald-50/60 border-emerald-200 text-emerald-800' : 'bg-amber-50/60 border-amber-200 text-amber-800'"
+                >
+                  <UIcon
+                    :name="activeVolunteerHours >= 2 ? 'i-lucide-check-circle-2' : 'i-lucide-alert-circle'"
+                    class="w-4 h-4 shrink-0"
+                    :class="activeVolunteerHours >= 2 ? 'text-emerald-600' : 'text-amber-600'"
+                  />
+                  <div>
+                    <span class="font-bold block">Min. 2h</span>
+                    <span class="text-[11px] opacity-90">{{ activeVolunteerHours >= 2 ? 'Règle respectée' : '1 créneau min. requis' }}</span>
+                  </div>
+                </div>
+
+                <!-- Règle 6h max -->
+                <div
+                  class="p-2.5 rounded-2xl border flex items-center gap-2 text-xs"
+                  :class="activeVolunteerHours > 6 ? 'bg-rose-50/60 border-rose-200 text-rose-800' : 'bg-slate-50 border-slate-200 text-slate-700'"
+                >
+                  <UIcon
+                    :name="activeVolunteerHours > 6 ? 'i-lucide-alert-octagon' : 'i-lucide-shield-check'"
+                    class="w-4 h-4 shrink-0"
+                    :class="activeVolunteerHours > 6 ? 'text-rose-600' : 'text-slate-500'"
+                  />
+                  <div>
+                    <span class="font-bold block">Max. 6h</span>
+                    <span class="text-[11px] opacity-90">{{ activeVolunteerHours > 6 ? 'Dépassement de 6h' : 'Plafond respecté' }}</span>
+                  </div>
+                </div>
+
+                <!-- Pause obligatoire -->
+                <div
+                  class="p-2.5 rounded-2xl border flex items-center gap-2 text-xs"
+                  :class="hasConsecutiveSlotsAlert ? 'bg-amber-50/80 border-amber-300 text-amber-900' : 'bg-emerald-50/60 border-emerald-200 text-emerald-800'"
+                >
+                  <UIcon
+                    :name="hasConsecutiveSlotsAlert ? 'i-lucide-coffee' : 'i-lucide-check-circle-2'"
+                    class="w-4 h-4 shrink-0"
+                    :class="hasConsecutiveSlotsAlert ? 'text-amber-600' : 'text-emerald-600'"
+                  />
+                  <div>
+                    <span class="font-bold block">Pause obligatoire</span>
+                    <span class="text-[11px] opacity-90">{{ hasConsecutiveSlotsAlert ? '3 consécutifs sans pause' : 'Rythme équilibré' }}</span>
+                  </div>
+                </div>
               </div>
 
-              <!-- Liste des créneaux -->
+              <!-- Alerte si pause consécutive non respectée -->
               <div
-                v-if="activeVolunteer.registrations.length > 0"
-                class="space-y-2 max-h-48 overflow-y-auto pr-1"
+                v-if="hasConsecutiveSlotsAlert"
+                class="p-2.5 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-center gap-2"
               >
-                <div
-                  v-for="reg in activeVolunteer.registrations"
-                  :key="reg.id"
-                  class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs"
+                <UIcon
+                  name="i-lucide-alert-triangle"
+                  class="w-4 h-4 text-amber-600 shrink-0"
+                />
+                <span><strong>Attention :</strong> Ce bénévole est affecté à 3 créneaux consécutifs sans pause sur la même journée. Une pause de 2h est normalement requise.</span>
+              </div>
+            </div>
+
+            <!-- 3. Onglets par jour d'événement -->
+            <div class="px-6 pt-3 pb-2 bg-slate-50/80 border-b border-slate-200 flex items-center gap-2 overflow-x-auto shrink-0">
+              <span class="text-xs font-semibold text-slate-500 mr-1 shrink-0">Journée :</span>
+              <button
+                v-for="day in planningDays"
+                :key="day.dateIso"
+                type="button"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-2"
+                :class="[
+                  activePlanningDayDate === day.dateIso
+                    ? 'bg-violet-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                ]"
+                @click="activePlanningDayDate = day.dateIso"
+              >
+                <span>{{ day.dayLabel }}</span>
+                <span
+                  class="px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                  :class="[
+                    activePlanningDayDate === day.dateIso
+                      ? 'bg-white/20 text-white'
+                      : getVolunteerDayRegistrationsCount(day.dateIso) > 0
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-slate-100 text-slate-500'
+                  ]"
                 >
-                  <div class="flex items-center gap-2.5">
-                    <UIcon
-                      :name="reg.isSensitive ? 'i-lucide-shield-alert' : 'i-lucide-calendar'"
-                      class="w-4 h-4 shrink-0"
-                      :class="reg.isSensitive ? 'text-violet-600' : 'text-slate-500'"
-                    />
-                    <div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="font-bold text-slate-900">{{ reg.missionName }}</span>
-                        <UBadge
-                          v-if="reg.isSensitive"
-                          color="warning"
-                          variant="solid"
-                          size="sm"
-                          class="font-semibold text-[10px] px-2 py-0.5 rounded shadow-2xs"
-                        >
-                          Poste sensible
-                        </UBadge>
+                  {{ getVolunteerDayRegistrationsCount(day.dateIso) }}
+                </span>
+              </button>
+            </div>
+
+            <!-- 4. Grille de planning hebdomadaire / journalière -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+              <div
+                v-if="activeDayPlanning && activeDayPlanning.slots.length > 0"
+                class="space-y-6"
+              >
+                <!-- Boucle sur chaque tranche horaire du jour -->
+                <div
+                  v-for="slot in activeDayPlanning.slots"
+                  :key="slot.id"
+                  class="rounded-3xl border border-slate-200 bg-white p-4 sm:p-5 shadow-2xs space-y-3.5"
+                >
+                  <!-- En-tête de la tranche horaire -->
+                  <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 flex-wrap gap-2">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center font-bold">
+                        <UIcon
+                          name="i-lucide-clock"
+                          class="w-4 h-4"
+                        />
                       </div>
-                      <span class="text-slate-500 text-[11px]">
-                        {{ formatSlotDate(reg.date) }} • {{ reg.startTime }} - {{ reg.endTime }}
+                      <span class="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
+                        {{ slot.startTime }} - {{ slot.endTime }}
                       </span>
+                      <span class="text-xs text-slate-400 font-medium">(2h)</span>
+                    </div>
+
+                    <!-- Statut du bénévole sur cette tranche -->
+                    <div v-if="activeVolunteer.registrations.some(r => r.timeSlotId === slot.id)">
+                      <UBadge
+                        color="success"
+                        variant="solid"
+                        size="sm"
+                        class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs inline-flex items-center gap-1"
+                      >
+                        <UIcon
+                          name="i-lucide-check-circle"
+                          class="w-3.5 h-3.5"
+                        />
+                        <span>Créneau affecté</span>
+                      </UBadge>
+                    </div>
+                    <div v-else>
+                      <span class="text-xs text-slate-400 italic">Bénévole disponible sur cette plage</span>
                     </div>
                   </div>
 
-                  <!-- Bouton suppression d'affectation -->
-                  <UButton
-                    color="error"
-                    variant="ghost"
-                    size="xs"
-                    icon="i-lucide-trash-2"
-                    :loading="deletingRegistrationId === reg.id"
-                    title="Supprimer cette affectation"
-                    @click="removeRegistration(reg.id)"
-                  />
+                  <!-- Grille des missions pour ce créneau horaire -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div
+                      v-for="m in slot.missions"
+                      :key="m.slotMissionId"
+                      class="rounded-2xl p-3.5 flex flex-col justify-between transition-all"
+                      :class="[
+                        // 1. Déjà sélectionné par le bénévole : Vert pastel / texte vert foncé
+                        activeVolunteer.registrations.some(r => r.slotMissionId === m.slotMissionId)
+                          ? 'bg-emerald-50/90 border-2 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
+                          : m.availablePlaces <= 0
+                            // 2. Complet : Ambré / Rouge
+                            ? 'bg-rose-50/30 border border-rose-200/80 text-slate-600'
+                            // 3. Disponible : Blanc / Bordure grise
+                            : 'bg-white border border-slate-200 hover:border-violet-300 hover:shadow-2xs text-slate-800'
+                      ]"
+                    >
+                      <!-- Haut de la carte mission -->
+                      <div class="space-y-1.5">
+                        <div class="flex items-start justify-between gap-1.5">
+                          <span
+                            class="font-bold text-xs line-clamp-2"
+                            :class="activeVolunteer.registrations.some(r => r.slotMissionId === m.slotMissionId) ? 'text-emerald-950' : 'text-slate-900'"
+                          >
+                            {{ m.name }}
+                          </span>
+                          <UBadge
+                            v-if="m.isSensitive"
+                            color="warning"
+                            variant="solid"
+                            size="sm"
+                            class="font-semibold text-[9px] px-1.5 py-0.5 rounded shadow-2xs shrink-0 inline-flex items-center gap-0.5"
+                          >
+                            <UIcon
+                              name="i-lucide-shield-alert"
+                              class="w-2.5 h-2.5"
+                            />
+                            <span>Sensible</span>
+                          </UBadge>
+                        </div>
+
+                        <!-- Jauge / Places -->
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                          <span
+                            v-if="activeVolunteer.registrations.some(r => r.slotMissionId === m.slotMissionId)"
+                            class="font-bold text-emerald-700 flex items-center gap-1"
+                          >
+                            <UIcon
+                              name="i-lucide-check"
+                              class="w-3 h-3"
+                            />
+                            Affecté à ce bénévole
+                          </span>
+                          <span
+                            v-else-if="m.availablePlaces <= 0"
+                            class="font-bold text-rose-600 flex items-center gap-1"
+                          >
+                            <UIcon
+                              name="i-lucide-alert-circle"
+                              class="w-3 h-3"
+                            />
+                            Complet (0 libre)
+                          </span>
+                          <span
+                            v-else
+                            class="text-slate-600"
+                          >
+                            {{ m.availablePlaces }} place(s) libre(s)
+                          </span>
+
+                          <span class="font-mono text-slate-400">
+                            {{ m.registeredCount }}/{{ m.capacityMax }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Action en bas de la carte -->
+                      <div class="pt-3 border-t border-slate-100/80 mt-2">
+                        <!-- Cas 1 : Bénévole déjà affecté à cette mission -->
+                        <template v-if="activeVolunteer.registrations.some(r => r.slotMissionId === m.slotMissionId)">
+                          <UButton
+                            color="error"
+                            variant="soft"
+                            size="xs"
+                            icon="i-lucide-trash-2"
+                            label="Retirer l'affectation"
+                            :loading="deletingRegistrationId === activeVolunteer.registrations.find(r => r.slotMissionId === m.slotMissionId)?.id"
+                            class="w-full justify-center font-semibold cursor-pointer"
+                            @click="() => {
+                              const reg = activeVolunteer?.registrations.find(r => r.slotMissionId === m.slotMissionId)
+                              if (reg) removeRegistration(reg.id)
+                            }"
+                          />
+                        </template>
+
+                        <!-- Cas 2 : Mission complète -> Forcer l'attribution (Override) -->
+                        <template v-else-if="m.availablePlaces <= 0">
+                          <UButton
+                            color="warning"
+                            variant="soft"
+                            size="xs"
+                            icon="i-lucide-shield-alert"
+                            label="Forcer (Override)"
+                            :loading="isAssigning && assigningSlotMissionId === m.slotMissionId"
+                            class="w-full justify-center font-semibold cursor-pointer"
+                            @click="quickAssignMission(m.slotMissionId)"
+                          />
+                        </template>
+
+                        <!-- Cas 3 : Mission disponible -> Affecter en 1 clic -->
+                        <template v-else>
+                          <UButton
+                            color="primary"
+                            variant="subtle"
+                            size="xs"
+                            icon="i-lucide-plus"
+                            label="Affecter"
+                            :loading="isAssigning && assigningSlotMissionId === m.slotMissionId"
+                            class="w-full justify-center font-semibold cursor-pointer"
+                            @click="quickAssignMission(m.slotMissionId)"
+                          />
+                        </template>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <p
+              <!-- État vide créneaux sur la journée -->
+              <div
                 v-else
-                class="text-xs text-slate-400 italic p-3 bg-slate-50 rounded-xl border border-slate-200 text-center"
+                class="p-12 text-center text-slate-400 bg-slate-50 rounded-3xl border border-slate-200"
               >
-                Aucune mission n'est actuellement affectée à ce bénévole.
-              </p>
+                <UIcon
+                  name="i-lucide-calendar-x"
+                  class="w-8 h-8 mx-auto text-slate-300 mb-2"
+                />
+                <p class="text-xs font-medium">
+                  Aucun créneau horaire configuré pour cette journée.
+                </p>
+              </div>
             </div>
 
-            <!-- SECTION 2 : FORCER / ATTRIBUER UNE MISSION (Override Admin) -->
-            <div class="space-y-3 pt-4 border-t border-slate-200">
-              <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-lucide-shield-check"
-                  class="w-4 h-4 text-violet-600"
-                />
-                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Attribution manuelle directe (Override Admin)
-                </h4>
-              </div>
-              <p class="text-xs text-slate-500">
-                Attribuez n'importe quel créneau, y compris les postes sensibles (Caisse, Billetterie) ou en dépassement de jauge.
-              </p>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <!-- 1. Sélection de la tranche horaire -->
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tranche horaire</label>
-                  <select
-                    v-model="selectedSlotId"
-                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
-                  >
-                    <option
-                      v-for="slot in availableSlots"
-                      :key="slot.id"
-                      :value="slot.id"
-                    >
-                      {{ slot.label }}
-                    </option>
-                  </select>
-                </div>
-
-                <!-- 2. Sélection de la mission -->
-                <div>
-                  <label class="block text-xs font-semibold text-slate-700 mb-1">Mission à affecter</label>
-                  <select
-                    v-model="selectedSlotMissionId"
-                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500"
-                  >
-                    <option
-                      value=""
-                      disabled
-                    >
-                      -- Choisir une mission --
-                    </option>
-                    <option
-                      v-for="m in missionsForSelectedSlot"
-                      :key="m.slotMissionId"
-                      :value="m.slotMissionId"
-                    >
-                      {{ m.name }} {{ m.isSensitive ? '[Poste restrein]' : '' }} ({{ m.registeredCount }}/{{ m.capacityMax }})
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="flex justify-end pt-2">
-                <UButton
-                  color="primary"
-                  variant="solid"
-                  size="sm"
-                  icon="i-lucide-plus"
-                  label="Attribuer la mission"
-                  :disabled="!selectedSlotMissionId || isAssigning"
-                  :loading="isAssigning"
-                  class="font-semibold shadow-xs cursor-pointer"
-                  @click="assignMission"
-                />
-              </div>
+            <!-- 5. Pied de page Modale -->
+            <div class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+              <span class="text-xs text-slate-500 font-medium">
+                {{ activeVolunteer.registrationsCount }} créneau(x) assigné(s) au total ({{ activeVolunteerHours }}h)
+              </span>
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="sm"
+                label="Fermer le planning"
+                class="cursor-pointer font-medium"
+                @click="closeModal"
+              />
             </div>
           </div>
         </div>

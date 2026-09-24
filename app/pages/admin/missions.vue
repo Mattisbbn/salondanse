@@ -274,15 +274,6 @@ const columns: TableColumn<MissionItem>[] = [
 
       <div class="flex items-center gap-2.5">
         <UButton
-          color="neutral"
-          variant="subtle"
-          size="sm"
-          icon="i-lucide-refresh-cw"
-          :loading="status === 'pending'"
-          @click="() => refresh()"
-        />
-
-        <UButton
           color="primary"
           variant="solid"
           size="md"
@@ -765,7 +756,7 @@ const columns: TableColumn<MissionItem>[] = [
                 <UTextarea
                   v-model="formState.description"
                   placeholder="Précisez le lieu de rendez-vous, les tâches clés ou les prérequis..."
-                  rows="3"
+                  :rows="3"
                   size="md"
                   class="w-full text-xs"
                 />
@@ -803,7 +794,10 @@ const columns: TableColumn<MissionItem>[] = [
                     for="isSensitive"
                     class="text-xs font-bold text-amber-950 cursor-pointer flex items-center gap-1.5"
                   >
-                    <UIcon name="i-lucide-lock" class="w-3.5 h-3.5 text-amber-700" />
+                    <UIcon
+                      name="i-lucide-lock"
+                      class="w-3.5 h-3.5 text-amber-700"
+                    />
                     <span>Poste sensible (attribution manuelle uniquement)</span>
                   </label>
                 </div>
@@ -813,7 +807,10 @@ const columns: TableColumn<MissionItem>[] = [
               </div>
 
               <!-- Options spécifiques en modification -->
-              <div v-if="isEditing" class="space-y-3 pt-1 border-t border-slate-100">
+              <div
+                v-if="isEditing"
+                class="space-y-3 pt-1 border-t border-slate-100"
+              >
                 <!-- Statut Active / Archivée -->
                 <div class="flex items-center gap-2">
                   <input

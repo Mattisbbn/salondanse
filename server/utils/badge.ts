@@ -45,8 +45,8 @@ export function buildBadgeVerifyUrl(userId: string, event?: H3Event): string {
 export async function generateBadgeQrCode(
   userId: string,
   event?: H3Event,
-  options: { width?: number; margin?: number } = {}
-): Promise<{ verifyUrl: string; qrCodeUrl: string }> {
+  options: { width?: number, margin?: number } = {}
+): Promise<{ verifyUrl: string, qrCodeUrl: string }> {
   const verifyUrl = buildBadgeVerifyUrl(userId, event)
 
   let qrCodeUrl = ''

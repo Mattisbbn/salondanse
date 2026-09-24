@@ -215,25 +215,13 @@ const columns: TableColumn<InvitationItem>[] = [
 <template>
   <div class="space-y-6">
     <!-- En-tête -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-          Invitations Bénévoles
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Générez des codes d'accès uniques et invitez vos futurs bénévoles par e-mail
-        </p>
-      </div>
-
-      <UButton
-        color="neutral"
-        variant="subtle"
-        size="sm"
-        icon="i-lucide-refresh-cw"
-        :loading="status === 'pending'"
-        label="Actualiser"
-        @click="() => refresh()"
-      />
+    <div class="pb-4 border-b border-slate-200">
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+        Invitations Bénévoles
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+        Générez des codes d'accès uniques et invitez vos futurs bénévoles par e-mail
+      </p>
     </div>
 
     <!-- Carte Formulaire d'envoi -->

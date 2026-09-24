@@ -25,6 +25,11 @@ export default defineNuxtConfig({
     }
   },
 
+  routeRules: {
+    '/admin/audit': { redirect: { to: '/admin/logs', statusCode: 301 } },
+    '/admin/mineurs': { redirect: { to: '/admin/minors', statusCode: 301 } }
+  },
+
   compatibilityDate: '2026-06-30',
 
   eslint: {

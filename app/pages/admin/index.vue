@@ -51,7 +51,7 @@ interface AdminStatsResponse {
 
 const toast = useToast()
 
-const { data, status, refresh } = await useFetch<AdminStatsResponse>('/api/admin/stats', {
+const { data, refresh } = await useFetch<AdminStatsResponse>('/api/admin/stats', {
   lazy: false
 })
 
@@ -61,7 +61,7 @@ const stats = computed(() => data.value)
 const isConfirmToggleOpen = ref(false)
 const isToggling = ref(false)
 
-function openToggleConfirm() {
+function _openToggleConfirm() {
   isConfirmToggleOpen.value = true
 }
 
@@ -112,19 +112,9 @@ async function handleToggleRegistrations() {
         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
           Tableau de bord Administrateur
         </h1>
-       
       </div>
 
       <div class="flex items-center gap-2">
-        <UButton
-          color="neutral"
-          variant="subtle"
-          size="sm"
-          icon="i-lucide-refresh-cw"
-          :loading="status === 'pending'"
-          @click="() => refresh()"
-        />
-
         <UButton
           to="/api/admin/exports/volunteers?format=csv"
           external
@@ -137,8 +127,6 @@ async function handleToggleRegistrations() {
         />
       </div>
     </div>
-
-  
 
     <!-- ======================================================== -->
     <!-- 1. CARTES D'INDICATEURS CLÉS (KPIs)                      -->
@@ -239,7 +227,6 @@ async function handleToggleRegistrations() {
             <h2 class="text-sm sm:text-base font-bold text-slate-900">
               Remplissage par jour d'événement
             </h2>
-         
           </div>
           <UIcon
             name="i-lucide-calendar-range"
@@ -276,7 +263,6 @@ async function handleToggleRegistrations() {
             <h2 class="text-sm sm:text-base font-bold text-slate-900">
               Taux d'occupation par mission
             </h2>
-         
           </div>
           <UIcon
             name="i-lucide-clipboard-check"
@@ -331,7 +317,6 @@ async function handleToggleRegistrations() {
           <h2 class="text-sm sm:text-base font-bold text-slate-900">
             Exports
           </h2>
-         
         </div>
       </div>
 

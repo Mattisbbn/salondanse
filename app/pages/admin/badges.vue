@@ -39,7 +39,7 @@ interface BadgesResponse {
   badges: VolunteerBadge[]
 }
 
-const { data, status, refresh } = await useFetch<BadgesResponse>('/api/admin/badges')
+const { data, status } = await useFetch<BadgesResponse>('/api/admin/badges')
 
 const searchQuery = ref('')
 
@@ -77,15 +77,6 @@ function printAllBadges() {
       </div>
 
       <div class="flex items-center gap-2.5">
-        <UButton
-          color="neutral"
-          variant="subtle"
-          size="sm"
-          icon="i-lucide-refresh-cw"
-          :loading="status === 'pending'"
-          @click="() => refresh()"
-        />
-
         <UButton
           color="primary"
           variant="solid"

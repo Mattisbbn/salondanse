@@ -43,8 +43,8 @@ const adminNavItems: NavItem[] = [
     icon: 'i-lucide-mail-plus'
   },
   {
-    label: 'Journal d\'audit',
-    to: '/admin/audit',
+    label: 'Logs',
+    to: '/admin/logs',
     icon: 'i-lucide-file-text'
   },
   {
@@ -310,152 +310,163 @@ const userInitials = computed(() => {
           class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs md:hidden"
           @click="isMobileMenuOpen = false"
         >
-          <div
-            class="fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-white shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-200"
-            @click.stop
+          <Transition
+            appear
+            enter-active-class="transition-transform duration-200 ease-out"
+            enter-from-class="translate-x-full"
+            enter-to-class="translate-x-0"
+            leave-active-class="transition-transform duration-150 ease-in"
+            leave-from-class="translate-x-0"
+            leave-to-class="translate-x-full"
           >
-            <!-- Header du menu mobile -->
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                  SD
-                </div>
-                <div>
-                  <span class="text-sm font-bold text-slate-900 block leading-tight">
-                    Salon de la Danse
-                  </span>
-                  <span class="text-[10px] text-slate-500 font-medium">
-                    Édition 2027 • Angers
-                  </span>
-                </div>
-              </div>
-
-              <UButton
-                icon="i-lucide-x"
-                color="neutral"
-                variant="ghost"
-                size="sm"
-                aria-label="Fermer le menu"
-                @click="isMobileMenuOpen = false"
-              />
-            </div>
-
-            <!-- Profil connecté & Accès rapide Badge -->
             <div
-              v-if="isAuthenticated"
-              class="p-4 border-b border-slate-100 bg-violet-50/30 space-y-3"
+              v-if="isMobileMenuOpen"
+              class="fixed inset-y-0 right-0 flex w-80 max-w-[85vw] flex-col border-l border-slate-200 bg-white shadow-2xl"
+              @click.stop
             >
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-200">
-                  {{ userInitials }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-1.5 flex-wrap">
-                    <p class="text-xs font-bold text-slate-900 truncate">
-                      {{ fullName }}
-                    </p>
-                    <UBadge
-                      :color="isAdmin ? 'primary' : 'neutral'"
-                      variant="solid"
-                      size="sm"
-                      class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
-                    >
-                      {{ isAdmin ? 'Admin' : 'Bénévole' }}
-                    </UBadge>
+              <!-- Header du menu mobile -->
+              <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                    SD
                   </div>
-                  <p class="text-[11px] text-slate-500 truncate mt-0.5">
-                    {{ user?.email }}
-                  </p>
+                  <div>
+                    <span class="text-sm font-bold text-slate-900 block leading-tight">
+                      Salon de la Danse
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-medium">
+                      Édition 2027 • Angers
+                    </span>
+                  </div>
+                </div>
+
+                <UButton
+                  icon="i-lucide-x"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Fermer le menu"
+                  @click="isMobileMenuOpen = false"
+                />
+              </div>
+
+              <!-- Profil connecté & Accès rapide Badge -->
+              <div
+                v-if="isAuthenticated"
+                class="p-4 border-b border-slate-100 bg-violet-50/30 space-y-3"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-200">
+                    {{ userInitials }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <p class="text-xs font-bold text-slate-900 truncate">
+                        {{ fullName }}
+                      </p>
+                      <UBadge
+                        :color="isAdmin ? 'primary' : 'neutral'"
+                        variant="solid"
+                        size="sm"
+                        class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+                      >
+                        {{ isAdmin ? 'Admin' : 'Bénévole' }}
+                      </UBadge>
+                    </div>
+                    <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                      {{ user?.email }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Bouton d'accès rapide Badge & QR Code -->
+                <div>
+                  <UButton
+                    v-if="isBenevole"
+                    to="/espace-benevole/dashboard"
+                    color="primary"
+                    variant="soft"
+                    size="sm"
+                    block
+                    icon="i-lucide-qr-code"
+                    label="Mon Badge Membre & QR Code"
+                    class="font-semibold shadow-xs text-xs justify-center"
+                    @click="isMobileMenuOpen = false"
+                  />
+                  <UButton
+                    v-else-if="isAdmin"
+                    to="/admin/badges"
+                    color="primary"
+                    variant="soft"
+                    size="sm"
+                    block
+                    icon="i-lucide-id-card"
+                    label="Contrôle Badges & QR Codes"
+                    class="font-semibold shadow-xs text-xs justify-center"
+                    @click="isMobileMenuOpen = false"
+                  />
                 </div>
               </div>
 
-              <!-- Bouton d'accès rapide Badge & QR Code -->
-              <div>
-                <UButton
-                  v-if="isBenevole"
-                  to="/espace-benevole/dashboard"
-                  color="primary"
-                  variant="soft"
-                  size="sm"
-                  block
-                  icon="i-lucide-qr-code"
-                  label="Mon Badge Membre & QR Code"
-                  class="font-semibold shadow-xs text-xs justify-center"
-                  @click="isMobileMenuOpen = false"
-                />
-                <UButton
-                  v-else-if="isAdmin"
-                  to="/admin/badges"
-                  color="primary"
-                  variant="soft"
-                  size="sm"
-                  block
-                  icon="i-lucide-id-card"
-                  label="Contrôle Badges & QR Codes"
-                  class="font-semibold shadow-xs text-xs justify-center"
-                  @click="isMobileMenuOpen = false"
-                />
-              </div>
-            </div>
+              <!-- Liens de navigation complets -->
+              <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+                <div class="px-2 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  {{ isAdmin ? 'Menu Administration' : isBenevole ? 'Menu Bénévole' : 'Navigation' }}
+                </div>
 
-            <!-- Liens de navigation complets -->
-            <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
-              <div class="px-2 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                {{ isAdmin ? 'Menu Administration' : isBenevole ? 'Menu Bénévole' : 'Navigation' }}
-              </div>
-
-              <NuxtLink
-                v-for="item in navItems"
-                :key="item.to"
-                :to="item.to"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
-                :class="[
-                  route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                    ? 'bg-violet-600 text-white shadow-xs'
-                    : 'text-slate-700 hover:bg-slate-100'
-                ]"
-                @click="isMobileMenuOpen = false"
-              >
-                <UIcon
-                  :name="item.icon"
-                  class="w-4 h-4 shrink-0"
+                <NuxtLink
+                  v-for="item in navItems"
+                  :key="item.to"
+                  :to="item.to"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
                   :class="[
                     route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                      ? 'text-white'
-                      : 'text-slate-400'
+                      ? 'bg-violet-600 text-white shadow-xs'
+                      : 'text-slate-700 hover:bg-slate-100'
                   ]"
-                />
-                <span class="truncate">{{ item.label }}</span>
-              </NuxtLink>
-            </nav>
+                  @click="isMobileMenuOpen = false"
+                >
+                  <UIcon
+                    :name="item.icon"
+                    class="w-4 h-4 shrink-0"
+                    :class="[
+                      route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
+                        ? 'text-white'
+                        : 'text-slate-400'
+                    ]"
+                  />
+                  <span class="truncate">{{ item.label }}</span>
+                </NuxtLink>
+              </nav>
 
-            <!-- Déconnexion ou Connexion en bas -->
-            <div class="p-3 border-t border-slate-200 bg-slate-50">
-              <UButton
-                v-if="isAuthenticated"
-                icon="i-lucide-log-out"
-                color="error"
-                variant="subtle"
-                size="sm"
-                block
-                label="Se déconnecter"
-                class="font-medium justify-center cursor-pointer text-xs"
-                @click="() => { isMobileMenuOpen = false; logout(); }"
-              />
-              <UButton
-                v-else
-                to="/espace-benevole/login"
-                color="primary"
-                variant="solid"
-                size="sm"
-                block
-                icon="i-lucide-log-in"
-                label="Se connecter"
-                class="font-semibold justify-center text-xs"
-                @click="isMobileMenuOpen = false"
-              />
+              <!-- Déconnexion ou Connexion en bas -->
+              <div class="p-3 border-t border-slate-200 bg-slate-50">
+                <UButton
+                  v-if="isAuthenticated"
+                  icon="i-lucide-log-out"
+                  color="error"
+                  variant="subtle"
+                  size="sm"
+                  block
+                  label="Se déconnecter"
+                  class="font-medium justify-center cursor-pointer text-xs"
+                  @click="() => { isMobileMenuOpen = false; logout(); }"
+                />
+                <UButton
+                  v-else
+                  to="/espace-benevole/login"
+                  color="primary"
+                  variant="solid"
+                  size="sm"
+                  block
+                  icon="i-lucide-log-in"
+                  label="Se connecter"
+                  class="font-semibold justify-center text-xs"
+                  @click="isMobileMenuOpen = false"
+                />
+              </div>
             </div>
-          </div>
+          </Transition>
         </div>
       </Transition>
     </Teleport>

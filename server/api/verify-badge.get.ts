@@ -1,4 +1,5 @@
 import { RegistrationStatus } from '@prisma/client'
+import { generateBadgeQrCode } from '../utils/badge'
 import { prisma } from '../utils/prisma'
 
 export default defineEventHandler(async (event) => {
@@ -41,6 +42,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const isConfirmed = user.planningStatus === RegistrationStatus.CONFIRMED
+  const { verifyUrl, qrCodeUrl } = await generateBadgeQrCode(user.id, event, { width: 200 })
 
   return {
     valid: isConfirmed,
@@ -56,6 +58,8 @@ export default defineEventHandler(async (event) => {
       planningLockedAt: user.planningLockedAt,
       editionName: user.edition.name,
       editionYear: user.edition.year,
+      qrCodeUrl,
+      verifyUrl,
       missions: user.registrations.map(r => ({
         id: r.id,
         missionName: r.slotMission.mission.name,

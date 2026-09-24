@@ -15,7 +15,7 @@ const registerSchema = z.object({
   isMinor: z.boolean().default(false),
   parentalAuthorizationUrl: z.string().trim().optional().nullable(),
   photoUrl: z.string().min(10, 'La photo d\'identité est obligatoire pour générer votre accréditation.')
-}).refine(data => {
+}).refine((data) => {
   if (data.isMinor && !data.parentalAuthorizationUrl) {
     return false
   }
