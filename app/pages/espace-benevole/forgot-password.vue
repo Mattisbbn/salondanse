@@ -55,63 +55,56 @@ const onSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F8FAFC]">
+  <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F6EFE6] text-[#2A1512]">
     <div class="w-full max-w-md">
-      <!-- Carte principale -->
-      <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-6 sm:p-8">
+      <!-- Carte principale (Papier #FFFCF8) -->
+      <div class="bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-xs p-6 sm:p-8">
         <!-- En-tête -->
-        <div class="text-left mb-6">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-semibold mb-3">
-            <UIcon
-              name="i-lucide-key-round"
-              class="w-3.5 h-3.5"
-            />
-            <span>Sécurité du compte</span>
-          </div>
-          <h1 class="text-2xl font-bold tracking-tight text-[#0F172A]">
+        <div class="text-left mb-6 space-y-1">
+          <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
+            Sécurité du compte
+          </span>
+          <h1 class="font-serif italic font-semibold text-3xl text-[#2A1512] leading-tight">
             Mot de passe oublié
           </h1>
-          <p class="text-sm text-slate-500 mt-1">
-            Indiquez votre adresse e-mail pour recevoir un lien direct de réinitialisation.
+          <p class="text-xs text-[#6E5A52]">
+            Indiquez votre adresse e-mail pour recevoir un lien de réinitialisation.
           </p>
         </div>
 
-        <!-- État après soumission réussie -->
+        <!-- État après soumission réussie (Statut Validé DA #E1E9DC / #2F5238) -->
         <div
           v-if="isSubmitted"
           class="space-y-5"
         >
-          <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-left">
+          <div class="rounded-2xl border border-[#9DB79F] bg-[#E1E9DC] p-4 text-left">
             <div class="flex items-start gap-3">
               <UIcon
                 name="i-lucide-mail-check"
-                class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+                class="w-5 h-5 text-[#2F5238] shrink-0 mt-0.5"
               />
-              <div class="text-xs text-emerald-800 leading-relaxed">
-                <p class="font-semibold mb-1">
+              <div class="text-xs text-[#2F5238] leading-relaxed">
+                <p class="font-bold mb-1">
                   E-mail envoyé (si le compte existe)
                 </p>
                 <p>
-                  Si l'adresse <strong class="text-emerald-950 font-medium">{{ state.email }}</strong> est enregistrée, vous recevrez un lien valable 1 heure. Pensez à vérifier vos courriers indésirables / spams.
+                  Si l'adresse <strong class="font-bold">{{ state.email }}</strong> est enregistrée, vous recevrez un lien valable 1 heure. Pensez à vérifier vos courriers indésirables / spams.
                 </p>
               </div>
             </div>
           </div>
 
-          <div class="pt-2 flex flex-col gap-2">
-            <UButton
-              color="neutral"
-              variant="outline"
-              block
-              size="md"
-              class="w-full justify-center font-medium cursor-pointer"
+          <div class="pt-2 flex flex-col gap-2.5">
+            <button
+              type="button"
+              class="w-full h-11 rounded-full border border-[#D8C6B4] bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] font-semibold text-xs flex items-center justify-center cursor-pointer transition-colors"
               @click="isSubmitted = false"
             >
               Envoyer à une autre adresse
-            </UButton>
+            </button>
             <NuxtLink
               to="/espace-benevole/login"
-              class="w-full inline-flex items-center justify-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 font-medium py-2 transition-colors"
+              class="w-full inline-flex items-center justify-center gap-1.5 text-xs text-[#7A291E] hover:text-[#5E1F16] font-semibold py-2 transition-colors"
             >
               <UIcon
                 name="i-lucide-arrow-left"
@@ -134,7 +127,7 @@ const onSubmit = async () => {
             label="Adresse e-mail"
             name="email"
             required
-            class="text-left"
+            class="text-left font-medium text-xs text-[#2A1512]"
           >
             <UInput
               v-model="state.email"
@@ -142,29 +135,31 @@ const onSubmit = async () => {
               icon="i-lucide-mail"
               placeholder="votre-email@exemple.fr"
               size="md"
-              class="w-full"
+              class="w-full h-11"
               autocomplete="email"
               autofocus
             />
           </UFormField>
 
           <div class="pt-2">
-            <UButton
+            <button
               type="submit"
-              color="primary"
-              block
-              size="lg"
-              :loading="isLoading"
-              class="w-full justify-center font-medium shadow-xs cursor-pointer"
+              :disabled="isLoading"
+              class="w-full h-11 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
             >
-              Recevoir le lien de réinitialisation
-            </UButton>
+              <UIcon
+                v-if="isLoading"
+                name="i-lucide-loader-2"
+                class="w-4 h-4 animate-spin"
+              />
+              <span>Recevoir le lien de réinitialisation</span>
+            </button>
           </div>
 
-          <div class="mt-5 pt-4 border-t border-[#E2E8F0] text-center">
+          <div class="mt-5 pt-4 border-t border-[#E6D9CB] text-center">
             <NuxtLink
               to="/espace-benevole/login"
-              class="text-xs text-slate-500 hover:text-slate-800 transition-colors font-medium inline-flex items-center gap-1"
+              class="text-xs text-[#6E5A52] hover:text-[#7A291E] transition-colors font-medium inline-flex items-center gap-1"
             >
               <UIcon
                 name="i-lucide-arrow-left"
@@ -177,8 +172,8 @@ const onSubmit = async () => {
       </div>
 
       <!-- Footer discret -->
-      <p class="text-center text-xs text-slate-400 mt-4">
-        Salon de la Danse Angers • Édition 2027
+      <p class="text-center text-xs text-[#6E5A52] mt-4 font-medium">
+        Salon de la Danse Angers · Édition 2027
       </p>
     </div>
   </div>

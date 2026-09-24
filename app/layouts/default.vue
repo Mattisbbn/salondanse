@@ -109,54 +109,43 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans">
+  <div class="min-h-screen bg-[#F6EFE6] text-[#2A1512] flex flex-col font-sans selection:bg-[#F3DCD5] selection:text-[#7A291E]">
     <!-- ======================================================== -->
-    <!-- DESKTOP SIDEBAR (Fixe à gauche, fine, épurée, fond blanc) -->
+    <!-- DESKTOP SIDEBAR (Fond sombre des Coulisses #2E1411)       -->
     <!-- ======================================================== -->
     <aside
-      class="hidden md:flex md:w-64 md:flex-col fixed inset-y-0 left-0 z-30 bg-white border-r border-[#E2E8F0]"
+      class="hidden md:flex md:w-64 md:flex-col fixed inset-y-0 left-0 z-30 bg-[#2E1411] border-r border-[#3D1C18] text-[#FFF7EE]"
       aria-label="Navigation principale"
     >
-      <!-- En-tête Sidebar -->
-      <div class="h-16 flex items-center justify-between px-5 border-b border-[#E2E8F0]">
-        <div class="flex items-center gap-2.5 overflow-hidden">
-          <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
-            SD
-          </div>
-          <div class="flex flex-col min-w-0">
-            <span class="text-sm font-semibold tracking-tight text-[#0F172A] truncate">
-              Salon de la Danse
-            </span>
-            <span class="text-[11px] text-slate-500 font-medium leading-none">
-              Édition 2027
-            </span>
-          </div>
-        </div>
+      <!-- En-tête Sidebar : Identité de marque officielle -->
+      <div class="h-20 flex items-center justify-between px-5 border-b border-[#3D1C18]">
+        <NuxtLink to="/" class="flex flex-col min-w-0 group">
+          <span class="font-serif italic font-semibold text-lg text-[#FFF7EE] tracking-tight group-hover:text-[#D9B777] transition-colors leading-none">
+            Salon de la Danse
+          </span>
+          <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-[#D9B777] mt-1.5 leading-none">
+            Angers · Édition 2027
+          </span>
+        </NuxtLink>
 
-        <!-- Badge de rôle -->
-        <UBadge
+        <!-- Badge de rôle DA -->
+        <span
           v-if="isAdmin"
-          color="primary"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shrink-0 shadow-2xs"
+          class="font-semibold text-[11px] px-2.5 py-0.5 rounded-full shrink-0 bg-[#7A291E] text-white border border-[#A8372A]"
         >
           Admin
-        </UBadge>
-        <UBadge
+        </span>
+        <span
           v-else-if="isBenevole"
-          color="neutral"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shrink-0 shadow-2xs"
+          class="font-semibold text-[11px] px-2.5 py-0.5 rounded-full shrink-0 bg-[#F3DCD5] text-[#7A291E]"
         >
           Bénévole
-        </UBadge>
+        </span>
       </div>
 
       <!-- Navigation Desktop -->
       <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div class="px-2 pb-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+        <div class="px-3 pb-2 text-[10px] font-bold !text-stone-300 uppercase tracking-[0.18em]">
           {{ isAdmin ? 'Administration' : isBenevole ? 'Espace Bénévole' : 'Navigation' }}
         </div>
 
@@ -164,11 +153,11 @@ const userInitials = computed(() => {
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+          class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
           :class="[
             route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-              ? 'bg-violet-50 text-violet-700 shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              ? 'bg-[#7A291E] !text-white shadow-xs font-semibold'
+              : '!text-stone-100 hover:!text-white hover:bg-[#3D1C18] font-medium'
           ]"
         >
           <UIcon
@@ -176,25 +165,25 @@ const userInitials = computed(() => {
             class="w-4 h-4 shrink-0 transition-colors"
             :class="[
               route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                ? 'text-violet-600'
-                : 'text-slate-400 group-hover:text-slate-600'
+                ? '!text-white'
+                : '!text-stone-200 group-hover:!text-white'
             ]"
           />
-          <span class="truncate">{{ item.label }}</span>
+          <span class="truncate text-inherit">{{ item.label }}</span>
         </NuxtLink>
 
-        <!-- Message si aucune section disponible -->
+        <!-- Message si non connecté -->
         <div
           v-if="!isAuthenticated"
-          class="p-4 bg-slate-50 rounded-lg border border-slate-200/80 text-center"
+          class="p-4 rounded-xl bg-[#3D1C18] border border-[#522520] text-center mt-4"
         >
-          <p class="text-xs text-slate-500 mb-2">
+          <p class="text-xs !text-stone-100 mb-3">
             Vous n'êtes pas connecté
           </p>
           <UButton
             to="/espace-benevole/login"
             color="primary"
-            variant="soft"
+            variant="solid"
             size="xs"
             block
             label="Connexion"
@@ -203,19 +192,19 @@ const userInitials = computed(() => {
       </nav>
 
       <!-- Bas de sidebar : Profil connecté & Déconnexion -->
-      <div class="p-3 border-t border-[#E2E8F0] bg-white">
+      <div class="p-3 border-t border-[#3D1C18] bg-[#220E0C]">
         <div
           v-if="isAuthenticated"
-          class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 border border-slate-200/60"
+          class="flex items-center gap-2.5 p-2 rounded-xl bg-[#2E1411] border border-[#3D1C18]"
         >
-          <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-semibold text-xs shrink-0">
+          <div class="w-8 h-8 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-xs shrink-0">
             {{ userInitials }}
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-[#0F172A] truncate">
+            <p class="text-xs font-semibold !text-white truncate">
               {{ fullName || 'Utilisateur' }}
             </p>
-            <p class="text-[11px] text-slate-500 truncate">
+            <p class="text-[11px] !text-stone-300 truncate">
               {{ user?.email }}
             </p>
           </div>
@@ -226,7 +215,7 @@ const userInitials = computed(() => {
             size="xs"
             title="Se déconnecter"
             aria-label="Déconnexion"
-            class="text-slate-400 hover:text-red-600 hover:bg-red-50"
+            class="!text-stone-300 hover:!text-white hover:bg-[#3D1C18]"
             @click="logout"
           />
         </div>
@@ -245,51 +234,42 @@ const userInitials = computed(() => {
     </aside>
 
     <!-- ======================================================== -->
-    <!-- MOBILE HEADER (Sticky supérieur, épuré)                  -->
+    <!-- MOBILE HEADER (Sticky, Fond sombre Coulisses #2E1411)    -->
     <!-- ======================================================== -->
-    <header class="md:hidden sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-[#E2E8F0] h-14 px-4 flex items-center justify-between">
+    <header class="md:hidden sticky top-0 z-30 bg-[#2E1411] border-b border-[#3D1C18] h-14 px-4 flex items-center justify-between text-[#FFF7EE]">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-7 h-7 rounded-md bg-violet-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-          SD
-        </div>
-        <div class="flex flex-col min-w-0">
-          <h1 class="text-xs font-bold text-[#0F172A] truncate">
-            {{ currentPageTitle }}
-          </h1>
-          <span class="text-[10px] text-slate-500 font-medium leading-tight">
+        <NuxtLink to="/" class="flex flex-col min-w-0">
+          <span class="font-serif italic font-semibold text-sm text-[#FFF7EE] truncate leading-tight">
             Salon de la Danse
           </span>
-        </div>
+          <span class="text-[9px] font-bold uppercase tracking-[0.16em] text-[#D9B777] leading-none">
+            {{ currentPageTitle }}
+          </span>
+        </NuxtLink>
       </div>
 
       <div class="flex items-center gap-2">
-        <UBadge
+        <span
           v-if="isAdmin"
-          color="primary"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+          class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#7A291E] text-white border border-[#A8372A]"
         >
           Admin
-        </UBadge>
-        <UBadge
+        </span>
+        <span
           v-else-if="isBenevole"
-          color="neutral"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+          class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#F3DCD5] text-[#7A291E]"
         >
           Bénévole
-        </UBadge>
+        </span>
 
-        <UButton
-          :icon="isMobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          aria-label="Menu"
+        <button
+          type="button"
+          :aria-label="isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
+          class="p-2 rounded-lg text-[#FFF7EE] hover:bg-[#3D1C18] focus:outline-hidden"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
-        />
+        >
+          <UIcon :name="isMobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'" class="w-5 h-5" />
+        </button>
       </div>
     </header>
 
@@ -307,7 +287,7 @@ const userInitials = computed(() => {
       >
         <div
           v-if="isMobileMenuOpen"
-          class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs md:hidden"
+          class="fixed inset-0 z-50 bg-[#2A1512]/60 backdrop-blur-xs md:hidden"
           @click="isMobileMenuOpen = false"
         >
           <Transition
@@ -321,96 +301,89 @@ const userInitials = computed(() => {
           >
             <div
               v-if="isMobileMenuOpen"
-              class="fixed inset-y-0 right-0 flex w-80 max-w-[85vw] flex-col border-l border-slate-200 bg-white shadow-2xl"
+              class="fixed inset-y-0 right-0 flex w-80 max-w-[85vw] flex-col border-l border-[#3D1C18] bg-[#2E1411] text-[#FFF7EE] shadow-2xl"
               @click.stop
             >
               <!-- Header du menu mobile -->
-              <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                    SD
-                  </div>
-                  <div>
-                    <span class="text-sm font-bold text-slate-900 block leading-tight">
-                      Salon de la Danse
-                    </span>
-                    <span class="text-[10px] text-slate-500 font-medium">
-                      Édition 2027 • Angers
-                    </span>
-                  </div>
+              <div class="p-4 border-b border-[#3D1C18] flex items-center justify-between bg-[#220E0C]">
+                <div>
+                  <span class="font-serif italic font-semibold text-base text-[#FFF7EE] block leading-tight">
+                    Salon de la Danse
+                  </span>
+                  <span class="text-[10px] font-bold tracking-[0.16em] uppercase text-[#D9B777]">
+                    Angers · Édition 2027
+                  </span>
                 </div>
 
-                <UButton
-                  icon="i-lucide-x"
-                  color="neutral"
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   aria-label="Fermer le menu"
+                  class="p-2 rounded-full text-[#D8C6B4] hover:text-[#FFF7EE] hover:bg-[#3D1C18]"
                   @click="isMobileMenuOpen = false"
-                />
+                >
+                  <UIcon name="i-lucide-x" class="w-5 h-5" />
+                </button>
               </div>
 
               <!-- Profil connecté & Accès rapide Badge -->
               <div
                 v-if="isAuthenticated"
-                class="p-4 border-b border-slate-100 bg-violet-50/30 space-y-3"
+                class="p-4 border-b border-[#3D1C18] bg-[#2E1411] space-y-3"
               >
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-sm shrink-0 border border-violet-200">
+                  <div class="w-10 h-10 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-sm shrink-0 border border-[#ECCBC4]">
                     {{ userInitials }}
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-1.5 flex-wrap">
-                      <p class="text-xs font-bold text-slate-900 truncate">
+                      <p class="text-xs font-bold text-white truncate">
                         {{ fullName }}
                       </p>
-                      <UBadge
-                        :color="isAdmin ? 'primary' : 'neutral'"
-                        variant="solid"
-                        size="sm"
-                        class="font-semibold text-xs px-2.5 py-0.5 rounded-md shadow-2xs"
+                      <span
+                        v-if="isAdmin"
+                        class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#7A291E] text-white border border-[#A8372A]"
                       >
-                        {{ isAdmin ? 'Admin' : 'Bénévole' }}
-                      </UBadge>
+                        Admin
+                      </span>
+                      <span
+                        v-else
+                        class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#F3DCD5] text-[#7A291E]"
+                      >
+                        Bénévole
+                      </span>
                     </div>
-                    <p class="text-[11px] text-slate-500 truncate mt-0.5">
+                    <p class="text-[11px] text-stone-300 truncate mt-0.5">
                       {{ user?.email }}
                     </p>
                   </div>
                 </div>
 
-                <!-- Bouton d'accès rapide Badge & QR Code -->
+                <!-- Bouton d'accès rapide Badge (H-11 mobile) -->
                 <div>
-                  <UButton
+                  <NuxtLink
                     v-if="isBenevole"
                     to="/espace-benevole/dashboard"
-                    color="primary"
-                    variant="soft"
-                    size="sm"
-                    block
-                    icon="i-lucide-qr-code"
-                    label="Mon Badge Membre & QR Code"
-                    class="font-semibold shadow-xs text-xs justify-center"
+                    class="h-11 px-4 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] text-white font-semibold text-xs flex items-center justify-center gap-2 w-full transition-colors"
                     @click="isMobileMenuOpen = false"
-                  />
-                  <UButton
+                  >
+                    <UIcon name="i-lucide-qr-code" class="w-4 h-4 text-[#D9B777]" />
+                    <span>Mon Badge Membre & QR Code</span>
+                  </NuxtLink>
+                  <NuxtLink
                     v-else-if="isAdmin"
                     to="/admin/badges"
-                    color="primary"
-                    variant="soft"
-                    size="sm"
-                    block
-                    icon="i-lucide-id-card"
-                    label="Contrôle Badges & QR Codes"
-                    class="font-semibold shadow-xs text-xs justify-center"
+                    class="h-11 px-4 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] text-white font-semibold text-xs flex items-center justify-center gap-2 w-full transition-colors"
                     @click="isMobileMenuOpen = false"
-                  />
+                  >
+                    <UIcon name="i-lucide-id-card" class="w-4 h-4 text-[#D9B777]" />
+                    <span>Contrôle Badges & QR Codes</span>
+                  </NuxtLink>
                 </div>
               </div>
 
               <!-- Liens de navigation complets -->
-              <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
-                <div class="px-2 pt-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
+                <div class="px-2 pt-1 pb-2 text-[10px] font-bold !text-stone-300 uppercase tracking-[0.16em]">
                   {{ isAdmin ? 'Menu Administration' : isBenevole ? 'Menu Bénévole' : 'Navigation' }}
                 </div>
 
@@ -418,52 +391,47 @@ const userInitials = computed(() => {
                   v-for="item in navItems"
                   :key="item.to"
                   :to="item.to"
-                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
+                  class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm transition-all"
                   :class="[
                     route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                      ? 'bg-violet-600 text-white shadow-xs'
-                      : 'text-slate-700 hover:bg-slate-100'
+                      ? 'bg-[#7A291E] !text-white shadow-xs font-semibold'
+                      : '!text-stone-100 hover:!text-white hover:bg-[#3D1C18] font-medium'
                   ]"
                   @click="isMobileMenuOpen = false"
                 >
                   <UIcon
                     :name="item.icon"
-                    class="w-4 h-4 shrink-0"
+                    class="w-4 h-4 shrink-0 transition-colors"
                     :class="[
                       route.path === item.to || (item.to !== '/admin' && route.path.startsWith(item.to))
-                        ? 'text-white'
-                        : 'text-slate-400'
+                        ? '!text-white'
+                        : '!text-stone-200 group-hover:!text-white'
                     ]"
                   />
-                  <span class="truncate">{{ item.label }}</span>
+                  <span class="truncate text-inherit">{{ item.label }}</span>
                 </NuxtLink>
               </nav>
 
               <!-- Déconnexion ou Connexion en bas -->
-              <div class="p-3 border-t border-slate-200 bg-slate-50">
-                <UButton
+              <div class="p-3 border-t border-[#3D1C18] bg-[#220E0C]">
+                <button
                   v-if="isAuthenticated"
-                  icon="i-lucide-log-out"
-                  color="error"
-                  variant="subtle"
-                  size="sm"
-                  block
-                  label="Se déconnecter"
-                  class="font-medium justify-center cursor-pointer text-xs"
+                  type="button"
+                  class="h-11 px-4 rounded-full border border-[#D9A79F] bg-transparent text-[#F4D8D3] hover:bg-[#7A291E]/20 w-full flex items-center justify-center gap-2 font-medium text-xs cursor-pointer transition-colors"
                   @click="() => { isMobileMenuOpen = false; logout(); }"
-                />
-                <UButton
+                >
+                  <UIcon name="i-lucide-log-out" class="w-4 h-4 text-[#F4D8D3]" />
+                  <span>Se déconnecter</span>
+                </button>
+                <NuxtLink
                   v-else
                   to="/espace-benevole/login"
-                  color="primary"
-                  variant="solid"
-                  size="sm"
-                  block
-                  icon="i-lucide-log-in"
-                  label="Se connecter"
-                  class="font-semibold justify-center text-xs"
+                  class="h-11 px-4 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] text-white font-semibold text-xs flex items-center justify-center gap-2 w-full transition-colors"
                   @click="isMobileMenuOpen = false"
-                />
+                >
+                  <UIcon name="i-lucide-log-in" class="w-4 h-4" />
+                  <span>Se connecter</span>
+                </NuxtLink>
               </div>
             </div>
           </Transition>
@@ -472,10 +440,13 @@ const userInitials = computed(() => {
     </Teleport>
 
     <!-- ======================================================== -->
-    <!-- ZONE CENTRALE (<slot />) SUR FOND #F8FAFC                -->
+    <!-- ZONE CENTRALE (<slot />) SUR FOND CRÈME #F6EFE6          -->
     <!-- ======================================================== -->
-    <main class="flex-1 md:pl-64 flex flex-col min-h-screen bg-[#F8FAFC]">
-      <div class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-8">
+    <main class="flex-1 md:pl-64 flex flex-col min-h-screen bg-[#F6EFE6]">
+      <div
+        class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto pb-10"
+        :class="isAdmin ? 'max-w-[1600px]' : 'max-w-7xl'"
+      >
         <slot />
       </div>
     </main>

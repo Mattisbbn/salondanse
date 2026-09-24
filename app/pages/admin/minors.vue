@@ -143,51 +143,49 @@ const columns: TableColumn<MinorItem>[] = [
 <template>
   <div class="space-y-6">
     <!-- En-tête -->
-    <div class="pb-4 border-b border-slate-200">
-      <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+    <div class="pb-4 border-b border-[#E6D9CB]">
+      <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
+        Direction artistique · Plateforme bénévoles
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
         Validation des Profils Mineurs
       </h1>
-      <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-        Vérifiez et validez les autorisations parentales des bénévoles de moins de 18 ans
+      <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
+        Vérifiez et validez les autorisations parentales des bénévoles de moins de 18 ans.
       </p>
     </div>
 
     <!-- Cartes KPI de Synthèse -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-      <div class="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-        <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Total Mineurs</span>
-        <span class="text-2xl font-black text-slate-900 mt-1 block">{{ stats.total }}</span>
+      <div class="p-4 bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs">
+        <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#6E5A52] block">Total Mineurs</span>
+        <span class="text-3xl font-serif italic font-semibold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
       </div>
 
-      <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl shadow-xs">
-        <span class="text-[11px] font-semibold text-amber-800 uppercase tracking-wider block">À Valider</span>
-        <span class="text-2xl font-black text-amber-900 mt-1 block">{{ stats.pending }}</span>
+      <div class="p-4 bg-[#F7E4C6]/40 border border-[#D9A660] rounded-2xl shadow-xs">
+        <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#8A4B0F] block">À Valider</span>
+        <span class="text-3xl font-serif italic font-semibold text-[#8A4B0F] mt-1 block">{{ stats.pending }}</span>
       </div>
 
-      <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl shadow-xs">
-        <span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider block">Validés</span>
-        <span class="text-2xl font-black text-emerald-900 mt-1 block">{{ stats.validated }}</span>
+      <div class="p-4 bg-[#E1E9DC]/60 border border-[#9DB79F] rounded-2xl shadow-xs">
+        <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#2F5238] block">Validés</span>
+        <span class="text-3xl font-serif italic font-semibold text-[#2F5238] mt-1 block">{{ stats.validated }}</span>
       </div>
 
-      <div class="p-4 bg-rose-50/70 border border-rose-200 rounded-2xl shadow-xs">
-        <span class="text-[11px] font-semibold text-rose-800 uppercase tracking-wider block">Refusés</span>
-        <span class="text-2xl font-black text-rose-900 mt-1 block">{{ stats.rejected }}</span>
+      <div class="p-4 bg-[#F4D8D3]/60 border border-[#D9A79F] rounded-2xl shadow-xs">
+        <span class="text-[11px] font-bold tracking-[0.12em] uppercase text-[#9A2A22] block">Refusés</span>
+        <span class="text-3xl font-serif italic font-semibold text-[#9A2A22] mt-1 block">{{ stats.rejected }}</span>
       </div>
     </div>
 
     <!-- Tableau des profils mineurs -->
-    <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+    <div class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-[#E6D9CB] flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-sm font-bold text-slate-900">Liste des déclarations</span>
-          <UBadge
-            color="neutral"
-            variant="solid"
-            size="sm"
-            class="font-semibold text-xs px-2.5 py-0.5 rounded-md"
-          >
+          <span class="text-sm font-bold text-[#2A1512]">Liste des déclarations</span>
+          <span class="font-semibold text-xs px-2.5 py-0.5 rounded-full bg-[#F6EFE6] text-[#2A1512] border border-[#E6D9CB]">
             {{ minors.length }} candidat(s)
-          </UBadge>
+          </span>
         </div>
       </div>
 
@@ -205,19 +203,19 @@ const columns: TableColumn<MinorItem>[] = [
                 v-if="row.original.photoUrl"
                 :src="row.original.photoUrl"
                 alt="Photo"
-                class="w-9 h-9 rounded-xl object-cover border border-slate-200 shrink-0"
+                class="w-9 h-9 rounded-full object-cover border border-[#D9A79F] shrink-0"
               >
               <div
                 v-else
-                class="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0"
+                class="w-9 h-9 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D9A79F]"
               >
                 {{ row.original.firstName.charAt(0) }}{{ row.original.lastName.charAt(0) }}
               </div>
               <div class="min-w-0">
-                <p class="font-bold text-slate-900 text-xs truncate">
+                <p class="font-bold text-[#2A1512] text-xs truncate">
                   {{ row.original.fullName }}
                 </p>
-                <p class="text-[11px] text-slate-400">
+                <p class="text-[11px] text-[#6E5A52]">
                   Inscrit le {{ formatDate(row.original.createdAt) }}
                 </p>
               </div>
@@ -227,25 +225,22 @@ const columns: TableColumn<MinorItem>[] = [
           <!-- Cellule Date de Naissance & Âge -->
           <template #birthDate-cell="{ row }">
             <div class="text-xs space-y-0.5">
-              <span class="font-medium text-slate-900 block">
+              <span class="font-medium text-[#2A1512] block">
                 {{ formatDate(row.original.birthDate) }}
               </span>
-              <UBadge
+              <span
                 v-if="row.original.age !== null"
-                color="warning"
-                variant="solid"
-                size="sm"
-                class="font-semibold text-[11px] px-2 py-0.5 rounded-md shadow-2xs inline-flex items-center gap-1"
+                class="font-semibold text-[11px] px-2 py-0.5 rounded-full inline-flex items-center gap-1 bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
               >
                 <UIcon
                   name="i-lucide-user"
-                  class="w-3 h-3"
+                  class="w-3 h-3 text-[#8A4B0F]"
                 />
                 <span>{{ row.original.age }} ans</span>
-              </UBadge>
+              </span>
               <span
                 v-else
-                class="text-slate-400 text-[11px]"
+                class="text-[#6E5A52] text-[11px]"
               >Non renseigné</span>
             </div>
           </template>
@@ -253,20 +248,20 @@ const columns: TableColumn<MinorItem>[] = [
           <!-- Cellule Coordonnées -->
           <template #contact-cell="{ row }">
             <div class="text-xs space-y-0.5">
-              <div class="flex items-center gap-1 text-slate-700">
+              <div class="flex items-center gap-1 text-[#2A1512]">
                 <UIcon
                   name="i-lucide-mail"
-                  class="w-3.5 h-3.5 text-slate-400 shrink-0"
+                  class="w-3.5 h-3.5 text-[#6E5A52] shrink-0"
                 />
                 <span
                   class="truncate max-w-[180px]"
                   :title="row.original.email"
                 >{{ row.original.email }}</span>
               </div>
-              <div class="flex items-center gap-1 text-slate-500 text-[11px]">
+              <div class="flex items-center gap-1 text-[#6E5A52] text-[11px]">
                 <UIcon
                   name="i-lucide-phone"
-                  class="w-3 h-3 text-slate-400 shrink-0"
+                  class="w-3 h-3 text-[#6E5A52] shrink-0"
                 />
                 <span>{{ row.original.phone }}</span>
               </div>
@@ -276,19 +271,18 @@ const columns: TableColumn<MinorItem>[] = [
           <!-- Cellule Document PDF -->
           <template #document-cell="{ row }">
             <div v-if="row.original.parentalAuthorizationUrl">
-              <UButton
-                color="primary"
-                variant="subtle"
-                size="xs"
-                icon="i-lucide-file-text"
-                label="Voir le PDF"
-                class="font-semibold cursor-pointer shadow-2xs"
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#7A291E] border border-[#D8C6B4] text-xs font-semibold transition-colors cursor-pointer"
                 @click="openPdfPreview(row.original.parentalAuthorizationUrl, row.original.fullName)"
-              />
+              >
+                <UIcon name="i-lucide-file-text" class="w-3.5 h-3.5 text-[#7A291E]" />
+                <span>Voir le PDF</span>
+              </button>
             </div>
             <span
               v-else
-              class="text-[11px] text-rose-500 font-semibold inline-flex items-center gap-1"
+              class="text-[11px] text-[#9A2A22] font-semibold inline-flex items-center gap-1"
             >
               <UIcon
                 name="i-lucide-alert-triangle"
@@ -300,75 +294,62 @@ const columns: TableColumn<MinorItem>[] = [
 
           <!-- Cellule Statut -->
           <template #minorValidationStatus-cell="{ row }">
-            <UBadge
+            <span
               v-if="row.original.minorValidationStatus === 'VALIDATED'"
-              color="success"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 rounded-full bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
             >
               <UIcon
                 name="i-lucide-check-circle"
                 class="w-3.5 h-3.5"
               />
               <span>Validé</span>
-            </UBadge>
-            <UBadge
+            </span>
+            <span
               v-else-if="row.original.minorValidationStatus === 'REJECTED'"
-              color="error"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 rounded-full bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F]"
             >
               <UIcon
                 name="i-lucide-x-circle"
                 class="w-3.5 h-3.5"
               />
               <span>Refusé</span>
-            </UBadge>
-            <UBadge
+            </span>
+            <span
               v-else
-              color="warning"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 rounded-full bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
             >
               <UIcon
                 name="i-lucide-clock"
                 class="w-3.5 h-3.5"
               />
               <span>En attente</span>
-            </UBadge>
+            </span>
           </template>
 
           <!-- Cellule Actions -->
           <template #actions-cell="{ row }">
             <div class="flex items-center gap-1.5">
               <!-- Bouton Valider -->
-              <UButton
-                color="success"
-                variant="solid"
-                size="xs"
-                icon="i-lucide-check"
-                label="Valider"
-                :loading="updatingId === row.original.id"
-                :disabled="row.original.minorValidationStatus === 'VALIDATED'"
-                class="cursor-pointer font-semibold shadow-2xs"
+              <button
+                type="button"
+                :disabled="row.original.minorValidationStatus === 'VALIDATED' || updatingId === row.original.id"
+                class="inline-flex items-center gap-1 h-7 px-3 rounded-full bg-[#2F5238] hover:bg-[#233f2a] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-40"
                 @click="updateMinorStatus(row.original, 'VALIDATED')"
-              />
+              >
+                <UIcon name="i-lucide-check" class="w-3 h-3 text-white" />
+                <span>Valider</span>
+              </button>
 
               <!-- Bouton Refuser -->
-              <UButton
-                color="error"
-                variant="soft"
-                size="xs"
-                icon="i-lucide-x"
-                label="Refuser"
-                :loading="updatingId === row.original.id"
-                :disabled="row.original.minorValidationStatus === 'REJECTED'"
-                class="cursor-pointer font-semibold shadow-2xs"
+              <button
+                type="button"
+                :disabled="row.original.minorValidationStatus === 'REJECTED' || updatingId === row.original.id"
+                class="inline-flex items-center gap-1 h-7 px-3 rounded-full bg-[#FFFCF8] hover:bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-40"
                 @click="updateMinorStatus(row.original, 'REJECTED')"
-              />
+              >
+                <UIcon name="i-lucide-x" class="w-3 h-3 text-[#9A2A22]" />
+                <span>Refuser</span>
+              </button>
             </div>
           </template>
         </UTable>
@@ -377,12 +358,12 @@ const columns: TableColumn<MinorItem>[] = [
       <!-- Vue Mobile : Liste de Cartes empilées -->
       <div
         v-if="minors.length > 0"
-        class="block md:hidden divide-y divide-slate-100"
+        class="block md:hidden divide-y divide-[#E6D9CB]"
       >
         <div
           v-for="minor in minors"
           :key="minor.id"
-          class="p-4 space-y-3 bg-white"
+          class="p-4 space-y-3 bg-[#FFFCF8]"
         >
           <!-- En-tête : Avatar + Nom + Âge + Statut -->
           <div class="flex items-start justify-between gap-2">
@@ -391,21 +372,21 @@ const columns: TableColumn<MinorItem>[] = [
                 v-if="minor.photoUrl"
                 :src="minor.photoUrl"
                 alt="Photo"
-                class="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
+                class="w-10 h-10 rounded-full object-cover border border-[#D9A79F] shrink-0"
               >
               <div
                 v-else
-                class="w-10 h-10 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xs shrink-0 border border-violet-200"
+                class="w-10 h-10 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D9A79F]"
               >
                 {{ minor.firstName.charAt(0) }}{{ minor.lastName.charAt(0) }}
               </div>
               <div class="min-w-0">
-                <span class="font-bold text-sm text-slate-900 block truncate">
+                <span class="font-bold text-sm text-[#2A1512] block truncate">
                   {{ minor.fullName }}
                 </span>
                 <span
                   v-if="minor.age !== null"
-                  class="text-[11px] font-semibold text-white bg-amber-600 px-2 py-0.5 rounded-md inline-block mt-0.5 shadow-2xs"
+                  class="text-[11px] font-semibold text-[#8A4B0F] bg-[#F7E4C6] border border-[#D9A660] px-2 py-0.5 rounded-full inline-block mt-0.5"
                 >
                   {{ minor.age }} ans (né(e) le {{ formatDate(minor.birthDate) }})
                 </span>
@@ -413,53 +394,44 @@ const columns: TableColumn<MinorItem>[] = [
             </div>
 
             <!-- Statut Badge -->
-            <UBadge
+            <span
               v-if="minor.minorValidationStatus === 'VALIDATED'"
-              color="success"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 rounded-full bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
             >
               <UIcon
                 name="i-lucide-check-circle"
                 class="w-3.5 h-3.5"
               />
               <span>Validé</span>
-            </UBadge>
-            <UBadge
+            </span>
+            <span
               v-else-if="minor.minorValidationStatus === 'REJECTED'"
-              color="error"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 rounded-full bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F]"
             >
               <UIcon
                 name="i-lucide-x-circle"
                 class="w-3.5 h-3.5"
               />
               <span>Refusé</span>
-            </UBadge>
-            <UBadge
+            </span>
+            <span
               v-else
-              color="warning"
-              variant="solid"
-              size="sm"
-              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 shadow-2xs"
+              class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1 shrink-0 rounded-full bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
             >
               <UIcon
                 name="i-lucide-clock"
                 class="w-3.5 h-3.5"
               />
               <span>En attente</span>
-            </UBadge>
+            </span>
           </div>
 
           <!-- Coordonnées & Document -->
-          <div class="text-xs space-y-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-600">
-            <div class="flex items-center gap-1.5 text-slate-700">
+          <div class="text-xs space-y-2 p-3 rounded-xl bg-[#F6EFE6]/60 border border-[#E6D9CB] text-[#6E5A52]">
+            <div class="flex items-center gap-1.5 text-[#2A1512]">
               <UIcon
                 name="i-lucide-mail"
-                class="w-3.5 h-3.5 text-slate-400 shrink-0"
+                class="w-3.5 h-3.5 text-[#6E5A52] shrink-0"
               />
               <span class="truncate font-medium">{{ minor.email }}</span>
             </div>
@@ -469,33 +441,32 @@ const columns: TableColumn<MinorItem>[] = [
             >
               <UIcon
                 name="i-lucide-phone"
-                class="w-3.5 h-3.5 text-slate-400 shrink-0"
+                class="w-3.5 h-3.5 text-[#6E5A52] shrink-0"
               />
               <a
                 :href="'tel:' + minor.phone"
-                class="text-violet-600 font-semibold hover:underline"
+                class="text-[#7A291E] font-semibold hover:underline"
               >
                 {{ minor.phone }}
               </a>
             </div>
 
             <!-- PDF Accord parental -->
-            <div class="pt-1 border-t border-slate-200/60 flex items-center justify-between">
-              <span class="text-slate-500 font-medium">Autorisation parentale :</span>
+            <div class="pt-1 border-t border-[#E6D9CB] flex items-center justify-between">
+              <span class="text-[#6E5A52] font-medium">Autorisation parentale :</span>
               <div v-if="minor.parentalAuthorizationUrl">
-                <UButton
-                  color="primary"
-                  variant="subtle"
-                  size="xs"
-                  icon="i-lucide-file-text"
-                  label="Voir le PDF"
-                  class="font-semibold cursor-pointer shadow-2xs"
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#7A291E] border border-[#D8C6B4] text-xs font-semibold transition-colors cursor-pointer"
                   @click="openPdfPreview(minor.parentalAuthorizationUrl, minor.fullName)"
-                />
+                >
+                  <UIcon name="i-lucide-file-text" class="w-3.5 h-3.5 text-[#7A291E]" />
+                  <span>Voir le PDF</span>
+                </button>
               </div>
               <span
                 v-else
-                class="text-[11px] text-rose-500 font-semibold inline-flex items-center gap-1"
+                class="text-[11px] text-[#9A2A22] font-semibold inline-flex items-center gap-1"
               >
                 <UIcon
                   name="i-lucide-alert-triangle"
@@ -508,29 +479,25 @@ const columns: TableColumn<MinorItem>[] = [
 
           <!-- Actions tactiles -->
           <div class="pt-1 flex items-center gap-2">
-            <UButton
-              color="success"
-              variant="solid"
-              size="sm"
-              icon="i-lucide-check"
-              label="Valider l'autorisation"
-              :loading="updatingId === minor.id"
-              :disabled="minor.minorValidationStatus === 'VALIDATED'"
-              class="flex-1 justify-center font-semibold cursor-pointer py-2 shadow-xs"
+            <button
+              type="button"
+              :disabled="minor.minorValidationStatus === 'VALIDATED' || updatingId === minor.id"
+              class="flex-1 h-11 inline-flex items-center justify-center gap-2 rounded-full bg-[#2F5238] hover:bg-[#233f2a] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
               @click="updateMinorStatus(minor, 'VALIDATED')"
-            />
+            >
+              <UIcon name="i-lucide-check" class="w-4 h-4 text-white" />
+              <span>Valider l'autorisation</span>
+            </button>
 
-            <UButton
-              color="error"
-              variant="soft"
-              size="sm"
-              icon="i-lucide-x"
-              label="Refuser"
-              :loading="updatingId === minor.id"
-              :disabled="minor.minorValidationStatus === 'REJECTED'"
-              class="justify-center font-semibold cursor-pointer px-4 py-2"
+            <button
+              type="button"
+              :disabled="minor.minorValidationStatus === 'REJECTED' || updatingId === minor.id"
+              class="h-11 px-4 rounded-full inline-flex items-center justify-center gap-1 bg-[#FFFCF8] hover:bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-40"
               @click="updateMinorStatus(minor, 'REJECTED')"
-            />
+            >
+              <UIcon name="i-lucide-x" class="w-4 h-4 text-[#9A2A22]" />
+              <span>Refuser</span>
+            </button>
           </div>
         </div>
       </div>
@@ -538,11 +505,11 @@ const columns: TableColumn<MinorItem>[] = [
       <!-- Si liste vide -->
       <div
         v-if="minors.length === 0 && status !== 'pending'"
-        class="py-12 text-center text-slate-400"
+        class="py-12 text-center text-[#6E5A52]"
       >
         <UIcon
           name="i-lucide-shield-check"
-          class="w-8 h-8 mx-auto text-slate-300 mb-2"
+          class="w-8 h-8 mx-auto text-[#D8C6B4] mb-2"
         />
         <p class="text-xs font-medium">
           Aucun profil bénévole mineur enregistré pour cette édition.
@@ -564,27 +531,27 @@ const columns: TableColumn<MinorItem>[] = [
       >
         <div
           v-if="isPdfModalOpen && previewPdfUrl"
-          class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
+          class="fixed inset-0 z-50 bg-[#2A1512]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
           @click="isPdfModalOpen = false"
         >
           <div
-            class="w-full max-w-4xl h-[88vh] bg-white rounded-2xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden"
+            class="w-full max-w-4xl h-[88vh] bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-2xl flex flex-col overflow-hidden"
             @click.stop
           >
             <!-- En-tête Modale -->
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
+            <div class="p-4 border-b border-[#E6D9CB] flex items-center justify-between bg-[#F6EFE6]/50 shrink-0">
               <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
+                <div class="w-8 h-8 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center shrink-0 border border-[#D9A79F]">
                   <UIcon
                     name="i-lucide-file-text"
                     class="w-4 h-4"
                   />
                 </div>
                 <div class="min-w-0">
-                  <h3 class="text-sm font-bold text-slate-900 truncate">
+                  <h3 class="text-sm font-bold text-[#2A1512] truncate">
                     Autorisation parentale — {{ previewVolunteerName }}
                   </h3>
-                  <p class="text-[11px] text-slate-500">
+                  <p class="text-[11px] text-[#6E5A52]">
                     Prévisualisation du document officiel
                   </p>
                 </div>
@@ -594,27 +561,27 @@ const columns: TableColumn<MinorItem>[] = [
                 <a
                   :href="previewPdfUrl"
                   target="_blank"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:text-violet-700 hover:bg-slate-50 transition-colors shadow-2xs"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] hover:text-[#7A291E] hover:bg-[#F6EFE6] transition-colors shadow-2xs"
                 >
                   <UIcon
                     name="i-lucide-external-link"
-                    class="w-3.5 h-3.5"
+                    class="w-3.5 h-3.5 text-[#7A291E]"
                   />
                   <span>Ouvrir dans un onglet</span>
                 </a>
-                <UButton
-                  icon="i-lucide-x"
-                  color="neutral"
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   aria-label="Fermer"
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-[#6E5A52] hover:text-[#2A1512] hover:bg-[#F6EFE6] transition-colors cursor-pointer"
                   @click="isPdfModalOpen = false"
-                />
+                >
+                  <UIcon name="i-lucide-x" class="w-4 h-4" />
+                </button>
               </div>
             </div>
 
             <!-- Contenu iframe PDF -->
-            <div class="flex-1 bg-slate-100 relative">
+            <div class="flex-1 bg-[#F6EFE6] relative">
               <iframe
                 :src="previewPdfUrl"
                 class="w-full h-full border-0"

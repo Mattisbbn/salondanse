@@ -126,47 +126,50 @@ const onSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F8FAFC]">
+  <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F6EFE6] text-[#2A1512]">
     <div class="w-full max-w-md">
-      <!-- Carte principale de connexion -->
-      <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-xs p-6 sm:p-8">
-        <!-- En-tête sobre aligné à gauche -->
-        <div class="text-left mb-6">
-          <h1 class="text-2xl font-bold tracking-tight text-[#0F172A]">
+      <!-- Carte principale de connexion (Papier #FFFCF8) -->
+      <div class="bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-xs p-6 sm:p-8">
+        <!-- En-tête officiel DA -->
+        <div class="text-left mb-6 space-y-1">
+          <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
             Espace Bénévoles
+          </span>
+          <h1 class="font-serif italic font-semibold text-3xl text-[#2A1512] leading-tight">
+            Connexion
           </h1>
-          <p class="text-sm text-slate-500 mt-1">
-            Salon de la Danse • Connexion
+          <p class="text-xs text-[#6E5A52]">
+            Salon de la Danse · Édition 2027
           </p>
         </div>
 
         <!-- Alerte de redirection auth_required -->
         <div
           v-if="warningMessage"
-          class="mb-5 rounded-xl border border-amber-200 bg-amber-50/80 p-3.5 text-xs text-amber-900 flex items-start gap-2.5"
+          class="mb-5 rounded-2xl border border-[#D9A660] bg-[#F7E4C6] p-3.5 text-xs text-[#8A4B0F] flex items-start gap-2.5 font-medium"
         >
           <UIcon
             name="i-lucide-alert-triangle"
-            class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
+            class="w-4 h-4 text-[#8A4B0F] shrink-0 mt-0.5"
           />
-          <span class="leading-relaxed font-medium">{{ warningMessage }}</span>
+          <span class="leading-relaxed">{{ warningMessage }}</span>
         </div>
 
         <!-- ======================================================== -->
-        <!-- SÉLECTEUR DE COMPTES DÉMO (PROTOTYPE)                    -->
+        <!-- SÉLECTEUR DE COMPTES DÉMO                                -->
         <!-- ======================================================== -->
-        <div class="mb-6 p-4 rounded-xl bg-violet-50/70 border border-violet-200/80 space-y-2.5">
+        <div class="mb-6 p-4 rounded-2xl bg-[#FAF2EF] border border-[#ECCBC4] space-y-2.5">
           <div class="flex items-center gap-2">
             <UIcon
               name="i-lucide-sparkles"
-              class="w-4 h-4 text-violet-600 shrink-0"
+              class="w-4 h-4 text-[#7A291E] shrink-0"
             />
-            <span class="text-xs font-bold text-violet-950 uppercase tracking-wider">
+            <span class="text-xs font-bold text-[#7A291E] uppercase tracking-wider">
               Profils de Démonstration
             </span>
           </div>
 
-          <p class="text-[11px] text-slate-600">
+          <p class="text-[11px] text-[#6E5A52]">
             Cliquez sur un profil pour pré-remplir instantanément les identifiants :
           </p>
 
@@ -176,11 +179,11 @@ const onSubmit = async () => {
               v-for="acc in demoAccounts"
               :key="acc.email"
               type="button"
-              class="px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 border cursor-pointer shadow-xs"
+              class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 border cursor-pointer"
               :class="[
                 state.email === acc.email
-                  ? 'bg-violet-600 text-white border-violet-600 ring-2 ring-violet-200 shadow-sm'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-violet-50 hover:border-violet-300'
+                  ? 'bg-[#7A291E] text-white border-[#7A291E] shadow-2xs'
+                  : 'bg-[#FFFCF8] text-[#2A1512] border-[#D8C6B4] hover:bg-[#F6EFE6]'
               ]"
               :title="acc.description"
               @mousedown.prevent
@@ -204,7 +207,7 @@ const onSubmit = async () => {
             label="Adresse e-mail"
             name="email"
             required
-            class="text-left"
+            class="text-left font-medium text-xs text-[#2A1512]"
           >
             <UInput
               v-model="state.email"
@@ -212,7 +215,7 @@ const onSubmit = async () => {
               icon="i-lucide-mail"
               placeholder="user@mail.fr"
               size="md"
-              class="w-full"
+              class="w-full h-11"
               autocomplete="email"
             />
           </UFormField>
@@ -222,7 +225,7 @@ const onSubmit = async () => {
             label="Mot de passe"
             name="password"
             required
-            class="text-left"
+            class="text-left font-medium text-xs text-[#2A1512]"
           >
             <UInput
               v-model="state.password"
@@ -230,22 +233,19 @@ const onSubmit = async () => {
               icon="i-lucide-lock"
               placeholder="••••••••"
               size="md"
-              class="w-full"
+              class="w-full h-11"
               autocomplete="current-password"
             >
               <template #trailing>
-                <UButton
-                  :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  :padded="false"
+                <button
                   type="button"
                   tabindex="-1"
-                  class="text-slate-400 hover:text-slate-700 p-1"
+                  class="text-[#6E5A52] hover:text-[#2A1512] p-1 cursor-pointer"
                   :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
                   @click="showPassword = !showPassword"
-                />
+                >
+                  <UIcon :name="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'" class="w-4 h-4" />
+                </button>
               </template>
             </UInput>
           </UFormField>
@@ -253,42 +253,44 @@ const onSubmit = async () => {
           <div class="flex justify-end pt-1">
             <NuxtLink
               to="/espace-benevole/forgot-password"
-              class="text-xs text-violet-600 hover:text-violet-700 hover:underline font-medium"
+              class="text-xs text-[#7A291E] hover:text-[#5E1F16] hover:underline font-semibold"
             >
               Mot de passe oublié ?
             </NuxtLink>
           </div>
 
-          <!-- Bouton pleine largeur violet (#7C3AED) -->
+          <!-- Bouton H-11 ergonomique mobile, Brique (#7A291E) -->
           <div class="pt-2">
-            <UButton
+            <button
               type="submit"
-              color="primary"
-              block
-              size="lg"
-              :loading="isLoading"
-              class="w-full justify-center font-medium shadow-xs cursor-pointer"
+              :disabled="isLoading"
+              class="w-full h-11 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
             >
-              Se connecter
-            </UButton>
+              <UIcon
+                v-if="isLoading"
+                name="i-lucide-loader-2"
+                class="w-4 h-4 animate-spin"
+              />
+              <span>Se connecter</span>
+            </button>
           </div>
         </UForm>
 
         <!-- Lien discret inscription -->
-        <div class="mt-6 pt-5 border-t border-[#E2E8F0] text-center">
+        <div class="mt-6 pt-5 border-t border-[#E6D9CB] text-center">
           <NuxtLink
             to="/espace-benevole/register"
-            class="text-xs text-slate-500 hover:text-violet-600 transition-colors font-medium inline-flex items-center gap-1"
+            class="text-xs text-[#6E5A52] hover:text-[#7A291E] transition-colors font-medium inline-flex items-center gap-1.5"
           >
             <span>Pas encore de compte ?</span>
-            <span class="text-violet-600 font-semibold underline underline-offset-2">S'inscrire</span>
+            <span class="text-[#7A291E] font-bold underline underline-offset-2">S'inscrire</span>
           </NuxtLink>
         </div>
       </div>
 
       <!-- Note discrète pour le Salon de la Danse 2027 -->
-      <p class="text-center text-xs text-slate-400 mt-4">
-        Salon de la Danse Angers • Édition 2027
+      <p class="text-center text-xs text-[#6E5A52] mt-4 font-medium">
+        Salon de la Danse Angers · Édition 2027
       </p>
     </div>
   </div>

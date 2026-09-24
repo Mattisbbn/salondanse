@@ -110,16 +110,22 @@ function getActionLabel(action: string): string {
 <template>
   <div class="space-y-6">
     <!-- En-tête -->
-    <div>
-      <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-        Logs
+    <div class="pb-5 border-b border-[#E6D9CB]">
+      <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
+        Traçabilité & Sécurité
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+        Journal d'Audit
       </h1>
+      <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
+        Historique horodaté des opérations administratives, affectations et modifications du planning
+      </p>
     </div>
 
     <!-- Conteneur principal unifié : Filtres intégrés + Tableau -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+    <div class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs overflow-hidden">
       <!-- Header de filtres intégré au-dessus des en-têtes de colonnes -->
-      <div class="p-3.5 sm:p-4 border-b border-slate-200 flex flex-col sm:flex-row items-center gap-3">
+      <div class="p-3.5 sm:p-4 border-b border-[#E6D9CB] flex flex-col sm:flex-row items-center gap-3">
         <div class="w-full sm:w-72">
           <UInput
             v-model="searchQuery"
@@ -130,10 +136,10 @@ function getActionLabel(action: string): string {
           />
         </div>
 
-        <div class="w-full sm:w-56">
+        <div class="w-full sm:w-60">
           <select
             v-model="selectedAction"
-            class="w-full text-xs font-semibold bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
+            class="w-full text-xs font-semibold bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A291E] cursor-pointer"
           >
             <option
               v-for="opt in actionOptions"
@@ -149,11 +155,11 @@ function getActionLabel(action: string): string {
       <!-- Chargement -->
       <div
         v-if="status === 'pending'"
-        class="py-16 text-center text-slate-400"
+        class="py-16 text-center text-[#6E5A52]"
       >
         <UIcon
           name="i-lucide-loader-2"
-          class="w-6 h-6 animate-spin mx-auto text-violet-600 mb-2"
+          class="w-6 h-6 animate-spin mx-auto text-[#7A291E] mb-2"
         />
         <p class="text-xs">
           Chargement des logs d'audit...
@@ -165,16 +171,16 @@ function getActionLabel(action: string): string {
         v-else-if="filteredLogs.length === 0"
         class="p-12 text-center space-y-2"
       >
-        <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
+        <div class="w-12 h-12 rounded-2xl bg-[#F6EFE6] text-[#6E5A52] flex items-center justify-center mx-auto">
           <UIcon
             name="i-lucide-clipboard-list"
             class="w-6 h-6"
           />
         </div>
-        <h3 class="text-base font-bold text-slate-900">
+        <h3 class="text-base font-serif italic font-semibold text-[#2A1512]">
           Aucune action enregistrée
         </h3>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-[#6E5A52]">
           Les opérations administratives (affectation, annulation, approbation mineur) apparaîtront ici.
         </p>
       </div>
@@ -184,67 +190,71 @@ function getActionLabel(action: string): string {
         <!-- Vue Desktop : Tableau -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+            <thead class="bg-[#F6EFE6] border-b border-[#E6D9CB] text-[#6E5A52] font-bold uppercase tracking-wider text-[10px]">
               <tr>
-                <th class="py-3 px-4">
+                <th class="py-3.5 px-4">
                   Date & Heure
                 </th>
-                <th class="py-3 px-4">
+                <th class="py-3.5 px-4">
                   Administrateur
                 </th>
-                <th class="py-3 px-4">
+                <th class="py-3.5 px-4">
                   Action
                 </th>
-                <th class="py-3 px-4">
+                <th class="py-3.5 px-4">
                   Détails de l'opération
                 </th>
-                <th class="py-3 px-4 text-right">
+                <th class="py-3.5 px-4 text-right">
                   ID Cible
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-[#E6D9CB]">
               <tr
                 v-for="log in filteredLogs"
                 :key="log.id"
-                class="hover:bg-slate-50/70 transition-colors"
+                class="hover:bg-[#F6EFE6]/40 transition-colors"
               >
                 <!-- Date -->
-                <td class="py-3 px-4 whitespace-nowrap font-mono text-slate-600">
+                <td class="py-3 px-4 whitespace-nowrap font-mono text-[#6E5A52]">
                   {{ formatDate(log.createdAt) }}
                 </td>
 
                 <!-- Admin -->
                 <td class="py-3 px-4 whitespace-nowrap">
-                  <div class="font-bold text-slate-900">
+                  <div class="font-bold text-[#2A1512]">
                     {{ log.adminName }}
                   </div>
-                  <div class="text-[11px] text-slate-400">
+                  <div class="text-[11px] text-[#6E5A52]">
                     {{ log.adminEmail }}
                   </div>
                 </td>
 
                 <!-- Action -->
                 <td class="py-3 px-4 whitespace-nowrap">
-                  <UBadge
-                    :color="getActionBadgeColor(log.action)"
-                    variant="solid"
-                    size="sm"
-                    class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
+                  <span
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                    :class="[
+                      getActionBadgeColor(log.action) === 'success' ? 'bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]' :
+                      getActionBadgeColor(log.action) === 'primary' ? 'bg-[#F3DCD5] text-[#7A291E] border border-[#D9A79F]' :
+                      getActionBadgeColor(log.action) === 'error' ? 'bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F]' :
+                      getActionBadgeColor(log.action) === 'warning' ? 'bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]' :
+                      'bg-[#EFE5DA] text-[#5B463E] border border-[#D8C6B4]'
+                    ]"
                   >
                     {{ getActionLabel(log.action) }}
-                  </UBadge>
+                  </span>
                 </td>
 
                 <!-- Détails -->
                 <td class="py-3 px-4 max-w-xs sm:max-w-md">
-                  <p class="text-slate-800 line-clamp-2">
+                  <p class="text-[#2A1512] line-clamp-2">
                     {{ log.details || '-' }}
                   </p>
                 </td>
 
                 <!-- Cible -->
-                <td class="py-3 px-4 text-right whitespace-nowrap font-mono text-[11px] text-slate-400">
+                <td class="py-3 px-4 text-right whitespace-nowrap font-mono text-[11px] text-[#6E5A52]">
                   {{ log.targetId ? log.targetId.slice(0, 8).toUpperCase() : '-' }}
                 </td>
               </tr>
@@ -253,46 +263,50 @@ function getActionLabel(action: string): string {
         </div>
 
         <!-- Vue Mobile : Liste de Cartes empilées -->
-        <div class="block md:hidden divide-y divide-slate-100">
+        <div class="block md:hidden divide-y divide-[#E6D9CB]">
           <div
             v-for="log in filteredLogs"
             :key="log.id"
-            class="p-4 space-y-2.5 bg-white"
+            class="p-4 space-y-2.5 bg-[#FFFCF8]"
           >
             <!-- En-tête : Badge Action + Date & Heure -->
             <div class="flex items-start justify-between gap-2">
-              <UBadge
-                :color="getActionBadgeColor(log.action)"
-                variant="solid"
-                size="sm"
-                class="font-semibold text-xs px-2.5 py-1 shrink-0 shadow-2xs"
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold shrink-0"
+                :class="[
+                  getActionBadgeColor(log.action) === 'success' ? 'bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]' :
+                  getActionBadgeColor(log.action) === 'primary' ? 'bg-[#F3DCD5] text-[#7A291E] border border-[#D9A79F]' :
+                  getActionBadgeColor(log.action) === 'error' ? 'bg-[#F4D8D3] text-[#9A2A22] border border-[#D9A79F]' :
+                  getActionBadgeColor(log.action) === 'warning' ? 'bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]' :
+                  'bg-[#EFE5DA] text-[#5B463E] border border-[#D8C6B4]'
+                ]"
               >
                 {{ getActionLabel(log.action) }}
-              </UBadge>
+              </span>
 
-              <span class="font-mono text-[11px] text-slate-500 shrink-0">
+              <span class="font-mono text-[11px] text-[#6E5A52] shrink-0">
                 {{ formatDate(log.createdAt) }}
               </span>
             </div>
 
             <!-- Administrateur -->
             <div class="flex items-center gap-2 text-xs">
-              <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <div class="w-6 h-6 rounded-md bg-[#F6EFE6] text-[#7A291E] flex items-center justify-center shrink-0">
                 <UIcon
                   name="i-lucide-user"
                   class="w-3.5 h-3.5"
                 />
               </div>
               <div class="min-w-0">
-                <span class="font-bold text-slate-900 block truncate">{{ log.adminName }}</span>
-                <span class="text-[11px] text-slate-400 block truncate">{{ log.adminEmail }}</span>
+                <span class="font-bold text-[#2A1512] block truncate">{{ log.adminName }}</span>
+                <span class="text-[11px] text-[#6E5A52] block truncate">{{ log.adminEmail }}</span>
               </div>
             </div>
 
             <!-- Détails de l'opération -->
             <div
               v-if="log.details"
-              class="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"
+              class="text-xs text-[#2A1512] bg-[#F6EFE6] p-2.5 rounded-xl border border-[#E6D9CB] leading-relaxed"
             >
               {{ log.details }}
             </div>
@@ -300,10 +314,10 @@ function getActionLabel(action: string): string {
             <!-- ID Cible si présent -->
             <div
               v-if="log.targetId"
-              class="flex items-center justify-between text-[11px] pt-0.5 text-slate-400 font-mono"
+              class="flex items-center justify-between text-[11px] pt-0.5 text-[#6E5A52] font-mono"
             >
               <span>Cible concernée :</span>
-              <span class="font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+              <span class="font-bold text-[#7A291E] bg-[#F3DCD5] px-1.5 py-0.5 rounded border border-[#D9A79F]">
                 {{ log.targetId.slice(0, 8).toUpperCase() }}
               </span>
             </div>

@@ -66,34 +66,36 @@ function printAllBadges() {
 <template>
   <div class="space-y-6">
     <!-- En-tête (masqué à l'impression) -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-[#E6D9CB] print:hidden">
       <div>
-        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Badges & Accréditations Bénévoles
+        <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
+          Accréditations & Émargement
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-serif italic font-semibold tracking-tight text-[#2A1512]">
+          Badges & Accréditations
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+        <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
           Génération et impression des badges officiels avec QR Code pour les bénévoles validés
         </p>
       </div>
 
       <div class="flex items-center gap-2.5">
-        <UButton
-          color="primary"
-          variant="solid"
-          size="md"
-          icon="i-lucide-printer"
-          label="Imprimer tous les badges"
-          class="font-semibold shadow-xs cursor-pointer"
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="!data?.badges || data.badges.length === 0"
           @click="printAllBadges"
-        />
+        >
+          <UIcon name="i-lucide-printer" class="w-4 h-4" />
+          <span>Imprimer tous les badges</span>
+        </button>
       </div>
     </div>
 
     <!-- Barre d'outils et recherche (masquée à l'impression) -->
     <div
       v-if="data?.badges && data.badges.length > 0"
-      class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden"
+      class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden"
     >
       <div class="flex items-center gap-2 w-full sm:w-80">
         <UInput
@@ -105,8 +107,8 @@ function printAllBadges() {
         />
       </div>
 
-      <div class="flex items-center gap-2 text-xs text-slate-500 self-end sm:self-auto">
-        <span class="font-semibold text-slate-800">{{ filteredBadges.length }}</span>
+      <div class="flex items-center gap-2 text-xs text-[#6E5A52] self-end sm:self-auto">
+        <span class="font-serif italic font-semibold text-sm text-[#2A1512]">{{ filteredBadges.length }}</span>
         <span>badge(s) prêt(s) à être imprimé(s)</span>
       </div>
     </div>
@@ -114,11 +116,11 @@ function printAllBadges() {
     <!-- Chargement -->
     <div
       v-if="status === 'pending'"
-      class="py-16 text-center text-slate-400 print:hidden"
+      class="py-16 text-center text-[#6E5A52] print:hidden"
     >
       <UIcon
         name="i-lucide-loader-2"
-        class="w-6 h-6 animate-spin mx-auto text-violet-600 mb-2"
+        class="w-6 h-6 animate-spin mx-auto text-[#7A291E] mb-2"
       />
       <p class="text-xs">
         Chargement des badges et génération des QR Codes...
@@ -128,29 +130,29 @@ function printAllBadges() {
     <!-- Aucun bénévole validé -->
     <div
       v-else-if="!data?.badges || data.badges.length === 0"
-      class="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3 print:hidden"
+      class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] p-12 text-center space-y-3 print:hidden"
     >
-      <div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mx-auto">
+      <div class="w-12 h-12 rounded-2xl bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center mx-auto">
         <UIcon
           name="i-lucide-id-card"
           class="w-6 h-6"
         />
       </div>
-      <h3 class="text-base font-bold text-slate-900">
+      <h3 class="text-base font-serif italic font-semibold text-[#2A1512]">
         Aucun badge à imprimer pour le moment
       </h3>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto">
+      <p class="text-xs text-[#6E5A52] max-w-sm mx-auto">
         Les badges sont automatiquement générés dès que les bénévoles ont validé et verrouillé leur planning.
       </p>
       <div class="pt-2">
         <NuxtLink to="/admin/volunteers">
-          <UButton
-            color="primary"
-            variant="subtle"
-            size="sm"
-            icon="i-lucide-users"
-            label="Gérer les bénévoles"
-          />
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] border border-[#D8C6B4] font-semibold text-xs transition-colors cursor-pointer"
+          >
+            <UIcon name="i-lucide-users" class="w-4 h-4 text-[#7A291E]" />
+            <span>Gérer les bénévoles</span>
+          </button>
         </NuxtLink>
       </div>
     </div>
@@ -165,19 +167,19 @@ function printAllBadges() {
       <div
         v-for="badge in filteredBadges"
         :key="badge.id"
-        class="bg-white rounded-2xl border-2 border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between print:border-slate-400 print:shadow-none print:break-inside-avoid print:rounded-xl"
+        class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs overflow-hidden flex flex-col justify-between print:border-slate-400 print:shadow-none print:break-inside-avoid print:rounded-xl"
         style="min-height: 380px; max-width: 320px; margin: 0 auto; width: 100%;"
       >
-        <!-- En-tête Badge -->
+        <!-- En-tête Badge Coulisses sombre -->
         <div>
-          <div class="bg-violet-700 text-white p-3 text-center space-y-0.5 print:bg-violet-800">
-            <span class="text-[9px] uppercase tracking-widest font-extrabold text-violet-200 block">
+          <div class="bg-[#2E1411] text-[#FFF7EE] p-3.5 text-center space-y-1 print:bg-[#2E1411]">
+            <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-[#D9B777] block">
               Accréditation Officielle
             </span>
-            <h2 class="text-xs font-black tracking-wider uppercase">
+            <h2 class="text-sm font-serif italic font-semibold text-[#FFF7EE]">
               Salon de la Danse 2027
             </h2>
-            <span class="text-[9px] text-violet-200 block">
+            <span class="text-[9px] text-[#D8C6B4] block uppercase tracking-wider">
               Angers • 14-16 Mai 2027
             </span>
           </div>
@@ -190,30 +192,30 @@ function printAllBadges() {
                 v-if="badge.photoUrl"
                 :src="badge.photoUrl"
                 :alt="`${badge.firstName} ${badge.lastName}`"
-                class="w-full h-full rounded-2xl object-cover border-2 border-violet-600 shadow-sm mx-auto"
+                class="w-full h-full rounded-2xl object-cover border-2 border-[#D8C6B4] shadow-xs mx-auto"
               >
               <div
                 v-else
-                class="w-full h-full rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold text-xl border-2 border-violet-600 shadow-sm mx-auto"
+                class="w-full h-full rounded-2xl bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center font-bold text-xl border-2 border-[#D9A79F] shadow-xs mx-auto"
               >
                 {{ badge.firstName.charAt(0) }}{{ badge.lastName.charAt(0) }}
               </div>
             </div>
 
             <!-- Nom et rôle -->
-            <div class="space-y-1">
-              <h3 class="text-base font-black text-[#0F172A] tracking-tight leading-tight">
+            <div class="space-y-1.5">
+              <h3 class="text-base font-serif italic font-semibold text-[#2A1512] tracking-tight leading-tight">
                 {{ badge.firstName }} {{ badge.lastName }}
               </h3>
 
               <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                <span class="px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800 text-[10px] font-extrabold tracking-wider uppercase">
+                <span class="px-3 py-0.5 rounded-full bg-[#7A291E] text-white text-[10px] font-bold tracking-wider uppercase">
                   Bénévole
                 </span>
                 <span
                   v-if="badge.isMinor"
-                  class="px-2 py-0.5 rounded-full text-[9px] font-bold"
-                  :class="badge.isApprovedMinor ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+                  class="px-2.5 py-0.5 rounded-full text-[9px] font-semibold"
+                  :class="badge.isApprovedMinor ? 'bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]' : 'bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]'"
                 >
                   {{ badge.isApprovedMinor ? 'Mineur Autorisé' : 'Mineur' }}
                 </span>
@@ -226,9 +228,9 @@ function printAllBadges() {
                 v-if="badge.qrCodeUrl"
                 :src="badge.qrCodeUrl"
                 alt="QR Code de contrôle"
-                class="w-24 h-24 mx-auto border border-slate-200 rounded-lg p-1 bg-white"
+                class="w-24 h-24 mx-auto border border-[#E6D9CB] rounded-xl p-1 bg-white"
               >
-              <span class="text-[9px] text-slate-400 font-mono block mt-1">
+              <span class="text-[9px] text-[#6E5A52] font-mono block mt-1">
                 Scan contrôle accès
               </span>
             </div>
@@ -236,9 +238,9 @@ function printAllBadges() {
         </div>
 
         <!-- Pied de Badge -->
-        <div class="bg-slate-50 border-t border-slate-200 px-3 py-2 text-center">
-          <span class="text-[9px] font-mono text-slate-400 tracking-wider">
-            ID: {{ badge.id.slice(0, 8).toUpperCase() }} • JayDance Fam
+        <div class="bg-[#F6EFE6] border-t border-[#E6D9CB] px-3 py-2 text-center">
+          <span class="text-[9px] font-mono text-[#6E5A52] tracking-wider">
+            ID: {{ badge.id.slice(0, 8).toUpperCase() }} • Salon de la Danse
           </span>
         </div>
       </div>

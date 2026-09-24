@@ -389,53 +389,53 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-lg">
+  <div class="min-h-screen bg-[#F6EFE6] text-[#2A1512] flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-xl">
       <!-- En-tête -->
-      <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-600 text-white shadow-md shadow-violet-200 mb-3">
-          <UIcon
-            name="i-lucide-sparkles"
-            class="w-7 h-7"
-          />
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
-          Salon de la Danse 2027
+      <div class="text-center mb-6 space-y-1.5">
+        <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
+          Salon de la Danse · Angers 2027
+        </span>
+        <h1 class="font-serif italic font-semibold text-3xl sm:text-4xl text-[#2A1512] leading-tight">
+          Rejoindre les équipes
         </h1>
-        <p class="text-sm text-slate-500 mt-1 font-medium">
-          Rejoignez l'équipe des bénévoles • Angers, 14-16 mai 2027
+        <p class="text-xs text-[#6E5A52] font-medium">
+          Inscription officielle des bénévoles · 14, 15 & 16 mai 2027
         </p>
       </div>
 
-      <!-- Carte d'inscription -->
-      <div class="bg-white rounded-2xl border border-[#E2E8F0] shadow-sm p-6 sm:p-8 space-y-6">
+      <!-- Carte d'inscription (Papier #FFFCF8) -->
+      <div class="bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-xs p-6 sm:p-8 space-y-6">
         <!-- Titre de la carte -->
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center justify-between pb-4 border-b border-[#E6D9CB]">
           <div>
-            <h2 class="text-lg font-bold text-[#0F172A]">
+            <h2 class="text-base font-bold text-[#2A1512]">
               Inscription Bénévole
             </h2>
-            <p class="text-xs text-slate-500">
-              Complétez votre profil pour accéder au choix des créneaux
+            <p class="text-xs text-[#6E5A52]">
+              Complétez votre profil pour débloquer le choix des créneaux
             </p>
           </div>
-          <UBadge
+          <span
             v-if="!isCodeValid"
-            color="primary"
-            variant="solid"
-            size="sm"
-            class="font-semibold text-xs px-2.5 py-1 shadow-2xs"
+            class="font-semibold text-xs px-2.5 py-1 rounded-full bg-[#F3DCD5] text-[#7A291E]"
           >
             Étape 1 sur 2
-          </UBadge>
+          </span>
+          <span
+            v-else
+            class="font-semibold text-xs px-2.5 py-1 rounded-full bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
+          >
+            Étape 2 sur 2
+          </span>
         </div>
 
         <!-- ======================================================== -->
         <!-- ÉTAPE 1 : VÉRIFICATION DU CODE D'INVITATION             -->
         <!-- ======================================================== -->
         <div class="space-y-3">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
-            1. Code d'invitation personnel <span class="text-red-500">*</span>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#2A1512]">
+            1. Code d'invitation personnel <span class="text-[#7A291E]">*</span>
           </label>
 
           <div
@@ -447,49 +447,57 @@ onMounted(() => {
                 v-model="invitationCode"
                 placeholder="Ex : DANSE-A1B2C3D4"
                 icon="i-lucide-key-round"
-                class="w-full uppercase font-mono tracking-wider"
+                class="w-full uppercase font-mono tracking-wider h-11"
                 size="md"
                 :disabled="isCheckingCode"
                 @keydown.enter.prevent="verifyCode()"
               />
             </div>
-            <UButton
-              color="primary"
-              variant="solid"
-              size="md"
-              :loading="isCheckingCode"
-              icon="i-lucide-check-circle"
-              label="Valider"
-              class="font-semibold shrink-0 cursor-pointer"
+            <button
+              type="button"
+              :disabled="isCheckingCode || !invitationCode"
+              class="h-11 px-5 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs shrink-0"
               @click="verifyCode()"
-            />
+            >
+              <UIcon
+                v-if="isCheckingCode"
+                name="i-lucide-loader-2"
+                class="w-4 h-4 animate-spin"
+              />
+              <UIcon
+                v-else
+                name="i-lucide-check-circle"
+                class="w-4 h-4"
+              />
+              <span>Valider</span>
+            </button>
           </div>
 
-          <!-- Code déjà validé -->
+          <!-- Code déjà validé (Statut DA #E1E9DC / #2F5238) -->
           <div
             v-else
-            class="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200"
+            class="flex items-center justify-between p-3.5 rounded-2xl bg-[#E1E9DC] border border-[#9DB79F]"
           >
             <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <div class="w-8 h-8 rounded-full bg-[#2F5238] text-white flex items-center justify-center shrink-0">
                 <UIcon
-                  name="i-lucide-check-check"
+                  name="i-lucide-check"
                   class="w-4 h-4"
                 />
               </div>
               <div class="min-w-0">
-                <span class="block text-xs font-mono font-bold text-emerald-900 tracking-wider">
+                <span class="block text-xs font-mono font-bold text-[#2F5238] tracking-wider">
                   {{ invitationCode }}
                 </span>
-                <span class="block text-[11px] text-emerald-700 truncate">
-                  {{ verifiedEdition?.name || 'Salon de la Danse 2027' }} • Invitation vérifiée
+                <span class="block text-[11px] text-[#2F5238]/90 truncate">
+                  {{ verifiedEdition?.name || 'Salon de la Danse 2027' }} · Invitation vérifiée
                 </span>
               </div>
             </div>
 
             <button
               type="button"
-              class="text-xs text-slate-400 hover:text-slate-600 underline font-medium cursor-pointer"
+              class="text-xs text-[#2F5238] hover:underline font-semibold cursor-pointer"
               @click="resetCode"
             >
               Changer
@@ -502,32 +510,32 @@ onMounted(() => {
         <!-- ======================================================== -->
         <form
           v-if="isCodeValid"
-          class="space-y-4 pt-2 border-t border-slate-100 transition-opacity duration-300"
+          class="space-y-4 pt-3 border-t border-[#E6D9CB] transition-opacity duration-300"
           @submit.prevent="handleRegister"
         >
           <!-- Identité -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">
-                Prénom <span class="text-red-500">*</span>
+              <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                Prénom <span class="text-[#7A291E]">*</span>
               </label>
               <UInput
                 v-model="firstName"
                 placeholder="Ex : Camille"
                 size="md"
-                class="w-full"
+                class="w-full h-11"
                 required
               />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">
-                Nom <span class="text-red-500">*</span>
+              <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                Nom <span class="text-[#7A291E]">*</span>
               </label>
               <UInput
                 v-model="lastName"
                 placeholder="Ex : Moreau"
                 size="md"
-                class="w-full"
+                class="w-full h-11"
                 required
               />
             </div>
@@ -536,8 +544,8 @@ onMounted(() => {
           <!-- Coordonnées -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">
-                E-mail <span class="text-red-500">*</span>
+              <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                E-mail <span class="text-[#7A291E]">*</span>
               </label>
               <UInput
                 v-model="email"
@@ -545,13 +553,13 @@ onMounted(() => {
                 placeholder="camille.moreau@email.fr"
                 icon="i-lucide-mail"
                 size="md"
-                class="w-full"
+                class="w-full h-11"
                 required
               />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">
-                Téléphone <span class="text-red-500">*</span>
+              <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                Téléphone <span class="text-[#7A291E]">*</span>
               </label>
               <UInput
                 v-model="phone"
@@ -559,7 +567,7 @@ onMounted(() => {
                 placeholder="06 12 34 56 78"
                 icon="i-lucide-phone"
                 size="md"
-                class="w-full"
+                class="w-full h-11"
                 required
               />
             </div>
@@ -567,8 +575,8 @@ onMounted(() => {
 
           <!-- Mot de passe -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">
-              Mot de passe (8 caractères min.) <span class="text-red-500">*</span>
+            <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+              Mot de passe (8 caractères min.) <span class="text-[#7A291E]">*</span>
             </label>
             <UInput
               v-model="password"
@@ -576,7 +584,7 @@ onMounted(() => {
               placeholder="••••••••••••"
               icon="i-lucide-lock"
               size="md"
-              class="w-full"
+              class="w-full h-11"
               required
             />
           </div>
@@ -584,28 +592,24 @@ onMounted(() => {
           <!-- Date de naissance & Détection automatique Mineur/Majeur -->
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
-              <label class="block text-xs font-semibold text-slate-700">
-                Date de naissance <span class="text-red-500">*</span>
+              <label class="block text-xs font-semibold text-[#2A1512]">
+                Date de naissance <span class="text-[#7A291E]">*</span>
               </label>
               <div v-if="userAgeAtEvent !== null">
-                <UBadge
+                <span
                   v-if="isMinor"
-                  color="warning"
-                  variant="solid"
-                  size="sm"
-                  class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
+                  class="font-semibold text-xs px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
                 >
+                  <UIcon name="i-lucide-shield-alert" class="w-3 h-3" />
                   Mineur(e) au Salon ({{ userAgeAtEvent }} ans)
-                </UBadge>
-                <UBadge
+                </span>
+                <span
                   v-else
-                  color="success"
-                  variant="solid"
-                  size="sm"
-                  class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
+                  class="font-semibold text-xs px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
                 >
+                  <UIcon name="i-lucide-check" class="w-3 h-3" />
                   Majeur(e) au Salon ({{ userAgeAtEvent }} ans)
-                </UBadge>
+                </span>
               </div>
             </div>
 
@@ -614,10 +618,10 @@ onMounted(() => {
               type="date"
               icon="i-lucide-calendar"
               size="md"
-              class="w-full"
+              class="w-full h-11"
               required
             />
-            <p class="text-[11px] text-slate-500">
+            <p class="text-[11px] text-[#6E5A52]">
               L'âge est calculé automatiquement à la date d'ouverture du festival (18 ans révolus requis pour le statut majeur).
             </p>
           </div>
@@ -625,20 +629,20 @@ onMounted(() => {
           <!-- Section Spécifique Mineur(e) & Upload Autorisation Parentale (PDF) -->
           <div
             v-if="isMinor"
-            class="p-4 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-3"
+            class="p-4 bg-[#FAF2EF] border border-[#ECCBC4] rounded-2xl space-y-3"
           >
             <div class="flex items-start gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <div class="w-8 h-8 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center shrink-0">
                 <UIcon
                   name="i-lucide-shield-alert"
                   class="w-4 h-4"
                 />
               </div>
               <div>
-                <h3 class="text-xs sm:text-sm font-bold text-amber-900">
+                <h3 class="text-xs sm:text-sm font-bold text-[#7A291E]">
                   Bénévole mineur(e) — Autorisation parentale obligatoire
                 </h3>
-                <p class="text-[11px] sm:text-xs text-amber-800/90 mt-0.5 leading-relaxed">
+                <p class="text-[11px] text-[#6E5A52] mt-0.5 leading-relaxed">
                   Conformément au règlement du Salon de la Danse, tout bénévole âgé de moins de 18 ans au moment de l'événement doit obligatoirement fournir une autorisation parentale signée par un représentant légal (format PDF).
                 </p>
               </div>
@@ -656,20 +660,20 @@ onMounted(() => {
               <!-- Document déjà chargé -->
               <div
                 v-if="parentalAuthorizationUrl"
-                class="flex items-center justify-between p-3 bg-white border border-amber-200 rounded-xl shadow-2xs"
+                class="flex items-center justify-between p-3 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-2xs"
               >
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <div class="w-8 h-8 rounded-lg bg-[#E1E9DC] text-[#2F5238] flex items-center justify-center shrink-0">
                     <UIcon
                       name="i-lucide-file-check"
                       class="w-4 h-4"
                     />
                   </div>
                   <div class="min-w-0">
-                    <span class="block text-xs font-semibold text-slate-900 truncate">
+                    <span class="block text-xs font-semibold text-[#2A1512] truncate">
                       {{ pdfFileName || 'Autorisation-parentale.pdf' }}
                     </span>
-                    <span class="block text-[10px] text-emerald-700 font-medium">
+                    <span class="block text-[10px] text-[#2F5238] font-medium">
                       Document PDF prêt pour vérification
                     </span>
                   </div>
@@ -679,7 +683,7 @@ onMounted(() => {
                   <a
                     :href="parentalAuthorizationUrl"
                     target="_blank"
-                    class="p-1.5 text-xs text-slate-600 hover:text-violet-700 font-medium rounded-lg hover:bg-slate-100 transition-colors"
+                    class="p-2 text-xs text-[#7A291E] hover:text-[#5E1F16] font-medium rounded-full hover:bg-[#FAF2EF] transition-colors"
                     title="Aperçu du PDF"
                   >
                     <UIcon
@@ -689,7 +693,7 @@ onMounted(() => {
                   </a>
                   <button
                     type="button"
-                    class="p-1.5 text-xs text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                    class="p-2 text-xs text-[#9A2A22] hover:text-[#7A291E] rounded-full hover:bg-[#F4D8D3] transition-colors cursor-pointer"
                     title="Supprimer"
                     @click="removePdf"
                   >
@@ -705,11 +709,11 @@ onMounted(() => {
               <div v-else>
                 <button
                   type="button"
-                  class="w-full flex flex-col items-center justify-center gap-1.5 p-4 border-2 border-dashed border-amber-300 hover:border-amber-400 bg-white/70 hover:bg-white rounded-xl transition-all cursor-pointer text-center"
+                  class="w-full flex flex-col items-center justify-center gap-1.5 p-4 border-2 border-dashed border-[#D8C6B4] hover:border-[#7A291E] bg-[#FFFCF8] hover:bg-[#FAF2EF] rounded-2xl transition-all cursor-pointer text-center"
                   :disabled="isUploadingPdf"
                   @click="pdfInputRef?.click()"
                 >
-                  <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                  <div class="w-8 h-8 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center">
                     <UIcon
                       v-if="isUploadingPdf"
                       name="i-lucide-loader-2"
@@ -722,10 +726,10 @@ onMounted(() => {
                     />
                   </div>
                   <div>
-                    <span class="text-xs font-bold text-slate-900 block">
+                    <span class="text-xs font-bold text-[#2A1512] block">
                       {{ isUploadingPdf ? 'Téléversement du PDF en cours...' : 'Téléverser l\'autorisation parentale signée' }}
                     </span>
-                    <span class="text-[10px] text-slate-500">
+                    <span class="text-[10px] text-[#6E5A52]">
                       Document PDF uniquement (10 Mo maximum)
                     </span>
                   </div>
@@ -736,8 +740,8 @@ onMounted(() => {
 
           <!-- Upload Photo d'identité (Obligatoire pour Badge) -->
           <div class="space-y-2">
-            <label class="block text-xs font-semibold text-slate-700">
-              Photo d'identité cadrée (visage dégagé) <span class="text-red-500">*</span>
+            <label class="block text-xs font-semibold text-[#2A1512]">
+              Photo d'identité cadrée (visage dégagé) <span class="text-[#7A291E]">*</span>
             </label>
 
             <input
@@ -751,18 +755,18 @@ onMounted(() => {
             <!-- Aperçu de la photo si chargée -->
             <div
               v-if="photoUrl"
-              class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl"
+              class="flex items-center gap-4 p-3 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl"
             >
               <img
                 :src="photoUrl"
                 alt="Aperçu photo d'identité"
-                class="w-16 h-16 rounded-xl object-cover border-2 border-violet-500 shadow-xs shrink-0"
+                class="w-16 h-16 rounded-full object-cover border-2 border-[#7A291E] shadow-2xs shrink-0"
               >
               <div class="min-w-0 flex-1">
-                <span class="block text-xs font-bold text-slate-900 truncate">
+                <span class="block text-xs font-bold text-[#2A1512] truncate">
                   {{ photoFileName || 'Photo enregistrée' }}
                 </span>
-                <span class="flex items-center gap-1 text-[11px] text-emerald-600 font-medium mt-0.5">
+                <span class="flex items-center gap-1 text-[11px] text-[#2F5238] font-semibold mt-0.5">
                   <UIcon
                     name="i-lucide-check-circle-2"
                     class="w-3.5 h-3.5"
@@ -770,78 +774,82 @@ onMounted(() => {
                   Prête pour le badge d'accréditation
                 </span>
               </div>
-              <UButton
-                color="neutral"
-                variant="ghost"
-                size="xs"
-                icon="i-lucide-trash-2"
-                label="Changer"
-                class="text-slate-400 hover:text-red-600 cursor-pointer"
+              <button
+                type="button"
+                class="text-xs text-[#7A291E] hover:text-[#5E1F16] font-semibold underline cursor-pointer"
                 @click="removePhoto"
-              />
+              >
+                Changer
+              </button>
             </div>
 
             <!-- Bouton pour importer la photo -->
             <div
               v-else
-              class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-violet-400 hover:bg-violet-50/40 transition-colors cursor-pointer"
+              class="border-2 border-dashed border-[#D8C6B4] rounded-2xl p-4 text-center hover:border-[#7A291E] hover:bg-[#FAF2EF] transition-colors cursor-pointer"
               @click="photoInputRef?.click()"
             >
-              <div class="w-10 h-10 rounded-full bg-violet-50 text-violet-600 flex items-center justify-center mx-auto mb-2">
+              <div class="w-10 h-10 rounded-full bg-[#F3DCD5] text-[#7A291E] flex items-center justify-center mx-auto mb-2">
                 <UIcon
                   name="i-lucide-camera"
                   class="w-5 h-5"
                 />
               </div>
-              <p class="text-xs font-bold text-slate-800">
+              <p class="text-xs font-bold text-[#2A1512]">
                 Sélectionner une photo d'identité
               </p>
-              <p class="text-[11px] text-slate-400 mt-0.5">
+              <p class="text-[11px] text-[#6E5A52] mt-0.5">
                 Format JPG, PNG ou WebP (max. 2 Mo)
               </p>
             </div>
           </div>
 
-          <!-- Bouton de soumission -->
+          <!-- Bouton de soumission H-11 mobile -->
           <div class="pt-3">
-            <UButton
+            <button
               type="submit"
-              color="primary"
-              variant="solid"
-              size="lg"
-              block
-              :loading="isRegistering"
-              icon="i-lucide-user-plus"
-              label="Finaliser mon inscription"
-              class="font-bold shadow-sm shadow-violet-200 cursor-pointer"
-            />
+              :disabled="isRegistering"
+              class="w-full h-11 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
+            >
+              <UIcon
+                v-if="isRegistering"
+                name="i-lucide-loader-2"
+                class="w-4 h-4 animate-spin"
+              />
+              <UIcon
+                v-else
+                name="i-lucide-user-plus"
+                class="w-4 h-4"
+              />
+              <span>Finaliser mon inscription</span>
+            </button>
           </div>
         </form>
 
         <!-- Message invitant à saisir le code si non validé -->
         <div
           v-else
-          class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1"
+          class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl text-center space-y-1"
         >
           <UIcon
             name="i-lucide-lock"
-            class="w-5 h-5 text-slate-400 mx-auto"
+            class="w-5 h-5 text-[#6E5A52] mx-auto"
           />
-          <p class="text-xs font-semibold text-slate-700">
+          <p class="text-xs font-bold text-[#2A1512]">
             Formulaire d'inscription sécurisé
           </p>
-          <p class="text-[11px] text-slate-500">
+          <p class="text-[11px] text-[#6E5A52]">
             Veuillez valider votre code d'invitation ci-dessus pour déverrouiller le formulaire d'inscription.
           </p>
         </div>
 
         <!-- Pied de carte : lien connexion -->
-        <div class="pt-4 border-t border-slate-100 text-center">
-          <p class="text-xs text-slate-500">
+        <div class="pt-4 border-t border-[#E6D9CB] text-center">
+          <p class="text-xs text-[#6E5A52]">
             Vous avez déjà un compte bénévole ou administrateur ?
             <NuxtLink
               to="/espace-benevole/login"
-              class="text-violet-600 font-bold hover:underline ml-1"
+              class="text-[#7A291E] font-bold hover:underline ml-1"
             >
               Se connecter
             </NuxtLink>

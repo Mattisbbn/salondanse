@@ -428,63 +428,85 @@ async function confirmPlanning() {
 </script>
 
 <template>
-  <div class="w-full max-w-6xl xl:max-w-7xl mx-auto space-y-6">
+  <div class="w-full max-w-6xl xl:max-w-7xl mx-auto space-y-6 text-[#2A1512]">
     <!-- En-tête de la page -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E6D9CB]">
+      <div class="space-y-1">
+        <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block">
+          Espace Bénévoles · Choix des missions
+        </span>
+        <h1 class="font-serif italic font-semibold text-2xl sm:text-3xl text-[#2A1512] leading-tight">
           Mon Planning Bénévole
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+        <p class="text-xs text-[#6E5A52]">
           {{ editionSubtitle }}
         </p>
       </div>
 
-      <!-- Badge de statut -->
+      <!-- Badge de statut DA -->
       <div>
-        <UBadge
+        <span
           v-if="isConfirmed"
-          color="success"
-          variant="solid"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1.5 shadow-2xs"
+          class="font-semibold text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
         >
           <UIcon
             name="i-lucide-lock"
-            class="w-3.5 h-3.5"
+            class="w-3.5 h-3.5 text-[#2F5238]"
           />
           <span>Planning validé et verrouillé</span>
-        </UBadge>
-        <UBadge
+        </span>
+        <span
           v-else
-          color="warning"
-          variant="subtle"
-          size="sm"
-          class="font-semibold text-xs px-2.5 py-1 inline-flex items-center gap-1.5 shadow-2xs border border-amber-200 text-amber-800 bg-amber-50"
+          class="font-semibold text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
         >
           <UIcon
             name="i-lucide-clock"
-            class="w-3.5 h-3.5 text-amber-600"
+            class="w-3.5 h-3.5 text-[#8A4B0F]"
           />
           <span>En attente de validation</span>
-        </UBadge>
+        </span>
+      </div>
+    </div>
+
+    <!-- Légende officielle du cahier des charges DA -->
+    <div class="p-3.5 bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#6E5A52]">
+        Code couleur des créneaux
+      </span>
+      <div class="flex items-center gap-4 flex-wrap">
+        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
+          <span class="w-3.5 h-3.5 rounded-md bg-[#E1E9DC] border border-[#9DB79F]" />
+          Places disponibles
+        </span>
+        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
+          <span class="w-3.5 h-3.5 rounded-md bg-[#F7E4C6] border border-[#D9A660]" />
+          Presque complet (1 place)
+        </span>
+        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
+          <span class="w-3.5 h-3.5 rounded-md bg-[#D8CFC8] border border-[#A99A91]" />
+          Complet
+        </span>
+        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
+          <span class="w-3.5 h-3.5 rounded-md bg-[#F3DCD5] border border-[#ECCBC4]" />
+          Poste sensible
+        </span>
       </div>
     </div>
 
     <!-- Bandeau discret d'alerte Inscriptions Fermées -->
     <div
       v-if="!isRegistrationOpen"
-      class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 shadow-xs"
+      class="bg-[#F7E4C6] border border-[#D9A660] rounded-2xl p-4 flex items-start gap-3 shadow-2xs"
     >
       <UIcon
         name="i-lucide-lock"
-        class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+        class="w-5 h-5 text-[#8A4B0F] shrink-0 mt-0.5"
       />
-      <div class="text-xs text-amber-900 leading-relaxed">
+      <div class="text-xs text-[#8A4B0F] leading-relaxed">
         <p class="font-bold">
-          Inscriptions fermées - Consultation seule
+          Inscriptions fermées — Consultation seule
         </p>
-        <p class="text-amber-800 mt-0.5">
+        <p class="mt-0.5">
           La campagne d'inscription est actuellement fermée. Vous pouvez consulter les créneaux et missions en lecture seule.
         </p>
       </div>
@@ -493,49 +515,49 @@ async function confirmPlanning() {
     <!-- Bandeau d'information VERROUILLÉ -->
     <div
       v-if="isConfirmed"
-      class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3"
+      class="bg-[#E1E9DC] border border-[#9DB79F] rounded-2xl p-4 flex items-start gap-3"
     >
       <UIcon
         name="i-lucide-check-circle"
-        class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+        class="w-5 h-5 text-[#2F5238] shrink-0 mt-0.5"
       />
-      <div class="text-xs sm:text-sm text-emerald-900">
-        <p class="font-semibold">
+      <div class="text-xs sm:text-sm text-[#2F5238]">
+        <p class="font-bold">
           Votre planning est confirmé et verrouillé !
         </p>
-        <p class="mt-0.5 text-emerald-700">
+        <p class="mt-0.5 text-xs opacity-90">
           Validé le {{ formattedLockedDate }}. Vos créneaux sont définitivement enregistrés. Pour toute demande de changement, veuillez contacter l'administration.
         </p>
       </div>
     </div>
 
     <!-- ======================================================== -->
-    <!-- BARRE RÉCAPITULATIVE FLOTTANTE / STICKY                  -->
+    <!-- BARRE RÉCAPITULATIVE FLOTTANTE / STICKY (Papier #FFFCF8)  -->
     <!-- ======================================================== -->
-    <div class="sticky top-16 md:top-4 z-20 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-sm p-4 transition-all">
+    <div class="sticky top-16 md:top-4 z-20 bg-[#FFFCF8]/95 backdrop-blur-md rounded-3xl border border-[#E6D9CB] shadow-sm p-4 transition-all">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <!-- Compteur & barre de progression -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-semibold text-slate-700">
-              <span class="text-violet-600 font-bold text-sm">{{ selectedCount }}</span> / 3 créneaux sélectionnés
-              <span class="text-slate-400 font-normal ml-1">({{ selectedCount * 2 }}h de bénévolat)</span>
+            <span class="text-xs font-semibold text-[#2A1512]">
+              <span class="text-[#7A291E] font-bold text-sm">{{ selectedCount }}</span> / 3 créneaux sélectionnés
+              <span class="text-[#6E5A52] font-normal ml-1">({{ selectedCount * 2 }}h de bénévolat)</span>
             </span>
-            <span class="text-[11px] text-slate-500 font-medium">
+            <span class="text-[11px] text-[#6E5A52] font-medium">
               {{ selectedCount === 0 ? 'Min. 1 créneau' : selectedCount === 3 ? 'Quota maximal atteint' : `${3 - selectedCount} restant(s)` }}
             </span>
           </div>
 
           <!-- Barre de progression -->
-          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/60">
+          <div class="w-full bg-[#EFE6DA] rounded-full h-2 overflow-hidden border border-[#E6D9CB]">
             <div
               class="h-full transition-all duration-300 rounded-full"
               :class="[
                 selectedCount === 0
-                  ? 'bg-slate-300 w-0'
+                  ? 'bg-transparent w-0'
                   : selectedCount < 3
-                    ? 'bg-violet-600'
-                    : 'bg-emerald-600'
+                    ? 'bg-[#7A291E]'
+                    : 'bg-[#2F5238]'
               ]"
               :style="{ width: `${progressPercentage}%` }"
             />
@@ -545,40 +567,47 @@ async function confirmPlanning() {
         <!-- Actions de validation (masquées si déjà confirmé ou inscriptions fermées) -->
         <div
           v-if="!isConfirmed && isRegistrationOpen"
-          class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100"
+          class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E6D9CB]"
         >
-          <UButton
-            color="neutral"
-            variant="subtle"
-            size="sm"
-            :loading="isSavingDraft"
+          <button
+            type="button"
             :disabled="isSavingDraft"
-            icon="i-lucide-save"
-            label="Enregistrer brouillon"
+            class="h-10 sm:h-9 px-4 rounded-full border border-[#D8C6B4] bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
             @click="saveDraft"
-          />
+          >
+            <UIcon
+              v-if="isSavingDraft"
+              name="i-lucide-loader-2"
+              class="w-3.5 h-3.5 animate-spin"
+            />
+            <UIcon
+              v-else
+              name="i-lucide-save"
+              class="w-3.5 h-3.5 text-[#7A291E]"
+            />
+            <span>Brouillon</span>
+          </button>
 
-          <UButton
-            color="primary"
-            variant="solid"
-            size="sm"
+          <button
+            type="button"
             :disabled="selectedCount < 1 || selectedCount > 3 || hasConsecutiveSlotsConflict"
-            icon="i-lucide-check-circle"
-            class="font-semibold shadow-xs"
-            label="Valider définitivement"
+            class="h-10 sm:h-9 px-5 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
             @click="openConfirmModal"
-          />
+          >
+            <UIcon name="i-lucide-check-circle" class="w-3.5 h-3.5" />
+            <span>Valider définitivement</span>
+          </button>
         </div>
       </div>
 
       <!-- Alerte de pause obligatoire si 3 consécutifs -->
       <div
         v-if="hasConsecutiveSlotsConflict && !isConfirmed"
-        class="mt-2.5 pt-2.5 border-t border-red-100 flex items-center gap-2 text-xs text-red-600 font-medium"
+        class="mt-2.5 pt-2.5 border-t border-[#D9A79F] flex items-center gap-2 text-xs text-[#9A2A22] font-semibold"
       >
         <UIcon
           name="i-lucide-alert-triangle"
-          class="w-4 h-4 shrink-0"
+          class="w-4 h-4 shrink-0 text-[#9A2A22]"
         />
         <span>Impossible d'enchaîner 3 créneaux consécutifs le même jour (pause obligatoire de 2h)</span>
       </div>
@@ -591,16 +620,16 @@ async function confirmPlanning() {
       v-if="data?.days && data.days.length > 0"
       class="space-y-4"
     >
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#E6D9CB]">
         <button
           v-for="(day, idx) in data.days"
           :key="day.dayKey"
           type="button"
-          class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 cursor-pointer"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all shrink-0 cursor-pointer"
           :class="[
             activeDayIndex === idx
-              ? 'bg-violet-600 text-white shadow-xs'
-              : 'bg-white text-slate-600 hover:bg-slate-100/70 border border-slate-200'
+              ? 'bg-[#7A291E] text-white shadow-2xs'
+              : 'bg-[#FFFCF8] text-[#2A1512] hover:bg-[#F6EFE6] border border-[#E6D9CB]'
           ]"
           @click="activeDayIndex = idx"
         >
@@ -610,8 +639,8 @@ async function confirmPlanning() {
             class="w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center transition-colors"
             :class="[
               activeDayIndex === idx
-                ? 'bg-white text-violet-700'
-                : 'bg-violet-100 text-violet-700'
+                ? 'bg-white text-[#7A291E]'
+                : 'bg-[#F3DCD5] text-[#7A291E]'
             ]"
           >
             {{ selectedCountByDay[idx] }}
@@ -625,10 +654,10 @@ async function confirmPlanning() {
         class="space-y-6 pt-2"
       >
         <div class="flex items-center justify-between">
-          <h2 class="text-base sm:text-lg font-bold text-slate-900">
+          <h2 class="font-serif italic font-semibold text-lg text-[#2A1512]">
             {{ data.days[activeDayIndex]?.fullDayLabel }}
           </h2>
-          <span class="text-xs text-slate-500">
+          <span class="text-xs text-[#6E5A52]">
             5 créneaux de 2h disponibles
           </span>
         </div>
@@ -637,22 +666,22 @@ async function confirmPlanning() {
         <div
           v-for="slot in data.days[activeDayIndex]?.slots"
           :key="slot.id"
-          class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3"
+          class="bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] p-4 sm:p-5 shadow-2xs space-y-3"
         >
           <!-- En-tête de tranche horaire -->
-          <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center">
+          <div class="flex items-center justify-between pb-2.5 border-b border-[#E6D9CB]">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-full bg-[#FAF2EF] text-[#7A291E] flex items-center justify-center">
                 <UIcon
                   name="i-lucide-clock"
                   class="w-4 h-4"
                 />
               </div>
               <div>
-                <span class="text-sm font-bold text-slate-900">
+                <span class="text-sm font-bold text-[#2A1512]">
                   {{ slot.startTime }} - {{ slot.endTime }}
                 </span>
-                <span class="text-[11px] text-slate-400 font-medium ml-2">
+                <span class="text-[11px] text-[#6E5A52] font-medium ml-2">
                   Créneau {{ slot.orderIndex }} / 5
                 </span>
               </div>
@@ -660,43 +689,38 @@ async function confirmPlanning() {
 
             <!-- Indicateur si une mission est choisie sur cette tranche -->
             <div v-if="selectedBySlotMap.has(slot.id)">
-              <UBadge
-                color="primary"
-                variant="solid"
-                size="sm"
-                class="font-semibold text-xs px-2.5 py-0.5 shadow-2xs"
-              >
+              <span class="font-semibold text-xs px-2.5 py-0.5 rounded-full bg-[#7A291E] text-white">
                 1 mission choisie
-              </UBadge>
+              </span>
             </div>
           </div>
 
           <!-- Grille des missions du créneau -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div
               v-for="mission in slot.missions"
               :key="mission.id"
-              class="rounded-xl p-3 border transition-all select-none flex flex-col justify-between"
+              class="rounded-2xl p-3.5 border transition-all select-none flex flex-col justify-between"
               :class="[
                 mission.isSensitive
                   ? mission.isAssignedByAdmin
-                    ? 'border-2 border-violet-500 bg-violet-50/70 shadow-xs cursor-not-allowed'
-                    : 'opacity-60 bg-slate-100/70 border-dashed border-slate-300 cursor-not-allowed'
+                    ? 'border-2 border-[#7A291E] bg-[#FAF2EF] cursor-not-allowed'
+                    : 'opacity-60 bg-[#EFE6DA]/40 border-dashed border-[#D8C6B4] cursor-not-allowed'
                   : selectedIds.includes(mission.id)
-                    ? 'border-2 border-violet-600 bg-violet-50/50 shadow-xs cursor-pointer'
+                    ? 'border-2 border-[#7A291E] bg-[#FAF2EF] shadow-2xs cursor-pointer'
                     : mission.availablePlaces <= 0
-                      ? 'border-slate-200 bg-slate-50/80 opacity-50 cursor-not-allowed'
+                      ? 'border-[#E6D9CB] bg-[#EFE6DA]/30 opacity-60 cursor-not-allowed'
                       : selectedBySlotMap.has(slot.id)
-                        ? 'border-slate-200 bg-slate-50/60 opacity-60 cursor-not-allowed'
+                        ? 'border-[#E6D9CB] bg-[#EFE6DA]/20 opacity-60 cursor-not-allowed'
                         : isConfirmed || !isRegistrationOpen
-                          ? 'border-slate-200 bg-white opacity-70 cursor-not-allowed'
-                          : 'border-slate-200 bg-white hover:border-violet-300 hover:shadow-xs cursor-pointer'
+                          ? 'border-[#E6D9CB] bg-white opacity-70 cursor-not-allowed'
+                          : 'border-[#E6D9CB] bg-white hover:border-[#7A291E] hover:shadow-2xs cursor-pointer'
               ]"
               @click="toggleMission(slot, mission)"
             >
               <div>
-                <div class="flex items-start justify-between gap-2 mb-1.5">
-                  <span class="text-xs font-bold text-slate-900 leading-snug">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <span class="text-xs font-bold text-[#2A1512] leading-snug">
                     {{ mission.name }}
                   </span>
 
@@ -705,49 +729,49 @@ async function confirmPlanning() {
                     <UIcon
                       v-if="mission.isSensitive && mission.isAssignedByAdmin"
                       name="i-lucide-shield-check"
-                      class="w-4 h-4 text-violet-600"
+                      class="w-4 h-4 text-[#7A291E]"
                     />
                     <UIcon
                       v-else-if="mission.isSensitive"
                       name="i-lucide-lock"
-                      class="w-4 h-4 text-slate-400"
+                      class="w-4 h-4 text-[#6E5A52]"
                     />
                     <UIcon
                       v-else-if="selectedIds.includes(mission.id)"
                       name="i-lucide-check-circle-2"
-                      class="w-4 h-4 text-violet-600"
+                      class="w-4 h-4 text-[#7A291E]"
                     />
                     <div
                       v-else-if="!isConfirmed && isRegistrationOpen && mission.availablePlaces > 0 && !selectedBySlotMap.has(slot.id)"
-                      class="w-4 h-4 rounded-full border border-slate-300"
+                      class="w-4 h-4 rounded-full border border-[#D8C6B4]"
                     />
                   </div>
                 </div>
 
                 <!-- Cas 1 : Poste sensible attribué par l'admin -->
                 <template v-if="mission.isSensitive && mission.isAssignedByAdmin">
-                  <div class="inline-flex items-center gap-1 text-[10px] text-violet-700 bg-violet-100/90 px-2 py-0.5 rounded-md font-semibold mb-1.5">
+                  <div class="inline-flex items-center gap-1 text-[10px] text-[#7A291E] bg-[#F3DCD5] px-2 py-0.5 rounded-full font-bold mb-1.5">
                     <UIcon
                       name="i-lucide-shield-check"
                       class="w-3 h-3 shrink-0"
                     />
                     <span>Attribué par l'admin</span>
                   </div>
-                  <p class="text-[11px] text-violet-800/90 font-medium mb-2 leading-relaxed">
+                  <p class="text-[11px] text-[#7A291E] font-medium mb-2 leading-relaxed">
                     Ce poste vous a été affecté directement par l'équipe d'organisation.
                   </p>
                 </template>
 
                 <!-- Cas 2 : Poste sensible sous restriction admin (non attribué) -->
                 <template v-else-if="mission.isSensitive">
-                  <div class="inline-flex items-center gap-1 text-[10px] text-slate-600 bg-slate-200/80 px-2 py-0.5 rounded-md font-medium mb-1.5">
+                  <div class="inline-flex items-center gap-1 text-[10px] text-[#7A291E] bg-[#F3DCD5] px-2 py-0.5 rounded-full font-bold mb-1.5">
                     <UIcon
                       name="i-lucide-lock"
-                      class="w-3 h-3 shrink-0 text-slate-500"
+                      class="w-3 h-3 shrink-0"
                     />
-                    <span>Poste sous restriction</span>
+                    <span>Poste sensible</span>
                   </div>
-                  <p class="text-[11px] text-slate-500 italic mb-2 leading-relaxed">
+                  <p class="text-[11px] text-[#6E5A52] italic mb-2 leading-relaxed">
                     Ce poste nécessite une habilitation et est attribué directement par l'équipe d'organisation.
                   </p>
                 </template>
@@ -755,7 +779,7 @@ async function confirmPlanning() {
                 <!-- Cas 3 : Poste standard -->
                 <p
                   v-else-if="mission.description"
-                  class="text-[11px] text-slate-500 line-clamp-2 mb-2"
+                  class="text-[11px] text-[#6E5A52] line-clamp-2 mb-2"
                 >
                   {{ mission.description }}
                 </p>
@@ -763,97 +787,78 @@ async function confirmPlanning() {
                 <!-- Point de rendez-vous / Lieu précis -->
                 <div
                   v-if="mission.locationNotes"
-                  class="inline-flex items-center gap-1 text-[10px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-2"
+                  class="inline-flex items-center gap-1 text-[10px] font-medium text-[#6E5A52] bg-[#FAF2EF] px-2 py-0.5 rounded-md mb-2"
                 >
                   <UIcon
                     name="i-lucide-map-pin"
-                    class="w-3 h-3 text-slate-400 shrink-0"
+                    class="w-3 h-3 text-[#7A291E] shrink-0"
                   />
                   <span class="truncate">{{ mission.locationNotes }}</span>
                 </div>
               </div>
 
-              <!-- Pied de carte -->
+              <!-- Pied de carte avec Code Couleur DA officiel -->
               <!-- Cas 1 : Poste sensible attribué par l'admin -->
               <div
                 v-if="mission.isSensitive && mission.isAssignedByAdmin"
-                class="flex items-center justify-between pt-2 border-t border-violet-200/70 mt-2 text-[10px]"
+                class="flex items-center justify-between pt-2 border-t border-[#ECCBC4] mt-2 text-[10px]"
               >
-                <span class="text-violet-700 font-semibold flex items-center gap-1">
+                <span class="text-[#7A291E] font-semibold flex items-center gap-1">
                   <UIcon
                     name="i-lucide-check"
                     class="w-3 h-3"
                   />
                   Affectation confirmée
                 </span>
-                <UBadge
-                  color="primary"
-                  variant="solid"
-                  size="sm"
-                  class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
-                >
+                <span class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#7A291E] text-white">
                   Attribution Admin
-                </UBadge>
+                </span>
               </div>
 
               <!-- Cas 2 : Poste sensible sous restriction standard -->
               <div
                 v-else-if="mission.isSensitive"
-                class="flex items-center justify-between pt-2 border-t border-slate-200/60 mt-2 text-[10px]"
+                class="flex items-center justify-between pt-2 border-t border-[#E6D9CB] mt-2 text-[10px]"
               >
-                <span class="text-slate-400 font-medium flex items-center gap-1">
+                <span class="text-[#6E5A52] font-medium flex items-center gap-1">
                   <UIcon
                     name="i-lucide-shield-alert"
-                    class="w-3 h-3"
+                    class="w-3 h-3 text-[#7A291E]"
                   />
                   Accès restreint
                 </span>
-                <UBadge
-                  color="warning"
-                  variant="solid"
-                  size="sm"
-                  class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
-                >
+                <span class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#F3DCD5] text-[#7A291E]">
                   Attribution Admin
-                </UBadge>
+                </span>
               </div>
 
-              <!-- Cas 3 : Jauges dynamiques strictes : Vert (>1), Orange (1), Gris (0) -->
+              <!-- Cas 3 : Jauges DA officielles : Vert (#E1E9DC), Jaune/Orange (#F7E4C6), Gris (#D8CFC8) -->
               <div
                 v-else
-                class="flex items-center justify-between pt-2 border-t border-slate-100 mt-2"
+                class="flex items-center justify-between pt-2 border-t border-[#E6D9CB] mt-2"
               >
-                <span class="text-[10px] text-slate-400 font-medium">
+                <span class="text-[10px] text-[#6E5A52] font-medium">
                   Jauge : {{ mission.registeredCount }} / {{ mission.capacityMax }}
                 </span>
 
-                <UBadge
+                <span
                   v-if="mission.availablePlaces > 1"
-                  color="success"
-                  variant="solid"
-                  size="sm"
-                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
+                  class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
                 >
                   {{ mission.availablePlaces }} places dispo
-                </UBadge>
-                <UBadge
+                </span>
+                <span
                   v-else-if="mission.availablePlaces === 1"
-                  color="warning"
-                  variant="solid"
-                  size="sm"
-                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
+                  class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
                 >
                   1 place restante !
-                </UBadge>
-                <UBadge
+                </span>
+                <span
                   v-else
-                  color="neutral"
-                  variant="solid"
-                  size="sm"
-                  class="text-[10px] font-semibold px-2 py-0.5 shadow-2xs"
+                  class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#D8CFC8] text-[#6E5A52] border border-[#A99A91]"
                 >
                   Complet
-                </UBadge>
+                </span>
               </div>
             </div>
           </div>
@@ -864,11 +869,11 @@ async function confirmPlanning() {
     <!-- État de chargement -->
     <div
       v-else-if="status === 'pending'"
-      class="py-16 text-center text-slate-400"
+      class="py-16 text-center text-[#6E5A52]"
     >
       <UIcon
         name="i-lucide-loader-2"
-        class="w-6 h-6 animate-spin mx-auto text-violet-600 mb-2"
+        class="w-6 h-6 animate-spin mx-auto text-[#7A291E] mb-2"
       />
       <p class="text-xs">
         Chargement du planning...
@@ -889,62 +894,59 @@ async function confirmPlanning() {
       >
         <div
           v-if="isConfirmModalOpen"
-          class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4"
+          class="fixed inset-0 z-50 bg-[#2A1512]/60 backdrop-blur-xs flex items-center justify-center p-4"
           @click="isConfirmModalOpen = false"
         >
           <div
-            class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-xl p-6 space-y-4"
+            class="w-full max-w-md bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-xl p-6 space-y-4"
             @click.stop
           >
             <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
+              <div class="w-10 h-10 rounded-full bg-[#FAF2EF] text-[#7A291E] flex items-center justify-center shrink-0">
                 <UIcon
                   name="i-lucide-lock"
                   class="w-5 h-5"
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="text-base font-bold text-slate-900">
+                <h3 class="font-serif italic font-semibold text-lg text-[#2A1512]">
                   Confirmation définitive du planning
                 </h3>
-                <p class="text-xs text-slate-500 mt-0.5">
+                <p class="text-xs text-[#6E5A52] mt-0.5">
                   Bénévole : {{ user?.firstName }} {{ user?.lastName }}
                 </p>
               </div>
             </div>
 
             <!-- Récapitulatif des créneaux -->
-            <div class="space-y-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-              <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+            <div class="space-y-2 bg-[#FAF2EF] p-3.5 rounded-2xl border border-[#ECCBC4]">
+              <span class="text-[11px] font-bold text-[#7A291E] uppercase tracking-wider block">
                 Créneaux sélectionnés ({{ selectedCount }})
               </span>
               <div
                 v-for="item in selectedMissionsDetails"
                 :key="item.slotMissionId"
-                class="flex items-center justify-between text-xs py-1 border-b border-slate-200/60 last:border-0"
+                class="flex items-center justify-between text-xs py-1 border-b border-[#ECCBC4]/60 last:border-0"
               >
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="font-bold text-slate-900">{{ item.missionName }}</span>
-                  <span class="text-slate-500">({{ item.dayLabel }})</span>
-                  <UBadge
+                  <span class="font-bold text-[#2A1512]">{{ item.missionName }}</span>
+                  <span class="text-[#6E5A52]">({{ item.dayLabel }})</span>
+                  <span
                     v-if="item.isAssignedByAdmin"
-                    color="primary"
-                    variant="solid"
-                    size="sm"
-                    class="font-semibold text-[10px] px-2 py-0.5 shadow-2xs"
+                    class="font-semibold text-[10px] px-2 py-0.5 rounded-full bg-[#F3DCD5] text-[#7A291E]"
                   >
                     Affecté par l'organisation
-                  </UBadge>
+                  </span>
                 </div>
-                <span class="text-violet-700 font-semibold font-mono">{{ item.timeSlotLabel }}</span>
+                <span class="text-[#7A291E] font-semibold font-mono">{{ item.timeSlotLabel }}</span>
               </div>
             </div>
 
             <!-- Avertissement de verrouillage -->
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 flex items-start gap-2">
+            <div class="bg-[#F7E4C6] border border-[#D9A660] rounded-2xl p-3 text-xs text-[#8A4B0F] flex items-start gap-2">
               <UIcon
                 name="i-lucide-alert-triangle"
-                class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
+                class="w-4 h-4 text-[#8A4B0F] shrink-0 mt-0.5"
               />
               <span>
                 <strong>Attention :</strong> Une fois validé, votre planning sera <strong>définitivement verrouillé</strong>. Aucune modification ne sera possible sans l'accord d'un administrateur.
@@ -953,25 +955,33 @@ async function confirmPlanning() {
 
             <!-- Boutons de la modale -->
             <div class="flex items-center justify-end gap-2.5 pt-2">
-              <UButton
-                color="neutral"
-                variant="subtle"
-                size="sm"
-                label="Annuler"
+              <button
+                type="button"
                 :disabled="isConfirming"
+                class="h-10 px-4 rounded-full border border-[#D8C6B4] bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] font-semibold text-xs cursor-pointer transition-colors"
                 @click="isConfirmModalOpen = false"
-              />
+              >
+                Annuler
+              </button>
 
-              <UButton
-                color="primary"
-                variant="solid"
-                size="sm"
-                :loading="isConfirming"
-                icon="i-lucide-check-circle"
-                label="Confirmer et verrouiller"
-                class="font-semibold shadow-xs"
+              <button
+                type="button"
+                :disabled="isConfirming"
+                class="h-10 px-5 rounded-full bg-[#7A291E] hover:bg-[#5E1F16] disabled:opacity-50 text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
                 @click="confirmPlanning"
-              />
+              >
+                <UIcon
+                  v-if="isConfirming"
+                  name="i-lucide-loader-2"
+                  class="w-4 h-4 animate-spin"
+                />
+                <UIcon
+                  v-else
+                  name="i-lucide-check-circle"
+                  class="w-4 h-4"
+                />
+                <span>Confirmer et verrouiller</span>
+              </button>
             </div>
           </div>
         </div>
