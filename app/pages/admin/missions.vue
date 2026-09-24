@@ -537,7 +537,7 @@ async function handleUnscheduleSlotMission(smId: string) {
 <template>
   <div class="space-y-6">
     <!-- En-tête principal -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-[#E6D9CB]">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4  ">
       <div>
         <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#7A291E] block mb-1">
           Exploitation & Grille horaire
@@ -563,7 +563,7 @@ async function handleUnscheduleSlotMission(smId: string) {
               name="i-lucide-calendar-days"
               class="w-4 h-4 text-[#7A291E]"
             />
-            <span>Calendrier général</span>
+            <span>Calendrier </span>
             <span
               class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#E1E9DC] text-[#2F5238]"
             >
@@ -581,7 +581,7 @@ async function handleUnscheduleSlotMission(smId: string) {
               name="i-lucide-layers"
               class="w-4 h-4 text-[#7A291E]"
             />
-            <span>Catalogue des missions</span>
+            <span>Liste des missions</span>
             <span
               class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#EFE5DA] text-[#5B463E]"
             >
@@ -763,33 +763,7 @@ async function handleUnscheduleSlotMission(smId: string) {
       v-else
       class="space-y-6"
     >
-      <!-- KPIs globaux -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
-          <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Missions Catalogue</span>
-          <span class="text-2xl font-bold text-[#2A1512] mt-1 block">{{ stats.total }}</span>
-          <span class="text-[11px] text-[#6E5A52] mt-0.5 block">Dont {{ stats.active }} active(s)</span>
-        </div>
-
-        <div class="p-4 bg-[#F3DCD5]/60 border border-[#D9A79F] rounded-2xl shadow-xs">
-          <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#7A291E] block">Postes Sensibles (Manuel)</span>
-          <span class="text-2xl font-bold text-[#7A291E] mt-1 block">{{ stats.sensitive }}</span>
-          <span class="text-[11px] text-[#7A291E]/80 mt-0.5 block">Attribution admin réservée</span>
-        </div>
-
-        <div class="p-4 bg-[#E1E9DC]/60 border border-[#9DB79F] rounded-2xl shadow-xs">
-          <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#2F5238] block">Créneaux Planifiés</span>
-          <span class="text-2xl font-bold text-[#2F5238] mt-1 block">{{ stats.totalSlotsCount }}</span>
-          <span class="text-[11px] text-[#2F5238]/80 mt-0.5 block">Affectations horaires actives</span>
-        </div>
-
-        <div class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl shadow-xs">
-          <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-[#6E5A52] block">Capacité Totale Requise</span>
-          <span class="text-2xl font-bold text-[#2A1512] mt-1 block">{{ stats.totalCapacityNeeded }} pers.</span>
-          <span class="text-[11px] text-[#6E5A52] mt-0.5 block">Somme des jauges planifiées</span>
-        </div>
-      </div>
-
+   
       <!-- Filtres & Recherche -->
       <div class="bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xs p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div class="w-full sm:max-w-sm">
@@ -1274,11 +1248,11 @@ async function handleUnscheduleSlotMission(smId: string) {
           @click="isScheduleModalOpen = false"
         >
           <div
-            class="w-full max-w-md bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] shadow-xl p-6 space-y-4 my-8"
+            class="w-full max-w-md bg-[#F6EFE6] rounded-2xl border border-[#D8C6B4] shadow-2xl p-6 space-y-4 my-8"
             @click.stop
           >
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-xl bg-[#E1E9DC] text-[#2F5238] flex items-center justify-center shrink-0">
+            <div class="flex items-start gap-3 pb-3 border-b border-[#E6D9CB]">
+              <div class="w-10 h-10 rounded-xl bg-[#E1E9DC] text-[#2F5238] border border-[#C5D5BD] flex items-center justify-center shrink-0">
                 <UIcon
                   name="i-lucide-calendar-plus"
                   class="w-5 h-5"
@@ -1300,13 +1274,13 @@ async function handleUnscheduleSlotMission(smId: string) {
             >
               <!-- Sélection de la mission -->
               <div>
-                <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                <label class="block text-xs font-semibold text-[#2A1512] mb-1.5">
                   Mission <span class="text-[#9A2A22]">*</span>
                 </label>
                 <select
                   v-model="scheduleFormState.missionId"
                   required
-                  class="w-full text-xs font-medium bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#7A291E] focus:outline-none"
+                  class="w-full text-xs font-medium bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2.5 shadow-2xs focus:ring-2 focus:ring-[#7A291E] focus:outline-none"
                 >
                   <option
                     disabled
@@ -1326,13 +1300,13 @@ async function handleUnscheduleSlotMission(smId: string) {
 
               <!-- Sélection de la tranche horaire -->
               <div>
-                <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                <label class="block text-xs font-semibold text-[#2A1512] mb-1.5">
                   Tranche horaire & Jour <span class="text-[#9A2A22]">*</span>
                 </label>
                 <select
                   v-model="scheduleFormState.targetSlotId"
                   required
-                  class="w-full text-xs font-medium bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#7A291E] focus:outline-none font-mono"
+                  class="w-full text-xs font-medium bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2.5 shadow-2xs focus:ring-2 focus:ring-[#7A291E] focus:outline-none font-mono"
                 >
                   <optgroup
                     v-for="day in planningData?.days || []"
@@ -1352,28 +1326,27 @@ async function handleUnscheduleSlotMission(smId: string) {
 
               <!-- Capacité requise -->
               <div>
-                <label class="block text-xs font-semibold text-[#2A1512] mb-1">
+                <label class="block text-xs font-semibold text-[#2A1512] mb-1.5">
                   Capacité requise (bénévoles nécessaires) <span class="text-[#9A2A22]">*</span>
                 </label>
-                <div class="flex items-center gap-2">
-                  <UInput
+                <div class="flex items-center gap-2.5">
+                  <input
                     v-model.number="scheduleFormState.capacity"
                     type="number"
                     min="1"
                     max="50"
                     required
-                    size="md"
-                    class="w-32 font-mono font-bold"
+                    class="w-28 text-xs font-mono font-bold bg-[#FFFCF8] border border-[#D8C6B4] text-[#2A1512] rounded-xl px-3 py-2.5 shadow-2xs focus:ring-2 focus:ring-[#7A291E] focus:outline-none"
                   />
                   <span class="text-xs text-[#6E5A52] font-medium">bénévoles requis</span>
                 </div>
               </div>
 
               <!-- Actions -->
-              <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E6D9CB]">
+              <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-[#E6D9CB]">
                 <button
                   type="button"
-                  class="inline-flex items-center justify-center h-9 px-4 rounded-full bg-[#FFFCF8] hover:bg-[#F6EFE6] text-[#2A1512] border border-[#D8C6B4] font-semibold text-xs transition-colors cursor-pointer"
+                  class="inline-flex items-center justify-center h-9 px-4 rounded-full bg-[#EFE5DA] hover:bg-[#E6D9CB] text-[#2A1512] border border-[#D8C6B4] font-semibold text-xs transition-colors cursor-pointer"
                   :disabled="isScheduling"
                   @click="isScheduleModalOpen = false"
                 >

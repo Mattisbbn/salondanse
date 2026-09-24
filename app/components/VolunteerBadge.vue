@@ -13,6 +13,7 @@ interface VolunteerData {
 
 defineProps<{
   volunteer: VolunteerData
+  hideActions?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -21,14 +22,14 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="w-full flex justify-center">
+  <div class="w-full flex justify-center print:block print:w-auto">
     <div
-      class="relative w-full max-w-[310px] aspect-[9/14] min-h-[470px] bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-sm p-5 flex flex-col justify-between overflow-hidden select-none"
+      class="relative w-full max-w-[310px] aspect-[9/14] min-h-[470px] bg-[#FFFCF8] rounded-3xl border border-[#E6D9CB] shadow-sm p-5 flex flex-col justify-between overflow-hidden select-none print:shadow-none print:border-stone-400 print:break-inside-avoid print:bg-white"
     >
       <!-- HAUT : En-tête du badge avec encoche tour de cou -->
       <div class="space-y-3">
-        <!-- Encoche clip tour de cou -->
-        <div class="w-12 h-1.5 rounded-full bg-[#E6D9CB] mx-auto -mt-1 mb-1.5" />
+        <!-- Encoche clip tour de cou réaliste -->
+        <div class="w-12 h-2 rounded-full bg-[#EFE5DA] border border-[#D8C6B4] shadow-inner mx-auto -mt-1 mb-1.5 print:border-stone-400" />
 
         <!-- Logo et Édition -->
         <div class="flex items-center justify-between px-0.5">
@@ -110,8 +111,9 @@ const emit = defineEmits<{
         </div>
 
         <button
+          v-if="!hideActions"
           type="button"
-          class="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-[#7A291E] hover:text-[#5E1F16] transition-colors cursor-pointer"
+          class="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-[#7A291E] hover:text-[#5E1F16] transition-colors cursor-pointer print:hidden"
           @click="emit('open-qr')"
         >
           <UIcon
@@ -124,7 +126,7 @@ const emit = defineEmits<{
 
       <!-- BAS : Identifiant unique -->
       <div class="pt-2 flex items-center justify-between text-[10px] font-mono text-[#6E5A52] border-t border-[#E6D9CB]">
-        <span class="tracking-wider">ID: {{ volunteer.id.slice(0, 8).toUpperCase() }}</span>
+        <span class="tracking-wider">ID: {{ volunteer.id ? volunteer.id.slice(0, 8).toUpperCase() : 'OFFICIEL' }}</span>
         <span class="font-sans font-semibold text-[9px] uppercase tracking-wider text-[#7A291E]">Salon de la Danse</span>
       </div>
     </div>

@@ -29,7 +29,7 @@ Le portail d'administration du **Salon de la Danse** permet aux coordinateurs et
 
 Le tableau de bord administrateur offre une vue synthétique et dynamique de l'état d'avancement des inscriptions et du remplissage des postes.
 
-![Tableau de bord administrateur et métriques globales](./screenshots/admin-01-dashboard.png)
+![Tableau de bord administrateur et métriques globales](./images/dashboard-admin.png)
 
 ### Indicateurs de pilotage :
 1. **Compteurs globaux** :
@@ -52,7 +52,7 @@ Le tableau de bord administrateur offre une vue synthétique et dynamique de l'�
 
 Pour garantir la qualité et la sécurité du festival, l'accès à la plateforme est restreint par un système de codes d'invitation à usage unique.
 
-![Interface de gestion et d'émission des invitations](./screenshots/admin-02-invitations.png)
+![Interface de gestion et d'émission des invitations](./images/invitations-admin.png)
 
 ### Émettre une invitation :
 1. Accédez au menu **« Invitations »** ([/admin/invitations](https://salondeladanse.mattisbabin.fr/admin/invitations)).
@@ -71,7 +71,7 @@ Pour garantir la qualité et la sécurité du festival, l'accès à la plateform
 
 Ce module centralise la gestion unitaire des bénévoles, le suivi de leurs engagements et les arbitrages manuels sur leurs plannings.
 
-![Annuaire des bénévoles et filtres avancés](./screenshots/admin-03-gestion-benevoles.png)
+![Annuaire des bénévoles et filtres avancés](./images/annuaire-benevoles.png)
 
 ### Filtrage et recherche :
 - **Barre de recherche** : Filtrage en temps réel par nom, prénom ou adresse email.
@@ -82,7 +82,7 @@ Ce module centralise la gestion unitaire des bénévoles, le suivi de leurs enga
 - **Relance groupée** : Le bouton **« Relancer les brouillons »** ouvre une boîte de confirmation récapitulant le nombre de bénévoles concernés. Un email de rappel d'urgence leur est envoyé automatiquement.
 - **Relance individuelle** : Une icône d'enveloppe sur chaque ligne permet de relancer un bénévole précis sans solliciter les autres.
 
-![Fiche de gestion détaillée d'un bénévole et affectation manuelle](./screenshots/admin-04-fiche-benevole-affectations.png)
+![Fiche de gestion détaillée d'un bénévole et affectation manuelle](./images/planning-benevole-admin.png)
 
 ### Édition d'un bénévole et affectations manuelles :
 1. Cliquez sur le nom d'un bénévole ou sur **« Voir / Modifier »** pour ouvrir le volet latéral complet.
@@ -100,7 +100,7 @@ Ce module centralise la gestion unitaire des bénévoles, le suivi de leurs enga
 
 Conformément à la législation en vigueur sur le travail bénévole des mineurs, tout jeune âgé de moins de 18 ans doit impérativement fournir une autorisation parentale valide.
 
-![Interface de validation des autorisations parentales pour mineurs](./screenshots/admin-05-validation-mineurs.png)
+![Interface de validation des autorisations parentales pour mineurs](./images/profils-mineurs-admin.png)
 
 ### Circuit d'approbation d'un mineur :
 1. Accédez à la section **« Mineurs »** ([/admin/minors](https://salondeladanse.mattisbabin.fr/admin/minors)).
@@ -131,7 +131,7 @@ Ce module en deux étapes permet de concevoir l'architecture opérationnelle du 
    - **Capacité par défaut** : Nombre standard de bénévoles requis.
    - **Option « Mission sensible »** : Cochez cette case pour réserver la mission à l'affectation manuelle par les coordinateurs (masquée du formulaire d'auto-sélection bénévole).
 
-![Matrice de planification et créneaux horaires par jour](./screenshots/admin-07-matrice-planning-creneaux.png)
+![Matrice de planification et créneaux horaires par jour](./images/missions-planning.png)
 
 ### Étape 2 : La Matrice Calendaire (Grille horaire)
 1. Basculez sur l'onglet **« Matrice & Créneaux »**.
@@ -148,7 +148,7 @@ Ce module en deux étapes permet de concevoir l'architecture opérationnelle du 
 
 À l'approche du festival, le module Badges permet de fabriquer les badges physiques prêts pour distribution ou plastification.
 
-![Module d'impression groupée des badges d'accès](./screenshots/admin-08-impression-badges.png)
+![Module d'impression groupée des badges d'accès](./images/badges-admin.png)
 
 ### Procédure d'impression :
 1. Rendez-vous sur la page **« Badges »** ([/admin/badges](https://salondeladanse.mattisbabin.fr/admin/badges)).

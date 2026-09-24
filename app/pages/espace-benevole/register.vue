@@ -603,13 +603,7 @@ onMounted(() => {
                   <UIcon name="i-lucide-shield-alert" class="w-3 h-3" />
                   Mineur(e) au Salon ({{ userAgeAtEvent }} ans)
                 </span>
-                <span
-                  v-else
-                  class="font-semibold text-xs px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
-                >
-                  <UIcon name="i-lucide-check" class="w-3 h-3" />
-                  Majeur(e) au Salon ({{ userAgeAtEvent }} ans)
-                </span>
+            
               </div>
             </div>
 
@@ -826,22 +820,7 @@ onMounted(() => {
           </div>
         </form>
 
-        <!-- Message invitant à saisir le code si non validé -->
-        <div
-          v-else
-          class="p-4 bg-[#FFFCF8] border border-[#E6D9CB] rounded-2xl text-center space-y-1"
-        >
-          <UIcon
-            name="i-lucide-lock"
-            class="w-5 h-5 text-[#6E5A52] mx-auto"
-          />
-          <p class="text-xs font-bold text-[#2A1512]">
-            Formulaire d'inscription sécurisé
-          </p>
-          <p class="text-[11px] text-[#6E5A52]">
-            Veuillez valider votre code d'invitation ci-dessus pour déverrouiller le formulaire d'inscription.
-          </p>
-        </div>
+ 
 
         <!-- Pied de carte : lien connexion -->
         <div class="pt-4 border-t border-[#E6D9CB] text-center">
