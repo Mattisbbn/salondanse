@@ -12,6 +12,7 @@ interface MissionData {
   name: string
   description: string | null
   capacityMax: number
+  locationNotes?: string | null
   registeredCount: number
   availablePlaces: number
   isSelectedByMe: boolean
@@ -758,6 +759,18 @@ async function confirmPlanning() {
                 >
                   {{ mission.description }}
                 </p>
+
+                <!-- Point de rendez-vous / Lieu précis -->
+                <div
+                  v-if="mission.locationNotes"
+                  class="inline-flex items-center gap-1 text-[10px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-2"
+                >
+                  <UIcon
+                    name="i-lucide-map-pin"
+                    class="w-3 h-3 text-slate-400 shrink-0"
+                  />
+                  <span class="truncate">{{ mission.locationNotes }}</span>
+                </div>
               </div>
 
               <!-- Pied de carte -->

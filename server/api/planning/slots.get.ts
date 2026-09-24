@@ -60,6 +60,7 @@ export default defineEventHandler(async (event) => {
         description: string | null
         color: string | null
         capacityMax: number
+        locationNotes: string | null
         registeredCount: number
         availablePlaces: number
         isSelectedByMe: boolean
@@ -115,6 +116,7 @@ export default defineEventHandler(async (event) => {
           description: sm.mission.description,
           color: sm.mission.color,
           capacityMax: sm.capacityMax,
+          locationNotes: sm.locationNotes,
           registeredCount,
           availablePlaces,
           isSelectedByMe,

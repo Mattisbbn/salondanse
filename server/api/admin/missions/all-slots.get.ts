@@ -54,7 +54,9 @@ export default defineEventHandler(async (event) => {
         name: sm.mission.name,
         description: sm.mission.description,
         isSensitive: sm.mission.isSensitive,
+        capacity: sm.capacityMax,
         capacityMax: sm.capacityMax,
+        locationNotes: sm.locationNotes,
         registeredCount: sm._count.registrations,
         availablePlaces: Math.max(0, sm.capacityMax - sm._count.registrations)
       }))

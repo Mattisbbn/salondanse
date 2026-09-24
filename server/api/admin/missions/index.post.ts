@@ -8,7 +8,7 @@ const createMissionSchema = z.object({
   description: z.string().trim().optional().nullable(),
   color: z.string().trim().optional().nullable(),
   isSensitive: z.boolean().default(false),
-  defaultCapacity: z.number().int().min(1, 'La capacité minimale est de 1').max(50, 'La capacité maximale est de 50').default(2),
+  defaultCapacity: z.number().int().min(1).max(50).optional().default(2),
   editionId: z.string().optional()
 })
 
@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Création de la mission et génération automatique des SlotMission pour tous les TimeSlot existants
+  // Création de la fiche mission dans le catalogue (sans planification arbitraire sur les créneaux)
   const newMission = await prisma.$transaction(async (tx) => {
     const created = await tx.mission.create({
       data: {
@@ -72,31 +72,15 @@ export default defineEventHandler(async (event) => {
         color: data.color || null,
         isSensitive: data.isSensitive,
         isActive: true,
-        defaultCapacity: data.defaultCapacity,
+        defaultCapacity: data.defaultCapacity || 2,
         editionId: targetEditionId
       }
     })
 
-    // Récupération de tous les créneaux existants de l'édition
-    const timeSlots = await tx.timeSlot.findMany({
-      where: { editionId: targetEditionId }
-    })
-
-    if (timeSlots.length > 0) {
-      await tx.slotMission.createMany({
-        data: timeSlots.map(ts => ({
-          missionId: created.id,
-          timeSlotId: ts.id,
-          capacityMax: created.defaultCapacity
-        })),
-        skipDuplicates: true
-      })
-    }
-
     await tx.auditLog.create({
       data: {
         action: 'MISSION_CREATE',
-        details: `Création de la mission "${created.name}" (Sensible: ${created.isSensitive ? 'Oui' : 'Non'}, Capacité: ${created.defaultCapacity}) rattachée à ${timeSlots.length} créneau(x)`,
+        details: `Ajout au catalogue de la mission "${created.name}" (Sensible: ${created.isSensitive ? 'Oui' : 'Non'})`,
         adminId: admin.id,
         editionId: targetEditionId
       }
@@ -107,7 +91,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    message: `Mission "${newMission.name}" créée et rattachée aux créneaux de l'édition.`,
+    message: `Mission "${newMission.name}" ajoutée au catalogue. Vous pouvez maintenant la planifier sur les créneaux souhaités.`,
     mission: newMission
   }
 })

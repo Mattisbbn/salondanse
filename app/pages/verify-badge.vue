@@ -108,13 +108,25 @@ const glareStyle = computed(() => {
 </script>
 
 <template>
-  <div class="h-dvh min-h-dvh max-h-dvh w-full overflow-hidden flex flex-col justify-center items-center p-3 sm:p-4 bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100 relative select-none">
+  <div class="h-dvh min-h-dvh max-h-dvh w-full overflow-hidden flex flex-col justify-center items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 via-indigo-50/40 to-slate-100 relative select-none">
+    <!-- Texture / Mesh / Orbes d'ambiance moderne -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <!-- Orbe haut-gauche azuré -->
+      <div class="absolute -top-32 -left-32 w-80 h-80 sm:w-[28rem] sm:h-[28rem] rounded-full bg-blue-300/30 blur-3xl" />
+      <!-- Orbe bas-droite indigo -->
+      <div class="absolute -bottom-32 -right-32 w-80 h-80 sm:w-[28rem] sm:h-[28rem] rounded-full bg-indigo-300/30 blur-3xl" />
+      <!-- Orbe discret centre violet -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-200/20 blur-3xl" />
+      <!-- Trame de texture moderne subtile -->
+      <div class="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.12]" />
+    </div>
+
     <!-- Scène 3D avec perspective -->
     <div class="relative z-10 w-full flex justify-center [perspective:1000px]">
-      <!-- Carte physique de badge dans le même style que VolunteerBadge -->
+      <!-- Carte physique du badge avec relief marqué -->
       <div
         ref="cardRef"
-        class="relative w-full max-w-[320px] aspect-[9/14] min-h-[480px] bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/80 ring-1 ring-black/5 shadow-2xl shadow-indigo-950/10 p-5 flex flex-col justify-between overflow-hidden cursor-pointer select-none"
+        class="relative w-full max-w-[340px] aspect-[9/14] min-h-[500px] bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/80 ring-1 ring-black/5 shadow-2xl shadow-indigo-500/10 p-5 sm:p-6 flex flex-col justify-between overflow-hidden cursor-pointer select-none"
         :style="cardTransformStyle"
         @mousemove="onMouseMove"
         @mouseleave="resetTilt"
@@ -129,16 +141,22 @@ const glareStyle = computed(() => {
           :style="glareStyle"
         />
 
-        <!-- HAUT : En-tête -->
-        <div class="relative z-10 space-y-2">
-          <div class="flex items-center justify-between px-0.5">
+        <!-- HAUT : En-tête aéré -->
+        <div class="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-2xs">
+              <UIcon
+                name="i-lucide-sparkles"
+                class="w-3.5 h-3.5"
+              />
+            </div>
             <span class="font-extrabold text-sm tracking-tight text-slate-800">
               Salon de la Danse
             </span>
-            <span class="px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 font-bold text-[10px] tracking-wide border border-violet-100 shadow-2xs">
-              Édition {{ data?.volunteer?.editionYear || 2027 }}
-            </span>
           </div>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold text-[10px] tracking-wide border border-indigo-100 shadow-2xs">
+            Édition {{ data?.volunteer?.editionYear || 2027 }}
+          </span>
         </div>
 
         <!-- Chargement -->
@@ -148,7 +166,7 @@ const glareStyle = computed(() => {
         >
           <UIcon
             name="i-lucide-loader-2"
-            class="w-8 h-8 animate-spin mx-auto text-violet-600"
+            class="w-8 h-8 animate-spin mx-auto text-indigo-600"
           />
           <p class="text-xs text-slate-500 font-medium">
             Vérification de l'accréditation en cours...
@@ -158,21 +176,21 @@ const glareStyle = computed(() => {
         <!-- Badge valide -->
         <div
           v-else-if="data?.valid && data.volunteer"
-          class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-3 pt-1 transition-opacity duration-300"
+          class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-4 pt-3 transition-opacity duration-300"
         >
-          <!-- Photo + Identité + Statut -->
-          <div class="flex flex-col items-center">
-            <!-- Photo ronde comme volunteer badge -->
-            <div class="relative w-20 h-20 sm:w-22 sm:h-22">
+          <!-- Photo + Identité + Statut (rééquilibré verticalement vers le centre) -->
+          <div class="flex flex-col items-center my-auto py-2">
+            <!-- Photo ronde agrandie avec contour discret et ombre douce -->
+            <div class="relative w-24 h-24 sm:w-26 sm:h-26">
               <img
                 v-if="data.volunteer.photoUrl"
                 :src="data.volunteer.photoUrl"
                 :alt="`${data.volunteer.firstName} ${data.volunteer.lastName}`"
-                class="w-full h-full rounded-full object-cover border-2 border-violet-600 shadow-md ring-4 ring-violet-50"
+                class="w-full h-full rounded-full object-cover border-2 border-indigo-500 shadow-md ring-4 ring-indigo-100"
               >
               <div
                 v-else
-                class="w-full h-full rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-2xl border-2 border-violet-600 shadow-md ring-4 ring-violet-50"
+                class="w-full h-full rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-2xl border-2 border-white/80 shadow-md ring-4 ring-indigo-100"
               >
                 {{ data.volunteer.firstName.charAt(0) }}{{ data.volunteer.lastName.charAt(0) }}
               </div>
@@ -181,49 +199,61 @@ const glareStyle = computed(() => {
             <!-- Pastille statut mineur si applicable -->
             <div
               v-if="data.volunteer.isMinor"
-              class="mt-1.5"
+              class="mt-2"
             >
               <span
-                class="text-[9px] font-bold px-2 py-0.5 rounded-full inline-block"
+                class="text-[9px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 shadow-2xs"
                 :class="data.volunteer.isApprovedMinor ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'"
               >
+                <UIcon
+                  :name="data.volunteer.isApprovedMinor ? 'i-lucide-check' : 'i-lucide-alert-circle'"
+                  class="w-3 h-3"
+                />
                 {{ data.volunteer.isApprovedMinor ? 'Mineur Autorisé' : 'Mineur En attente' }}
               </span>
             </div>
 
-            <!-- Nom et Prénom -->
-            <div class="text-center px-2 mt-2">
-              <h3 class="text-slate-900 font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
+            <!-- Nom et Prénom bien contrasté -->
+            <div class="text-center px-2 mt-3 space-y-0.5">
+              <h2 class="text-slate-900 font-extrabold text-xl sm:text-2xl tracking-tight leading-tight truncate max-w-[280px]">
                 {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
-              </h3>
+              </h2>
             </div>
 
-            <!-- Pastille de statut en dessous du nom et de la pp -->
-            <div class="mt-2.5">
-              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold shadow-xs">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <!-- Pastille de statut plein avec relief (vert émeraude) -->
+            <div class="mt-3">
+              <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-600 text-white text-xs font-medium shadow-sm shadow-emerald-600/30 ring-1 ring-emerald-500/50">
                 <UIcon
-                  name="i-lucide-shield-check"
-                  class="w-3.5 h-3.5 text-emerald-600"
+                  name="i-lucide-badge-check"
+                  class="w-4 h-4 text-emerald-100"
                 />
                 <span>Badge valide</span>
               </div>
             </div>
           </div>
 
-          <!-- Récapitulatif missions -->
-          <div class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-left space-y-1">
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              Missions ({{ data.volunteer.missions.length }})
-            </span>
-            <div class="space-y-0.5 max-h-24 overflow-y-auto pr-1">
+          <!-- Récapitulatif missions : fond blanc, séparations nettes et typographies lisibles -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-3 shadow-xs space-y-1.5">
+            <div class="flex items-center justify-between px-0.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <UIcon
+                  name="i-lucide-calendar-days"
+                  class="w-3.5 h-3.5 text-indigo-500"
+                />
+                Missions ({{ data.volunteer.missions.length }})
+              </span>
+              <span class="text-[10px] font-medium text-slate-400">
+                {{ data.volunteer.editionYear || 2027 }}
+              </span>
+            </div>
+            <div class="divide-y divide-slate-100 max-h-24 overflow-y-auto pr-0.5">
               <div
                 v-for="m in data.volunteer.missions"
                 :key="m.id"
-                class="text-xs flex items-center justify-between py-0.5 border-b border-slate-200/60 last:border-0"
+                class="text-xs flex items-center justify-between py-1.5 first:pt-0.5 last:pb-0.5 gap-2"
               >
-                <span class="font-medium text-slate-700 truncate mr-2">{{ m.missionName }}</span>
-                <span class="text-violet-700 font-mono text-[11px] shrink-0 font-medium">{{ m.timeSlot }}</span>
+                <span class="font-medium text-slate-700 truncate text-[11px] sm:text-xs">{{ m.missionName }}</span>
+                <span class="text-indigo-600 font-mono text-[11px] shrink-0 font-semibold bg-indigo-50/70 px-2 py-0.5 rounded-md border border-indigo-100/60">{{ m.timeSlot }}</span>
               </div>
             </div>
           </div>
@@ -232,51 +262,50 @@ const glareStyle = computed(() => {
         <!-- Bénévole trouvé mais en attente de validation -->
         <div
           v-else-if="data?.volunteer"
-          class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-3 pt-1 transition-opacity duration-300"
+          class="relative z-10 flex flex-col justify-between flex-1 my-auto space-y-3 pt-2 transition-opacity duration-300"
         >
           <!-- Photo + Identité + Statut En attente -->
-          <div class="flex flex-col items-center">
-            <div class="relative w-20 h-20 sm:w-22 sm:h-22">
+          <div class="flex flex-col items-center my-auto py-1">
+            <div class="relative w-24 h-24 sm:w-26 sm:h-26">
               <img
                 v-if="data.volunteer.photoUrl"
                 :src="data.volunteer.photoUrl"
                 :alt="`${data.volunteer.firstName} ${data.volunteer.lastName}`"
-                class="w-full h-full rounded-full object-cover border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+                class="w-full h-full rounded-full object-cover border-2 border-amber-400 shadow-md ring-4 ring-amber-100"
               >
               <div
                 v-else
-                class="w-full h-full rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-2xl border-2 border-amber-400 shadow-md ring-4 ring-amber-50"
+                class="w-full h-full rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center font-bold text-2xl border-2 border-white/80 shadow-md ring-4 ring-amber-100"
               >
                 {{ data.volunteer.firstName.charAt(0) }}{{ data.volunteer.lastName.charAt(0) }}
               </div>
             </div>
 
             <!-- Nom et Prénom -->
-            <div class="text-center px-2 mt-2">
-              <h3 class="text-slate-900 font-bold text-lg sm:text-xl tracking-tight leading-snug truncate max-w-[260px]">
+            <div class="text-center px-2 mt-3 space-y-0.5">
+              <h2 class="text-slate-900 font-extrabold text-xl sm:text-2xl tracking-tight leading-tight truncate max-w-[280px]">
                 {{ data.volunteer.firstName }} {{ data.volunteer.lastName }}
-              </h3>
+              </h2>
             </div>
 
-            <!-- Pastille En attente de validation -->
-            <div class="mt-2.5">
-              <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <!-- Pastille En attente de validation plein avec relief -->
+            <div class="mt-3">
+              <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500 text-white text-xs font-medium shadow-sm shadow-amber-500/30 ring-1 ring-amber-400">
                 <UIcon
                   name="i-lucide-clock"
-                  class="w-3.5 h-3.5 text-amber-600"
+                  class="w-4 h-4 text-amber-100"
                 />
                 <span>En attente de validation</span>
               </div>
             </div>
           </div>
 
-          <!-- Message explicatif -->
-          <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl text-center space-y-1">
+          <!-- Message explicatif : fond blanc harmonisé -->
+          <div class="bg-white border border-amber-200/80 rounded-2xl p-3 text-center space-y-1 shadow-xs">
             <p class="text-xs font-bold text-amber-900">
               Planning non finalisé
             </p>
-            <p class="text-[11px] text-amber-800/90 leading-relaxed">
+            <p class="text-[11px] text-slate-500 leading-relaxed">
               Le bénévole n'a pas encore validé définitivement ses créneaux d'engagement.
             </p>
           </div>
@@ -285,27 +314,31 @@ const glareStyle = computed(() => {
         <!-- Badge invalide / non trouvé -->
         <div
           v-else
-          class="relative z-10 space-y-3 py-6 my-auto text-center transition-opacity duration-300"
+          class="relative z-10 space-y-4 py-8 my-auto text-center transition-opacity duration-300"
         >
-          <div class="w-14 h-14 rounded-full bg-red-50 border border-red-200 text-red-500 flex items-center justify-center mx-auto shadow-xs">
+          <div class="w-16 h-16 rounded-2xl bg-red-50 border border-red-200/80 text-red-500 flex items-center justify-center mx-auto shadow-sm shadow-red-500/10">
             <UIcon
               name="i-lucide-shield-x"
-              class="w-7 h-7"
+              class="w-8 h-8"
             />
           </div>
-          <div class="space-y-1">
-            <h2 class="text-base sm:text-lg font-bold text-red-600">
-              Accréditation Invalide
-            </h2>
-            <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-red-600 text-white text-xs font-medium shadow-sm shadow-red-600/25">
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="w-3.5 h-3.5"
+              />
+              <span>Accréditation Invalide</span>
+            </div>
+            <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed pt-1">
               {{ data?.message || 'Ce badge n\'est pas actif ou est inconnu de l\'organisation.' }}
             </p>
           </div>
         </div>
 
-        <!-- BAS : Identifiant unique -->
-        <div class="relative z-10 pt-2 flex items-center justify-center text-[10px] font-mono text-slate-400 px-0.5">
-          <span class="tracking-wider">ID: {{ (data?.volunteer?.id || userId || '').slice(0, 8).toUpperCase() }}</span>
+        <!-- BAS : Identifiant unique discret et élégant -->
+        <div class="relative z-10 pt-2 flex items-center justify-center text-[10px] font-mono text-slate-400 tracking-wider">
+          <span>ID: {{ (data?.volunteer?.id || userId || '').slice(0, 8).toUpperCase() }}</span>
         </div>
       </div>
     </div>

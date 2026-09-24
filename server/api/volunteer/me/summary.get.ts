@@ -115,7 +115,8 @@ export default defineEventHandler(async (event) => {
       startTime: ts.startTime,
       endTime: ts.endTime,
       orderIndex: ts.orderIndex,
-      location: custom.location,
+      location: reg.slotMission.locationNotes || custom.location,
+      locationNotes: reg.slotMission.locationNotes || null,
       instructions: custom.instructions
     }
   })
