@@ -26,7 +26,7 @@ Bienvenue sur la plateforme dédiée aux bénévoles du **Salon de la Danse**. C
 
 L'inscription s'effectue obligatoirement à l'aide d'un code d'invitation à usage unique délivré par l'équipe d'organisation.
 
-![Écran de création de compte bénévole avec code d'invitation](./screenshots/01-inscription-benevole.png)
+![Écran de création de compte bénévole avec code d'invitation](./images/inscription-benevole.png)
 
 ### Procédure d'inscription pas à pas :
 1. Rendez-vous sur la page d'inscription : [https://salondeladanse.mattisbabin.fr/espace-benevole/register](https://salondeladanse.mattisbabin.fr/espace-benevole/register).
@@ -48,7 +48,7 @@ L'inscription s'effectue obligatoirement à l'aide d'un code d'invitation à usa
 
 ## 3. Connexion et Gestion des Identifiants
 
-![Page de connexion à l'espace bénévole](./screenshots/02-connexion-espace-benevole.png)
+![Page de connexion à l'espace bénévole](./images/connexion-espace-benevole.png)
 
 ### Se connecter :
 1. Accédez à [https://salondeladanse.mattisbabin.fr/espace-benevole/login](https://salondeladanse.mattisbabin.fr/espace-benevole/login).
@@ -66,7 +66,7 @@ L'inscription s'effectue obligatoirement à l'aide d'un code d'invitation à usa
 
 Dès votre connexion, le tableau de bord récapitule votre situation, vos métriques d'engagement et vos prochains créneaux.
 
-![Tableau de bord principal et récapitulatif du profil](./screenshots/03-dashboard-benevole.png)
+![Tableau de bord principal et récapitulatif du profil](./images/dashboard-benevole.png)
 
 ### Les éléments clés du tableau de bord :
 - **Badge d'accès ou Statut d'attente (à gauche)** :
@@ -92,7 +92,7 @@ Dès votre connexion, le tableau de bord récapitule votre situation, vos métri
 
 La grille interactive vous permet de composer votre planning de festival en toute autonomie pendant la période d'ouverture des inscriptions.
 
-![Grille interactive de sélection des créneaux de mission](./screenshots/04-planning-selection-creneaux.png)
+![Grille interactive de sélection des créneaux de mission](./images/planning-selection-creneaux.png)
 
 ### Règles de composition de votre planning :
 - **Seuil recommandé** : Il est recommandé de choisir au minimum **3 créneaux** sur la durée du festival pour assurer le bon fonctionnement du salon. Une jauge de progression vous indique votre avancement.
@@ -110,7 +110,7 @@ La grille interactive vous permet de composer votre planning de festival en tout
    - **« Enregistrer le brouillon »** : mémorise vos choix temporaires sans verrouiller votre inscription. Vous pouvez revenir modifier vos choix ultérieurement.
    - **« Valider définitivement mon planning »** : engage la confirmation officielle de votre participation.
 
-![Modal de récapitulatif et de validation définitive du planning](./screenshots/05-validation-definitive-planning.png)
+![Modal de récapitulatif et de validation définitive du planning](./images/validation-definitive-planning.png)
 
 ### Confirmer définitivement son planning :
 1. Cliquez sur **« Valider définitivement mon planning »**.
@@ -129,7 +129,7 @@ La grille interactive vous permet de composer votre planning de festival en tout
 
 Votre badge numérique est votre laissez-passer sur l'ensemble de l'enceinte du salon (accès coulisses, QG bénévoles et espace restauration).
 
-![Badge bénévole officiel avec QR Code](./screenshots/06-badge-benevole.png)
+![Badge bénévole officiel avec QR Code](./images/badge-benevole.png)
 
 ### Caractéristiques du badge :
 - Votre photo d'identité officielle et votre nom complet.
@@ -143,7 +143,7 @@ Votre badge numérique est votre laissez-passer sur l'ensemble de l'enceinte du 
 3. Présentez l'écran au contrôleur équipé d'un lecteur ou d'un smartphone.
 4. Le contrôleur accède instantanément à l'écran de certification garantissant votre identité et la validité de votre accréditation.
 
-![Écran de vérification d'accès après scan du QR code](./screenshots/07-verification-badge-acces.png)
+![Écran de vérification d'accès après scan du QR code](./images/verification-badge-acces.png)
 
 ---
 
@@ -151,7 +151,7 @@ Votre badge numérique est votre laissez-passer sur l'ensemble de l'enceinte du 
 
 Pour anticiper les éventuelles pannes de batterie ou les zones sans réseau au sein du parc des expositions, vous pouvez imprimer votre fiche de mission au format papier ou l'enregistrer en PDF.
 
-![Aperçu avant impression de la fiche mission individuelle](./screenshots/08-fiche-mission-impression.png)
+![Aperçu de la fiche mission et récapitulatif des créneaux](./images/fiche-mission-impression.png)
 
 ### Exporter ou imprimer sa fiche :
 1. Sur votre tableau de bord, cliquez sur le bouton **« Fiche mission (PDF) »**.

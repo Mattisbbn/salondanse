@@ -120,7 +120,7 @@ Conformément à la législation en vigueur sur le travail bénévole des mineur
 
 Ce module en deux étapes permet de concevoir l'architecture opérationnelle du festival avant l'ouverture des inscriptions.
 
-![Catalogue des missions et configuration des attributs](./screenshots/admin-06-catalogue-missions.png)
+![Catalogue des missions et configuration des attributs](./images/missions-catalogue.png)
 
 ### Étape 1 : Le Catalogue des Missions
 1. Accédez à **« Missions »** ([/admin/missions](https://salondeladanse.mattisbabin.fr/admin/missions)).
@@ -162,7 +162,7 @@ Ce module en deux étapes permet de concevoir l'architecture opérationnelle du 
 
 Toutes les données de la plateforme sont exportables sous formats universels (Excel `.xlsx` et `.csv`) pour une utilisation terrain sans connexion internet.
 
-![Centre de téléchargement des exports et reporting](./screenshots/admin-09-exports-reporting.png)
+![Centre de téléchargement des exports et reporting](./images/exports-admin.png)
 
 ### Les types d'extractions disponibles :
 1. **Feuilles d'émargement terrain (par jour / créneau)** :
@@ -179,7 +179,7 @@ Toutes les données de la plateforme sont exportables sous formats universels (E
 
 Afin de prévenir les erreurs de manipulation et d'assurer une traçabilité rigoureuse, toute action modifiant l'état de l'application est enregistrée de manière immuable.
 
-![Journal d'audit de sécurité et historique des actions](./screenshots/admin-10-audit-logs.png)
+![Journal d'audit de sécurité et historique des actions](./images/logs-admin.png)
 
 ### Consultation des journaux :
 1. Rendez-vous sur **« Logs »** ([/admin/logs](https://salondeladanse.mattisbabin.fr/admin/logs)).
@@ -197,7 +197,7 @@ Afin de prévenir les erreurs de manipulation et d'assurer une traçabilité rig
 
 L'application prend en charge le fonctionnement multi-éditions, assurant la pérennité des données d'une année sur l'autre sans risque de collision.
 
-![Interface de gestion et bascule des éditions annuelles](./screenshots/admin-11-gestion-editions.png)
+![Interface de gestion et bascule des éditions annuelles](./images/editions-admin.png)
 
 ### Gérer les éditions :
 1. Accédez à **« Éditions »** ([/admin/editions](https://salondeladanse.mattisbabin.fr/admin/editions)).
