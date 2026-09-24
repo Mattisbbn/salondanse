@@ -27,40 +27,44 @@ const adminNavItems: NavItem[] = [
     to: '/admin/volunteers',
     icon: 'i-lucide-users'
   },
-  {
-    label: 'Profils Mineurs',
-    to: '/admin/minors',
-    icon: 'i-lucide-shield-alert'
+   {
+    label: 'Missions',
+    to: '/admin/missions',
+    icon: 'i-lucide-list-checks'
   },
-  {
+   {
     label: 'Badges & QR Codes',
     to: '/admin/badges',
     icon: 'i-lucide-id-card'
   },
+
+ 
   {
     label: 'Invitations',
     to: '/admin/invitations',
     icon: 'i-lucide-mail-plus'
   },
-  {
-    label: 'Logs',
-    to: '/admin/logs',
-    icon: 'i-lucide-file-text'
+   {
+    label: 'Profils Mineurs',
+    to: '/admin/minors',
+    icon: 'i-lucide-shield-alert'
   },
-  {
-    label: 'Multi-Éditions',
+ 
+ 
+   {
+    label: 'Éditions',
     to: '/admin/editions',
     icon: 'i-lucide-calendar-cog'
-  },
-  {
-    label: 'Gestion des Missions',
-    to: '/admin/missions',
-    icon: 'i-lucide-list-checks'
   },
   {
     label: 'Exports de données',
     to: '/admin/exports',
     icon: 'i-lucide-download'
+  },
+   {
+    label: 'Logs',
+    to: '/admin/logs',
+    icon: 'i-lucide-file-text'
   }
 ]
 

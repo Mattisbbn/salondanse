@@ -5,7 +5,7 @@ import { prisma } from '../../../utils/prisma'
 
 const sendSchema = z.object({
   email: z.string().trim().email('Format d\'adresse e-mail invalide'),
-  replaceExisting: z.boolean().optional().default(false)
+  replaceExisting: z.preprocess((val) => typeof val === 'boolean' ? val : val === 'true', z.boolean().default(false))
 })
 
 export default defineEventHandler(async (event) => {

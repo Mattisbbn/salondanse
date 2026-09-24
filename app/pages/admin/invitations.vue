@@ -51,8 +51,9 @@ const conflictData = ref<{
 
 const emailSchema = z.string().trim().min(1, 'Veuillez saisir une adresse e-mail').email('Format d\'adresse e-mail invalide')
 
-async function sendInvitation(replaceExisting = false) {
-  const targetEmail = (replaceExisting && conflictData.value?.email)
+async function sendInvitation(replaceExisting: boolean | Event = false) {
+  const shouldReplace = replaceExisting === true
+  const targetEmail = (shouldReplace && conflictData.value?.email)
     ? conflictData.value.email
     : emailInput.value.trim()
 
@@ -66,7 +67,7 @@ async function sendInvitation(replaceExisting = false) {
     return
   }
 
-  if (replaceExisting) {
+  if (shouldReplace) {
     if (isRegenerating.value) return
     isRegenerating.value = true
   } else {
@@ -86,19 +87,19 @@ async function sendInvitation(replaceExisting = false) {
       method: 'POST',
       body: {
         email: targetEmail,
-        replaceExisting
+        replaceExisting: shouldReplace
       }
     })
 
     toast.add({
-      title: replaceExisting ? 'Invitation régénérée !' : 'Invitation envoyée !',
-      description: replaceExisting
+      title: shouldReplace ? 'Invitation régénérée !' : 'Invitation envoyée !',
+      description: shouldReplace
         ? `Nouveau code ${res.invitation.code} généré et renvoyé à ${targetEmail}. L'ancien code a été supprimé.`
         : `Code ${res.invitation.code} généré et e-mail expédié à ${targetEmail}.`,
       color: 'success'
     })
 
-    if (replaceExisting) {
+    if (shouldReplace) {
       isConflictModalOpen.value = false
       conflictData.value = null
     } else {
@@ -248,7 +249,7 @@ const columns: TableColumn<InvitationItem>[] = [
 
       <form
         class="flex flex-col sm:flex-row gap-3 pt-2"
-        @submit.prevent="sendInvitation"
+        @submit.prevent="sendInvitation(false)"
       >
         <div class="flex-1">
           <UInput
