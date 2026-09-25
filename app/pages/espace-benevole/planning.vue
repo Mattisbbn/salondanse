@@ -58,22 +58,6 @@ const { data, status, refresh } = await useFetch<PlanningApiResponse>('/api/plan
   lazy: false
 })
 
-const editionSubtitle = computed(() => {
-  const editionName = data.value?.edition?.name || 'Salon de la Danse'
-  const days = data.value?.days
-  if (!days || days.length === 0) {
-    return `${editionName} (Angers)`
-  }
-  const first = days[0]
-  if (days.length === 1 && first) {
-    return `${editionName} • ${first.dayLabel} (Angers)`
-  }
-  const last = days[days.length - 1]
-  if (first && last) {
-    return `${editionName} • Du ${first.dayLabel} au ${last.dayLabel} (${days.length} jours • Angers)`
-  }
-  return `${editionName} (Angers)`
-})
 
 // Liste des IDs sélectionnés dans l'UI (réactif)
 const selectedIds = ref<string[]>([])
@@ -438,9 +422,7 @@ async function confirmPlanning() {
         <h1 class="font-bold tracking-tight text-2xl sm:text-3xl text-[#2A1512] leading-tight">
           Mon Planning Bénévole
         </h1>
-        <p class="text-xs text-[#6E5A52]">
-          {{ editionSubtitle }}
-        </p>
+   
       </div>
 
       <!-- Badge de statut DA -->
