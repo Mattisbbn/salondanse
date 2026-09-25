@@ -439,7 +439,7 @@ async function confirmPlanning() {
         </span>
         <span
           v-else
-          class="font-semibold text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-[#F7E4C6] text-[#8A4B0F] border border-[#D9A660]"
+          class="font-semibold text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-[#F7E4C6] text-[#8A4B0F] "
         >
           <UIcon
             name="i-lucide-clock"

@@ -97,7 +97,7 @@ function handlePrint() {
           @click="handlePrint"
         >
           <UIcon name="i-lucide-printer" class="w-3.5 h-3.5 text-[#7A291E]" />
-          <span>Fiche mission (PDF)</span>
+          <span>Fiche mission</span>
         </button>
 
         <NuxtLink
@@ -326,7 +326,7 @@ function handlePrint() {
           <div class="flex items-center justify-between pb-3 border-b border-[#E6D9CB]">
             <div>
               <h3 class="text-base font-bold text-[#2A1512]">
-                Mes créneaux de mission ({{ summary.totalSlots }})
+                Mes créneaux
               </h3>
               <p class="text-xs text-[#6E5A52]">
                 Total : {{ summary.totalHours }} heures de bénévolat
