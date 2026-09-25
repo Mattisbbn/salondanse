@@ -818,9 +818,19 @@ onMounted(() => {
               <span>Finaliser mon inscription</span>
             </button>
           </div>
-        </form>
 
- 
+          <!-- Mention discrète RGPD sous le formulaire -->
+          <p class="text-[11px] text-[#6E5A52] text-center pt-2 leading-relaxed">
+            En soumettant ce formulaire, vous acceptez le traitement de vos données pour l'organisation de l'événement selon notre
+            <NuxtLink
+              to="/politique-confidentialite"
+              target="_blank"
+              class="text-[#7A291E] font-semibold underline underline-offset-2 hover:text-[#5E1F16]"
+            >
+              Politique de Confidentialité (RGPD)
+            </NuxtLink>.
+          </p>
+        </form>
 
         <!-- Pied de carte : lien connexion -->
         <div class="pt-4 border-t border-[#E6D9CB] text-center">
@@ -834,6 +844,22 @@ onMounted(() => {
             </NuxtLink>
           </p>
         </div>
+      </div>
+
+      <!-- Pied de page discret avec lien politique de confidentialité -->
+      <div class="mt-4 text-center text-xs text-[#6E5A52] space-y-1">
+        <p class="font-medium">
+          Salon de la Danse Angers · Édition 2027
+        </p>
+        <p>
+          <NuxtLink
+            to="/politique-confidentialite"
+            class="text-[#7A291E] hover:underline underline-offset-2 font-medium inline-flex items-center gap-1.5"
+          >
+            <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#7A291E]" />
+            <span>Consulter notre Politique de Confidentialité (RGPD)</span>
+          </NuxtLink>
+        </p>
       </div>
     </div>
   </div>

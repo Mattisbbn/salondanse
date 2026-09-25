@@ -328,10 +328,19 @@ const onSubmit = async () => {
         </div>
       </div>
 
-      <!-- Note discrète pour le Salon de la Danse 2027 -->
-      <p class="text-center text-xs text-[#6E5A52] mt-4 font-medium">
-        Salon de la Danse Angers · Édition 2027
-      </p>
+      <!-- Note discrète pour le Salon de la Danse 2027 avec lien RGPD -->
+      <div class="mt-4 text-center text-xs text-[#6E5A52] space-y-1 font-medium">
+        <p>Salon de la Danse Angers · Édition 2027</p>
+        <p>
+          <NuxtLink
+            to="/politique-confidentialite"
+            class="text-[#7A291E] hover:underline underline-offset-2 font-medium inline-flex items-center gap-1"
+          >
+            <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#7A291E]" />
+            <span>Politique de Confidentialité (RGPD)</span>
+          </NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>

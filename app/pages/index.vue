@@ -54,10 +54,18 @@ const targetUrl = computed(() => {
         </NuxtLink>
       </div>
 
-      <!-- Footer discret -->
-      <p class="text-xs text-[#6E5A52] pt-6 font-medium">
-        Association Salon de la Danse Angers · Tous droits réservés
-      </p>
+      <!-- Footer discret avec lien RGPD -->
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-xs text-[#6E5A52] font-medium">
+        <span>Association Salon de la Danse Angers · Tous droits réservés</span>
+        <span class="hidden sm:inline text-[#D8C6B4]">·</span>
+        <NuxtLink
+          to="/politique-confidentialite"
+          class="hover:text-[#7A291E] underline underline-offset-2 transition-colors inline-flex items-center gap-1"
+        >
+          <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#7A291E]" />
+          <span>Politique de Confidentialité (RGPD)</span>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

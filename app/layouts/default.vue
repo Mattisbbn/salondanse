@@ -82,6 +82,20 @@ const benevoleNavItems: NavItem[] = [
   }
 ]
 
+// Menu Public (visiteurs non connectés)
+const publicNavItems: NavItem[] = [
+  {
+    label: 'Accueil',
+    to: '/',
+    icon: 'i-lucide-home'
+  },
+  {
+    label: 'Politique de Confidentialité',
+    to: '/politique-confidentialite',
+    icon: 'i-lucide-shield-check'
+  }
+]
+
 // Liste d'onglets filtrée selon le rôle
 const navItems = computed<NavItem[]>(() => {
   if (isAdmin.value) {
@@ -91,7 +105,7 @@ const navItems = computed<NavItem[]>(() => {
     return benevoleNavItems
   }
   // Si non connecté mais navigue sur le site
-  return []
+  return publicNavItems
 })
 
 // Détermination du titre de la page courante pour le header mobile
@@ -100,7 +114,16 @@ const currentPageTitle = computed(() => {
     if (item.to === '/admin') return route.path === '/admin'
     return route.path.startsWith(item.to)
   })
-  return found?.label || 'Salon de la Danse'
+  if (found) return found.label
+  if (route.path === '/politique-confidentialite') return 'Confidentialité (RGPD)'
+  return 'Salon de la Danse'
+})
+
+// Route du tableau de bord selon le rôle
+const dashboardRoute = computed(() => {
+  if (isAdmin.value) return '/admin'
+  if (isBenevole.value) return '/espace-benevole/dashboard'
+  return '/'
 })
 
 // Initiales pour l'avatar
@@ -123,7 +146,7 @@ const userInitials = computed(() => {
     >
       <!-- En-tête Sidebar : Identité de marque officielle -->
       <div class="h-20 flex items-center justify-between px-5 border-b border-[#3D1C18]">
-        <NuxtLink to="/" class="flex flex-col min-w-0 group">
+        <NuxtLink :to="dashboardRoute" class="flex flex-col min-w-0 group" title="Accéder au tableau de bord">
           <span class="font-serif italic font-semibold text-lg text-[#FFF7EE] tracking-tight group-hover:text-[#D9B777] transition-colors leading-none">
             Salon de la Danse
           </span>
@@ -234,6 +257,17 @@ const userInitials = computed(() => {
             label="Se connecter"
           />
         </div>
+
+        <!-- Lien discret politique de confidentialité dans la sidebar -->
+        <div class="pt-2.5 mt-2 border-t border-[#3D1C18]/60 text-center">
+          <NuxtLink
+            to="/politique-confidentialite"
+            class="text-[11px] !text-stone-300 hover:!text-white transition-colors inline-flex items-center gap-1.5"
+          >
+            <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#D9B777]" />
+            <span>Confidentialité RGPD</span>
+          </NuxtLink>
+        </div>
       </div>
     </aside>
 
@@ -242,7 +276,7 @@ const userInitials = computed(() => {
     <!-- ======================================================== -->
     <header class="md:hidden sticky top-0 z-30 bg-[#2E1411] border-b border-[#3D1C18] h-14 px-4 flex items-center justify-between text-[#FFF7EE]">
       <div class="flex items-center gap-2.5 min-w-0">
-        <NuxtLink to="/" class="flex flex-col min-w-0">
+        <NuxtLink :to="dashboardRoute" class="flex flex-col min-w-0" title="Accéder au tableau de bord">
           <span class="font-serif italic font-semibold text-sm text-[#FFF7EE] truncate leading-tight">
             Salon de la Danse
           </span>
@@ -310,14 +344,14 @@ const userInitials = computed(() => {
             >
               <!-- Header du menu mobile -->
               <div class="p-4 border-b border-[#3D1C18] flex items-center justify-between bg-[#220E0C]">
-                <div>
-                  <span class="font-serif italic font-semibold text-base text-[#FFF7EE] block leading-tight">
+                <NuxtLink :to="dashboardRoute" class="flex flex-col min-w-0 group" @click="isMobileMenuOpen = false">
+                  <span class="font-serif italic font-semibold text-base text-[#FFF7EE] block leading-tight group-hover:text-[#D9B777] transition-colors">
                     Salon de la Danse
                   </span>
                   <span class="text-[10px] font-bold tracking-[0.16em] uppercase text-[#D9B777]">
                     Angers · Édition 2027
                   </span>
-                </div>
+                </NuxtLink>
 
                 <button
                   type="button"
@@ -417,7 +451,16 @@ const userInitials = computed(() => {
               </nav>
 
               <!-- Déconnexion ou Connexion en bas -->
-              <div class="p-3 border-t border-[#3D1C18] bg-[#220E0C]">
+              <div class="p-3 border-t border-[#3D1C18] bg-[#220E0C] space-y-2">
+                <NuxtLink
+                  to="/politique-confidentialite"
+                  class="flex items-center justify-center gap-1.5 py-1 text-xs text-stone-300 hover:text-white transition-colors"
+                  @click="isMobileMenuOpen = false"
+                >
+                  <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#D9B777]" />
+                  <span>Politique de Confidentialité (RGPD)</span>
+                </NuxtLink>
+
                 <button
                   v-if="isAuthenticated"
                   type="button"
@@ -453,6 +496,35 @@ const userInitials = computed(() => {
       >
         <slot />
       </div>
+
+      <!-- Footer global officiel -->
+      <footer class="border-t border-[#E6D9CB] mt-auto py-4 px-4 sm:px-6 lg:px-8 bg-[#F6EFE6] text-xs text-[#6E5A52]">
+        <div
+          class="w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left"
+          :class="isAdmin ? 'max-w-[1600px]' : 'max-w-7xl'"
+        >
+          <div>
+            <span class="font-medium text-[#2A1512]">Salon de la Danse Angers 2027</span>
+            <span class="text-[#6E5A52] ml-1">· Tous droits réservés</span>
+          </div>
+          <div class="flex items-center gap-4 flex-wrap justify-center font-medium">
+            <NuxtLink
+              to="/politique-confidentialite"
+              class="hover:text-[#7A291E] underline underline-offset-2 transition-colors inline-flex items-center gap-1.5"
+            >
+              <UIcon name="i-lucide-shield-check" class="w-3.5 h-3.5 text-[#7A291E]" />
+              <span>Politique de Confidentialité (RGPD)</span>
+            </NuxtLink>
+            <span class="text-[#D8C6B4]">·</span>
+            <a
+              href="mailto:contact@salondeladanse.fr"
+              class="hover:text-[#7A291E] transition-colors"
+            >
+              contact@salondeladanse.fr
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   </div>
 </template>
