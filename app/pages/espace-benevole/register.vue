@@ -416,18 +416,7 @@ onMounted(() => {
               Complétez votre profil pour débloquer le choix des créneaux
             </p>
           </div>
-          <span
-            v-if="!isCodeValid"
-            class="font-semibold text-xs px-2.5 py-1 rounded-full bg-[#F3DCD5] text-[#7A291E]"
-          >
-            Étape 1 sur 2
-          </span>
-          <span
-            v-else
-            class="font-semibold text-xs px-2.5 py-1 rounded-full bg-[#E1E9DC] text-[#2F5238] border border-[#9DB79F]"
-          >
-            Étape 2 sur 2
-          </span>
+ 
         </div>
 
         <!-- ======================================================== -->
