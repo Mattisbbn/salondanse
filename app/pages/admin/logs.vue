@@ -117,9 +117,7 @@ function getActionLabel(action: string): string {
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Journal d'Audit
       </h1>
-      <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-        Historique horodaté des opérations administratives, affectations et modifications du planning
-      </p>
+  
     </div>
 
     <!-- Conteneur principal unifié : Filtres intégrés + Tableau -->

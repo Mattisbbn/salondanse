@@ -656,9 +656,7 @@ const columns: TableColumn<VolunteerItem>[] = [
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Bénévoles &amp; Plannings
       </h1>
-      <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-        Consultez, modifiez, annulez et ajustez les attributions de missions en direct.
-      </p>
+
     </div>
 
     <!-- Barre d'outils supérieure (Recherche + Filtres multi-critères) -->

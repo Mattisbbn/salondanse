@@ -120,9 +120,7 @@ function openQrModal(badge: VolunteerBadge) {
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Badges & Accréditations
         </h1>
-        <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-          Génération et impression des badges officiels avec QR Code pour les bénévoles validés
-        </p>
+     
       </div>
 
       <div class="flex items-center gap-2.5">

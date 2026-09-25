@@ -243,9 +243,7 @@ async function handleAddDay() {
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Gestion éditions
         </h1>
-        <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-          Consultez les éditions du festival, basculez l'édition courante ou préparez l'édition suivante
-        </p>
+ 
       </div>
 
       <div class="flex items-center gap-2.5">

@@ -51,9 +51,7 @@ const missionsExportUrl = computed(() => {
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Exports & Reporting
         </h1>
-        <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-          Téléchargement des feuilles d'émargement, plannings généraux et annuaires au format Excel (.xlsx) et CSV
-        </p>
+   
       </div>
 
       <NuxtLink to="/admin/badges">

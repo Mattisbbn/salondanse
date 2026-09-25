@@ -150,9 +150,7 @@ const columns: TableColumn<MinorItem>[] = [
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
         Validation des Profils Mineurs
       </h1>
-      <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-        Vérifiez et validez les autorisations parentales des bénévoles de moins de 18 ans.
-      </p>
+
     </div>
 
     <!-- Cartes KPI de Synthèse -->
