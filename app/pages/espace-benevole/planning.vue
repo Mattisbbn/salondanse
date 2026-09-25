@@ -468,30 +468,7 @@ async function confirmPlanning() {
       </div>
     </div>
 
-    <!-- Légende officielle du cahier des charges DA -->
-    <div class="p-3.5 bg-[#FFFCF8] rounded-2xl border border-[#E6D9CB] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-      <span class="text-[11px] font-bold tracking-[0.16em] uppercase text-[#6E5A52]">
-        Code couleur des créneaux
-      </span>
-      <div class="flex items-center gap-4 flex-wrap">
-        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
-          <span class="w-3.5 h-3.5 rounded-md bg-[#E1E9DC] border border-[#9DB79F]" />
-          Places disponibles
-        </span>
-        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
-          <span class="w-3.5 h-3.5 rounded-md bg-[#F7E4C6] border border-[#D9A660]" />
-          Presque complet (1 place)
-        </span>
-        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
-          <span class="w-3.5 h-3.5 rounded-md bg-[#D8CFC8] border border-[#A99A91]" />
-          Complet
-        </span>
-        <span class="inline-flex items-center gap-2 text-xs text-[#6E5A52]">
-          <span class="w-3.5 h-3.5 rounded-md bg-[#F3DCD5] border border-[#ECCBC4]" />
-          Poste sensible
-        </span>
-      </div>
-    </div>
+
 
     <!-- Bandeau discret d'alerte Inscriptions Fermées -->
     <div
