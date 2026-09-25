@@ -40,55 +40,61 @@ export async function sendInvitationEmail(options: SendInvitationOptions) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invitation Bénévolat - Salon de la Danse 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #0F172A;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
+<body style="margin: 0; padding: 28px 16px; font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F6EFE6; color: #2A1512; -webkit-font-smoothing: antialiased;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(42, 21, 18, 0.04);">
     <tr>
-      <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
-        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
+      <td style="padding: 32px 32px 24px 32px; background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+        <p style="margin: 0 0 6px 0; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #7A291E;">
           Salon de la Danse d'Angers 2027
+        </p>
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #2A1512; line-height: 1.3;">
+          Invitation Bénévolat
         </h1>
-        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748B;">
-          Invitation officielle pour l'équipe bénévole
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6E5A52;">
+          Invitation officielle pour rejoindre l'équipe bénévole
         </p>
       </td>
     </tr>
     <tr>
       <td style="padding: 32px;">
-        <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 18px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Bonjour,<br><br>
           Votre candidature a été retenue pour rejoindre l'équipe des bénévoles du <strong>Salon de la Danse</strong> qui se tiendra du 14 au 16 mai 2027 à Angers.
         </p>
 
-        <p style="margin: 0 0 28px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 26px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Pour finaliser votre compte et accéder au choix de vos créneaux de mission, veuillez cliquer sur le bouton ci-dessous :
         </p>
 
         <!-- Bouton CTA -->
-        <div style="text-align: center; margin: 32px 0;">
-          <a href="${options.registrationUrl}" target="_blank" style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-weight: 600; font-size: 15px; text-decoration: none; padding: 14px 28px; border-radius: 10px; box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);">
-            Finaliser mon inscription
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${options.registrationUrl}" target="_blank" style="display: inline-block; background-color: #7A291E; color: #FFFFFF; font-weight: 600; font-size: 15px; text-decoration: none; padding: 14px 32px; border-radius: 9999px; box-shadow: 0 3px 8px rgba(122, 41, 30, 0.25);">
+            Finaliser mon inscription →
           </a>
         </div>
 
         <!-- Encadré Code de secours -->
-        <div style="background-color: #F1F5F9; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; margin: 28px 0; text-align: center;">
-          <p style="margin: 0 0 6px 0; font-size: 12px; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">
+        <div style="background-color: #FAF4F2; border: 1px solid #ECCBC4; border-radius: 14px; padding: 18px; margin: 28px 0; text-align: center;">
+          <p style="margin: 0 0 6px 0; font-size: 11px; color: #6E5A52; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700;">
             Ou utilisez directement ce code :
           </p>
-          <div style="font-family: monospace, Consolas, Monaco; font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #7C3AED;">
+          <div style="font-family: monospace, Consolas, Monaco; font-size: 22px; font-weight: 700; letter-spacing: 2px; color: #7A291E;">
             ${options.code}
           </div>
         </div>
 
-        <p style="margin: 0; font-size: 13px; color: #64748B; line-height: 1.5;">
+        <p style="margin: 0; font-size: 13px; color: #6E5A52; line-height: 1.5;">
           Ce code est strictement personnel et à usage unique.
         </p>
       </td>
     </tr>
     <tr>
-      <td style="padding: 20px 32px; background-color: #F8FAFC; border-top: 1px solid #E2E8F0; text-align: center;">
-        <p style="margin: 0; font-size: 12px; color: #94A3B8;">
+      <td style="padding: 20px 32px; background-color: #FAF2EF; border-top: 1px solid #E6D9CB; text-align: center;">
+        <p style="margin: 0; font-size: 12px; color: #6E5A52; line-height: 1.5;">
           Salon de la Danse Angers • 14, 15 et 16 Mai 2027<br>
           Ce message a été envoyé automatiquement, merci de ne pas y répondre.
         </p>
@@ -164,50 +170,53 @@ export async function sendPasswordResetEmail(options: SendResetPasswordOptions) 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Réinitialisation de mot de passe - Salon de la Danse 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #0F172A;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
+<body style="margin: 0; padding: 28px 16px; font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F6EFE6; color: #2A1512; -webkit-font-smoothing: antialiased;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(42, 21, 18, 0.04);">
     <tr>
-      <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
-        <div style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; margin-bottom: 16px;">
+      <td style="padding: 32px 32px 24px 32px; background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+        <div style="display: inline-block; background-color: #7A291E; color: #FFFFFF; font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; border-radius: 9999px; margin-bottom: 14px;">
           SD 2027
         </div>
-        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #2A1512; line-height: 1.3;">
           Salon de la Danse d'Angers 2027
         </h1>
-        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748B;">
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6E5A52;">
           Réinitialisation sécurisée de votre mot de passe
         </p>
       </td>
     </tr>
     <tr>
       <td style="padding: 32px;">
-        <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 18px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Bonjour ${options.name || ''},<br><br>
           Nous avons reçu une demande de réinitialisation du mot de passe associé à votre compte bénévole ou administrateur.
         </p>
 
-        <p style="margin: 0 0 28px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 26px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Pour définir votre nouveau mot de passe, cliquez sur le bouton ci-dessous (ce lien est valable pendant 1 heure) :
         </p>
 
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 28px;">
           <tr>
             <td align="center">
-              <a href="${options.resetUrl}" style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);">
+              <a href="${options.resetUrl}" style="display: inline-block; background-color: #7A291E; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 9999px; box-shadow: 0 3px 8px rgba(122, 41, 30, 0.25);">
                 Réinitialiser mon mot de passe →
               </a>
             </td>
           </tr>
         </table>
 
-        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #64748B;">
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6E5A52;">
           Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité. Votre mot de passe actuel reste inchangé.
         </p>
       </td>
     </tr>
     <tr>
-      <td style="padding: 24px 32px; background-color: #F8FAFC; border-top: 1px solid #F1F5F9; font-size: 12px; color: #94A3B8; text-align: center;">
+      <td style="padding: 24px 32px; background-color: #FAF2EF; border-top: 1px solid #E6D9CB; font-size: 12px; color: #6E5A52; text-align: center; line-height: 1.5;">
         Association JayDance Fam • Salon de la Danse d'Angers 2027<br>
         14-16 mai 2027 • Parc des Expositions d'Angers
       </td>
@@ -282,14 +291,14 @@ export async function sendPlanningConfirmationEmail(options: SendPlanningConfirm
 
   const slotsListHtml = options.slots.map((s) => {
     return `
-      <tr style="border-bottom: 1px solid #F1F5F9;">
-        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #0F172A;">
+      <tr style="border-bottom: 1px solid #EFE6DA;">
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #2A1512;">
           ${s.date}
         </td>
-        <td style="padding: 12px 16px; font-size: 14px; color: #64748B; font-family: monospace;">
+        <td style="padding: 12px 16px; font-size: 13px; color: #6E5A52; font-family: monospace;">
           ${s.startTime} - ${s.endTime}
         </td>
-        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #7C3AED;">
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #7A291E;">
           ${s.missionName}
         </td>
       </tr>
@@ -303,39 +312,42 @@ export async function sendPlanningConfirmationEmail(options: SendPlanningConfirm
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confirmation de votre planning - Salon de la Danse 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #0F172A;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
+<body style="margin: 0; padding: 28px 16px; font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F6EFE6; color: #2A1512; -webkit-font-smoothing: antialiased;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(42, 21, 18, 0.04);">
     <tr>
-      <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
-        <div style="display: inline-block; background-color: #10B981; color: #FFFFFF; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; margin-bottom: 16px;">
+      <td style="padding: 32px 32px 24px 32px; background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+        <div style="display: inline-block; background-color: #E1E9DC; border: 1px solid #9DB79F; color: #2F5238; font-weight: 700; font-size: 12px; padding: 5px 14px; border-radius: 9999px; margin-bottom: 14px;">
           Planning Confirmé ✓
         </div>
-        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #2A1512; line-height: 1.3;">
           Salon de la Danse d'Angers 2027
         </h1>
-        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748B;">
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6E5A52;">
           Confirmation officielle de vos créneaux de bénévolat
         </p>
       </td>
     </tr>
     <tr>
       <td style="padding: 32px;">
-        <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 18px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Bonjour <strong>${options.name || ''}</strong>,<br><br>
           Votre planning pour le Salon de la Danse 2027 a été <strong>validé et verrouillé</strong> avec succès. Nous vous remercions chaleureusement pour votre engagement !
         </p>
 
-        <h3 style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 700; color: #0F172A;">
+        <h3 style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 700; color: #2A1512;">
           Récapitulatif de vos missions :
         </h3>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 24px; overflow: hidden; border-collapse: collapse;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 14px; margin-bottom: 24px; overflow: hidden; border-collapse: collapse;">
           <thead>
-            <tr style="background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0;">
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Jour</th>
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Horaire</th>
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Mission</th>
+            <tr style="background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Jour</th>
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Horaire</th>
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Mission</th>
             </tr>
           </thead>
           <tbody>
@@ -344,19 +356,19 @@ export async function sendPlanningConfirmationEmail(options: SendPlanningConfirm
         </table>
 
         <!-- Consignes d'arrivée -->
-        <div style="background-color: #EDE9FE; border: 1px solid #DDD6FE; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #6D28D9;">
+        <div style="background-color: #FAF4F2; border: 1px solid #ECCBC4; border-radius: 14px; padding: 18px; margin-bottom: 26px;">
+          <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #7A291E;">
             📍 Consignes importantes d'arrivée :
           </h4>
-          <p style="margin: 0; font-size: 13px; color: #5B21B6; line-height: 1.5;">
+          <p style="margin: 0; font-size: 13px; color: #4C1912; line-height: 1.5;">
             Présentez-vous au <strong>QG Bénévoles</strong> (Parc des Expositions d'Angers) <strong>15 minutes avant</strong> le début de votre premier créneau. Une pièce d'identité sera demandée pour récupérer votre badge d'accès et votre t-shirt officiel.
           </p>
         </div>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 16px;">
           <tr>
             <td align="center">
-              <a href="${options.dashboardUrl}" style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);">
+              <a href="${options.dashboardUrl}" style="display: inline-block; background-color: #7A291E; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 9999px; box-shadow: 0 3px 8px rgba(122, 41, 30, 0.25);">
                 Consulter mon espace bénévole →
               </a>
             </td>
@@ -365,7 +377,7 @@ export async function sendPlanningConfirmationEmail(options: SendPlanningConfirm
       </td>
     </tr>
     <tr>
-      <td style="padding: 24px 32px; background-color: #F8FAFC; border-top: 1px solid #F1F5F9; font-size: 12px; color: #94A3B8; text-align: center;">
+      <td style="padding: 24px 32px; background-color: #FAF2EF; border-top: 1px solid #E6D9CB; font-size: 12px; color: #6E5A52; text-align: center; line-height: 1.5;">
         Association JayDance Fam • Salon de la Danse d'Angers 2027<br>
         14-16 mai 2027 • Parc des Expositions d'Angers
       </td>
@@ -435,14 +447,14 @@ export async function sendPlanningReminderEmail(options: SendPlanningReminderOpt
 
   const slotsListHtml = options.slots.map((s) => {
     return `
-      <tr style="border-bottom: 1px solid #F1F5F9;">
-        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #0F172A;">
+      <tr style="border-bottom: 1px solid #EFE6DA;">
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #2A1512;">
           ${s.date}
         </td>
-        <td style="padding: 12px 16px; font-size: 14px; color: #64748B; font-family: monospace;">
+        <td style="padding: 12px 16px; font-size: 13px; color: #6E5A52; font-family: monospace;">
           ${s.startTime} - ${s.endTime}
         </td>
-        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #7C3AED;">
+        <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #7A291E;">
           ${s.missionName}
         </td>
       </tr>
@@ -456,39 +468,42 @@ export async function sendPlanningReminderEmail(options: SendPlanningReminderOpt
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rappel de convocation - Salon de la Danse 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F8FAFC; color: #0F172A;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden;">
+<body style="margin: 0; padding: 28px 16px; font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F6EFE6; color: #2A1512; -webkit-font-smoothing: antialiased;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; margin: 0 auto; background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 18px rgba(42, 21, 18, 0.04);">
     <tr>
-      <td style="padding: 32px 32px 24px 32px; border-bottom: 1px solid #F1F5F9;">
-        <div style="display: inline-block; background-color: #D97706; color: #FFFFFF; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; margin-bottom: 16px;">
+      <td style="padding: 32px 32px 24px 32px; background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+        <div style="display: inline-block; background-color: #F7E4C6; border: 1px solid #D9A660; color: #8A4B0F; font-weight: 700; font-size: 12px; padding: 5px 14px; border-radius: 9999px; margin-bottom: 14px;">
           Rappel Convocation ⏰
         </div>
-        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #0F172A; line-height: 1.3;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #2A1512; line-height: 1.3;">
           Salon de la Danse d'Angers 2027
         </h1>
-        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748B;">
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6E5A52;">
           Rappel de vos créneaux et consignes pour votre engagement bénévole
         </p>
       </td>
     </tr>
     <tr>
       <td style="padding: 32px;">
-        <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #334155;">
+        <p style="margin: 0 0 18px 0; font-size: 15px; line-height: 1.6; color: #2A1512;">
           Bonjour <strong>${options.name || ''}</strong>,<br><br>
           Le <strong>Salon de la Danse d'Angers</strong> approche à grands pas ! Nous vous envoyons ce rappel récapitulant vos tranches horaires et missions validées :
         </p>
 
-        <h3 style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 700; color: #0F172A;">
+        <h3 style="margin: 24px 0 12px 0; font-size: 15px; font-weight: 700; color: #2A1512;">
           Vos créneaux de bénévolat :
         </h3>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 24px; overflow: hidden; border-collapse: collapse;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FFFCF8; border: 1px solid #E6D9CB; border-radius: 14px; margin-bottom: 24px; overflow: hidden; border-collapse: collapse;">
           <thead>
-            <tr style="background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0;">
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Jour</th>
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Horaire</th>
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; text-align: left; color: #64748B; text-transform: uppercase;">Mission</th>
+            <tr style="background-color: #FAF2EF; border-bottom: 1px solid #ECCBC4;">
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Jour</th>
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Horaire</th>
+              <th style="padding: 11px 16px; font-size: 11px; font-weight: 700; text-align: left; color: #7A291E; letter-spacing: 0.08em; text-transform: uppercase;">Mission</th>
             </tr>
           </thead>
           <tbody>
@@ -497,21 +512,21 @@ export async function sendPlanningReminderEmail(options: SendPlanningReminderOpt
         </table>
 
         <!-- Consignes importantes -->
-        <div style="background-color: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #92400E;">
+        <div style="background-color: #F7E4C6; border: 1px solid #D9A660; border-radius: 14px; padding: 18px; margin-bottom: 26px;">
+          <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #8A4B0F;">
             📍 Rappel des consignes importantes :
           </h4>
-          <p style="margin: 0; font-size: 13px; color: #78350F; line-height: 1.5;">
+          <p style="margin: 0; font-size: 13px; color: #5B300A; line-height: 1.6;">
             • Présentation obligatoire <strong>15 minutes avant l'heure</strong> au QG Bénévoles (Parc des Expositions d'Angers).<br>
             • Munissez-vous d'une <strong>pièce d'identité</strong> pour le retrait de votre badge officiel et t-shirt.<br>
             • En cas d'empêchement ou retard, contactez immédiatement la régie au <strong>06 12 34 56 78</strong>.
           </p>
         </div>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 16px;">
           <tr>
             <td align="center">
-              <a href="${options.dashboardUrl}" style="display: inline-block; background-color: #7C3AED; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);">
+              <a href="${options.dashboardUrl}" style="display: inline-block; background-color: #7A291E; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 9999px; box-shadow: 0 3px 8px rgba(122, 41, 30, 0.25);">
                 Accéder à mon badge & planning →
               </a>
             </td>
@@ -520,7 +535,7 @@ export async function sendPlanningReminderEmail(options: SendPlanningReminderOpt
       </td>
     </tr>
     <tr>
-      <td style="padding: 24px 32px; background-color: #F8FAFC; border-top: 1px solid #F1F5F9; font-size: 12px; color: #94A3B8; text-align: center;">
+      <td style="padding: 24px 32px; background-color: #FAF2EF; border-top: 1px solid #E6D9CB; font-size: 12px; color: #6E5A52; text-align: center; line-height: 1.5;">
         Association JayDance Fam • Salon de la Danse d'Angers 2027<br>
         14-16 mai 2027 • Parc des Expositions d'Angers
       </td>
