@@ -115,9 +115,7 @@ async function handleToggleRegistrations() {
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1512]">
           Tableau de bord Administrateur
         </h1>
-        <p class="text-xs sm:text-sm text-[#6E5A52] mt-0.5">
-          Pilotage centralisé des effectifs, plannings et disponibilités du Salon.
-        </p>
+   
       </div>
 
       <div class="flex items-center gap-3">
